@@ -6,112 +6,43 @@
 
 @section('content')
 
+{{-- Judul Atas setiap halaman berbeda --}}
 <div class="mb-4">
-
-    <h3>Dashboard</h3>
-
+    <span class="text-3xl font-bold">Dashboard</span>
     <p class="text-muted">
         Selamat datang di Sistem E-Rapor SMK
     </p>
-
 </div>
 
-
-<div class="row g-4">
-
-
-    <!-- DATA SISWA -->
-
-    <div class="col-md-3">
-
-        <div class="stat-card">
-
-            <div class="stat-title">
-                👨‍🎓 DATA SISWA
-            </div>
-
-            <div class="stat-number">
-                0
-            </div>
-
-            <small class="text-muted">
-                Total siswa
-            </small>
-
+<div class="bg-white rounded-xl shadow-lg border border-gray-300 p-5 h-auto grid gap-10">
+    <div class="grid grid-cols-4 gap-4">
+        <div class="grid grid-rows-2 rounded-xl border border-gray-300 px-4 py-4 bg-white shadow-lg">
+            <span class="text-md font-bold">Data Siswa</span>
+            <span class="text-4xl text-purple-900 font-bold">20</span>
+            <span class="text-xs mt-2">Total Siswa</span>
         </div>
-
+        <div class="grid grid-rows-2 rounded-xl border border-gray-300 px-4 py-4 bg-white shadow-lg">
+            <span class="text-md font-bold">Data Siswa</span>
+            <span class="text-4xl text-purple-900 font-bold">20</span>
+            <span class="text-xs mt-2">Total Siswa</span>
+        </div>
+        <div class="grid grid-rows-2 rounded-xl border border-gray-300 px-4 py-4 bg-white shadow-lg">
+            <span class="text-md font-bold">Data Siswa</span>
+            <span class="text-4xl text-purple-900 font-bold">20</span>
+            <span class="text-xs mt-2">Total Siswa</span>
+        </div>
+        <div class="grid grid-rows-2 rounded-xl border border-gray-300 px-4 py-4 bg-white shadow-lg">
+            <span class="text-md font-bold">Data Siswa</span>
+            <span class="text-4xl text-purple-900 font-bold">20</span>
+            <span class="text-xs mt-2">Total Siswa</span>
+        </div>
     </div>
 
-
-    <!-- DATA GURU -->
-
-    <div class="col-md-3">
-
-        <div class="stat-card">
-
-            <div class="stat-title">
-                👨‍🏫 DATA GURU
-            </div>
-
-            <div class="stat-number">
-                0
-            </div>
-
-            <small class="text-muted">
-                Total guru
-            </small>
-
-        </div>
-
+    <div>
+        <span class="text-xl font-bold">Informasi e-Rapor</spna>
     </div>
-
-
-    <!-- MATA PELAJARAN -->
-
-    <div class="col-md-3">
-
-        <div class="stat-card">
-
-            <div class="stat-title">
-                📚 MATA PELAJARAN
-            </div>
-
-            <div class="stat-number">
-                0
-            </div>
-
-            <small class="text-muted">
-                Total mata pelajaran
-            </small>
-
-        </div>
-
-    </div>
-
-
-    <!-- ROMBEL -->
-
-    <div class="col-md-3">
-
-        <div class="stat-card">
-
-            <div class="stat-title">
-                🏫 ROMBEL
-            </div>
-
-            <div class="stat-number">
-                0
-            </div>
-
-            <small class="text-muted">
-                Total rombel
-            </small>
-
-        </div>
-
-    </div>
-
 </div>
+
 
 
 <!-- INFORMASI -->
