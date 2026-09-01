@@ -11,10 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guru_mengajars', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('guru_mengajar', function (Blueprint $table) {
+    $table->id();
+
+    $table->foreignId('guru_id')
+          ->constrained('data_guru')
+          ->cascadeOnDelete();
+
+    $table->foreignId('mata_pelajaran_id')
+          ->constrained('mata_pelajaran')
+          ->cascadeOnDelete();
+
+    $table->foreignId('rombel_id')
+          ->constrained('rombel')
+          ->cascadeOnDelete();
+
+    $table->foreignId('sekolah_id')
+          ->constrained('data_sekolah')
+          ->cascadeOnDelete();
+
+    $table->timestamps();
+});
     }
 
     /**

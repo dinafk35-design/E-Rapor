@@ -12,22 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rombel', function (Blueprint $table) {
-    $table->id();
-
-    $table->foreignId('sekolah_id')
-          ->constrained('data_sekolah')
-          ->cascadeOnDelete();
-
-    $table->string('nama_rombel');
-    $table->string('tingkat')->nullable();
-
-    $table->foreignId('wali_kelas_id')
-          ->nullable()
-          ->constrained('data_guru')
-          ->nullOnDelete();
-
-    $table->timestamps();
-});
+            $table->id();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -35,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rombels');
+        Schema::dropIfExists('rombel');
     }
 };

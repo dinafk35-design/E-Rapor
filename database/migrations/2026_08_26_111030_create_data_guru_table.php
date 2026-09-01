@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nama_models', function (Blueprint $table) {
+        Schema::create('data_guru', function (Blueprint $table) {
             $table->id();
-            $table->string('role');
             $table->timestamps();
         });
     }
@@ -23,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nama_models');
+        Schema::dropIfExists('data_guru');
     }
 };
