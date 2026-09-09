@@ -1,23 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DataSekolahController;
-use App\Http\Controllers\DataGuruController;
-
-
-Route::get('/', [DashboardController::class, 'index'])
-    ->name('dashboard');
-
-
-Route::resource(
-    'data-sekolah',
-    DataSekolahController::class
-);
-
-
-Route::resource(
-    'data-guru',
-    DataGuruController::class
-);
+Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

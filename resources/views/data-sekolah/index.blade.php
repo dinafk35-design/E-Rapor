@@ -10,27 +10,15 @@
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="mb-4">
+    <span class="text-3xl font-bold">Data Sekolah</span>
+    <p class="text-muted">
+        Kelola informasi data sekolah
+    </p>
+</div>
 
-        <div>
-            <h3 class="mb-1">
-                🏫 Data Sekolah
-            </h3>
-
-            <p class="text-muted mb-0">
-                Kelola informasi data sekolah
-            </p>
-        </div>
-
-        <a href="{{ route('data-sekolah.create') }}"
-           class="btn btn-primary">
-
-            + Tambah Sekolah
-
-        </a>
-
-    </div>
-
-
+<div class="bg-white rounded-xl shadow-lg border border-gray-300 p-5 h-auto grid gap-10">
+    
     <!-- PESAN BERHASIL -->
     @if(session('success'))
 
@@ -224,7 +212,8 @@
         </div>
 
     </div>
-
 </div>
+
+
 
 @endsection

@@ -29,6 +29,8 @@ return new class extends Migration
     $table->foreignId('sekolah_id')
           ->constrained('data_sekolah')
           ->cascadeOnDelete();
+$table ->String('telpon');
+      
 
     $table->timestamps();
 });

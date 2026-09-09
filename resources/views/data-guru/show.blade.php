@@ -1,139 +1,114 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
+@section('title', 'Detail Data Guru')
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+@section('page-title', 'Detail Data Guru')
 
-    <title>Detail Guru - E-Rapor SMK</title>
+@section('content')
 
-    <style>
+<div class="container-fluid">
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
-            margin: 0;
-        }
+    <div class="card shadow-sm border-0">
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-        }
+        <div class="card-header bg-white">
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.08);
-        }
+            <h5 class="mb-0">
+                🏫 Detail Data Guru
+            </h5>
 
-        h1 {
-            margin-top: 0;
-        }
-
-        .data {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-        }
-
-        .label {
-            font-weight: bold;
-        }
-
-        .buttons {
-            margin-top: 25px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            color: white;
-            margin-right: 8px;
-        }
-
-        .back {
-            background: #6c757d;
-        }
-
-        .edit {
-            background: #0d6efd;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="card">
-
-        <h1>👨‍🏫 Detail Data Guru</h1>
-
-        <div class="data">
-            <div class="label">NIP</div>
-            <div>{{ $dataGuru->nip }}</div>
         </div>
 
-        <div class="data">
-            <div class="label">Nama Guru</div>
-            <div>{{ $dataGuru->nama_guru }}</div>
-        </div>
 
-        <div class="data">
-            <div class="label">NIK</div>
-            <div>{{ $dataGuru->nik ?? '-' }}</div>
-        </div>
+        <div class="card-body">
 
-        <div class="data">
-            <div class="label">Email</div>
-            <div>{{ $dataGuru->email ?? '-' }}</div>
-        </div>
+            <div class="table-responsive">
 
-        <div class="data">
-            <div class="label">No. Telepon</div>
-            <div>{{ $dataGuru->no_telepon ?? '-' }}</div>
-        </div>
+                <table class="table table-bordered">
 
-        <div class="data">
-            <div class="label">Jenis Kelamin</div>
-            <div>{{ $dataGuru->jenis_kelamin ?? '-' }}</div>
-        </div>
+                    <tr>
 
-        <div class="data">
-            <div class="label">Tempat Lahir</div>
-            <div>{{ $dataGuru->tempat_lahir ?? '-' }}</div>
-        </div>
+                        <th width="250">
+                            Nama Guru
+                        </th>
 
-        <div class="data">
-            <div class="label">Tanggal Lahir</div>
-            <div>{{ $dataGuru->tanggal_lahir ?? '-' }}</div>
-        </div>
+                        <td>
+                            {{ $dataSekolah->nama_guru }}
+                        </td>
 
-        <div class="data">
-            <div class="label">Alamat</div>
-            <div>{{ $dataGuru->alamat ?? '-' }}</div>
-        </div>
+                    </tr>
 
-        <div class="buttons">
+
+                    <tr>
+
+                        <th>
+                            Alamat
+                        </th>
+
+                        <td>
+                            {{ $dataGuru->alamat }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <td>
+                            {{ $dataGuru->email ?? '-' }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>
+                            Telepon
+                        </th>
+
+                        <td>
+                            {{ $dataGuru->telepon ?? '-' }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>
+                            Dibuat
+                        </th>
+
+                        <td>
+                            {{ $dataGuru->created_at ?? '-' }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
 
             <a
                 href="{{ route('data-guru.index') }}"
-                class="btn back">
+                class="btn btn-secondary">
+
                 ← Kembali
+
             </a>
+
 
             <a
                 href="{{ route('data-guru.edit', $dataGuru->id) }}"
-                class="btn edit">
+                class="btn btn-warning">
+
                 ✏️ Edit
+
             </a>
 
         </div>
@@ -142,5 +117,4 @@
 
 </div>
 
-</body>
-</html>
+@endsection

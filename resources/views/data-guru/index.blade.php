@@ -1,328 +1,219 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.app')
 
-    <title>Data Guru - E-Rapor SMK</title>
+@section('title', 'Data Guru')
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+@section('page-title', 'Data Guru')
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f6fa;
-            color: #333;
-        }
+@section('content')
 
-        .container {
-            width: 95%;
-            max-width: 1400px;
-            margin: 30px auto;
-        }
+<div class="container-fluid">
 
-        .header {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="mb-4">
+    <span class="text-3xl font-bold">Data Guru</span>
+    <p class="text-muted">
+        Kelola informasi Data Guru
+    </p>
+</div>
 
-        .header h1 {
-            margin: 0 0 8px 0;
-            font-size: 28px;
-        }
-
-        .header p {
-            margin: 0;
-            color: #777;
-        }
-
-        .toolbar {
-            background: white;
-            padding: 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            background: #0d6efd;
-            color: white;
-        }
-
-        .btn-info {
-            background: #0dcaf0;
-            color: #000;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #000;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn:hover {
-            opacity: 0.85;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 900px;
-        }
-
-        th {
-            background: #212529;
-            color: white;
-            padding: 13px;
-            text-align: left;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .action {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        .alert {
-            padding: 14px 18px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: #d1e7dd;
-            color: #0f5132;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 5px;
-            background: #e9ecef;
-            font-size: 13px;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    {{-- HEADER --}}
-    <div class="header">
-        <h1>👨‍🏫 Data Guru</h1>
-        <p>Kelola data guru pada sistem E-Rapor SMK</p>
-    </div>
-
-
-    {{-- PESAN SUKSES --}}
+<div class="bg-white rounded-xl shadow-lg border border-gray-300 p-5 h-auto grid gap-10">
+    
+    <!-- PESAN BERHASIL -->
     @if(session('success'))
-        <div class="alert alert-success">
-            ✅ {{ session('success') }}
+
+        <div class="alert alert-success alert-dismissible fade show">
+
+            {{ session('success') }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
         </div>
+
     @endif
 
 
-    {{-- TOOLBAR --}}
-    <div class="toolbar">
+    <!-- ERROR -->
+    @if($errors->any())
 
-        <div>
-            <strong>Daftar Guru</strong>
+        <div class="alert alert-danger">
+
+            <strong>Terjadi kesalahan:</strong>
+
+            <ul class="mb-0">
+
+                @foreach($errors->all() as $error)
+
+                    <li>{{ $error }}</li>
+
+                @endforeach
+
+            </ul>
+
         </div>
 
-        <div>
-            <a href="{{ route('dashboard') }}" class="btn btn-info">
-                🏠 Dashboard
-            </a>
+    @endif
 
-            <a href="{{ route('data-guru.create') }}" class="btn btn-primary">
-                ➕ Tambah Guru
-            </a>
+
+    <!-- TABEL -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white">
+
+            <strong>
+                Daftar Sekolah
+            </strong>
+
         </div>
 
-    </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th width="60">
+                                No
+                            </th>
+
+                            <th>
+                                Nama Sekolah
+                            </th>
+
+                            <th>
+                                Alamat
+                            </th>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <th>
+                                Telepon
+                            </th>
+
+                            <th width="230">
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
 
 
-    {{-- TABLE --}}
-    <div class="table-container">
+                    <tbody>
 
-        <table>
+                        @forelse($dataSekolah as $sekolah)
 
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>NIP</th>
-                    <th>Nama Guru</th>
-                    <th>NIK</th>
-                    <th>Email</th>
-                    <th>No. Telepon</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
+                        <tr>
 
-            <tbody>
+                            <td>
+                                {{ $loop->iteration }}
+                            </td>
 
-                @forelse($dataGuru as $guru)
+                            <td>
+                                <strong>
+                                    {{ $sekolah->nama_sekolah }}
+                                </strong>
+                            </td>
 
-                    <tr>
+                            <td>
+                                {{ $sekolah->alamat }}
+                            </td>
 
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
+                            <td>
+                                {{ $sekolah->email ?? '-' }}
+                            </td>
 
-                        <td>
-                            {{ $guru->nip }}
-                        </td>
+                            <td>
+                                {{ $sekolah->telepon ?? '-' }}
+                            </td>
 
-                        <td>
-                            <strong>
-                                {{ $guru->nama_guru }}
-                            </strong>
-                        </td>
+                            <td>
 
-                        <td>
-                            {{ $guru->nik ?? '-' }}
-                        </td>
+                                <a href="{{ route('data-sekolah.show', $sekolah->id) }}"
+                                   class="btn btn-info btn-sm">
 
-                        <td>
-                            {{ $guru->email ?? '-' }}
-                        </td>
+                                    👁 Detail
 
-                        <td>
-                            {{ $guru->no_telepon ?? '-' }}
-                        </td>
-
-                        <td>
-                            @if($guru->jenis_kelamin)
-                                <span class="badge">
-                                    {{ $guru->jenis_kelamin }}
-                                </span>
-                            @else
-                                -
-                            @endif
-                        </td>
-
-                        <td>
-
-                            <div class="action">
-
-                                {{-- DETAIL --}}
-                                <a
-                                    href="{{ route('data-guru.show', $guru->id) }}"
-                                    class="btn btn-info"
-                                >
-                                    👁️ Detail
                                 </a>
 
 
-                                {{-- EDIT --}}
-                                <a
-                                    href="{{ route('data-guru.edit', $guru->id) }}"
-                                    class="btn btn-warning"
-                                >
-                                    ✏️ Edit
+                                <a href="{{ route('data-sekolah.edit', $sekolah->id) }}"
+                                   class="btn btn-warning btn-sm">
+
+                                    ✏ Edit
+
                                 </a>
 
 
-                                {{-- HAPUS --}}
                                 <form
-                                    action="{{ route('data-guru.destroy', $guru->id) }}"
+                                    action="{{ route('data-sekolah.destroy', $sekolah->id) }}"
                                     method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus data guru ini?')"
-                                >
+                                    class="d-inline">
 
                                     @csrf
+
                                     @method('DELETE')
 
                                     <button
                                         type="submit"
-                                        class="btn btn-danger"
-                                    >
-                                        🗑️ Hapus
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+
+                                        🗑 Hapus
+
                                     </button>
 
                                 </form>
 
-                            </div>
+                            </td>
 
-                        </td>
+                        </tr>
 
-                    </tr>
+                        @empty
 
-                @empty
+                        <tr>
 
-                    <tr>
-                        <td colspan="8" class="empty">
-                            📭 Belum ada data guru.
-                            <br><br>
+                            <td colspan="6"
+                                class="text-center py-4 text-muted">
 
-                            <a
-                                href="{{ route('data-guru.create') }}"
-                                class="btn btn-primary"
-                            >
-                                ➕ Tambahkan Guru
-                            </a>
-                        </td>
-                    </tr>
+                                🏫 Belum ada data sekolah.
 
-                @endforelse
+                                <br>
 
-            </tbody>
+                                <a href="{{ route('data-sekolah.create') }}"
+                                   class="btn btn-primary btn-sm mt-3">
 
-        </table>
+                                    + Tambah Data Sekolah
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
 
     </div>
-
 </div>
 
-</body>
-</html>
+
+
+@endsection

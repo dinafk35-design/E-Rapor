@@ -1,269 +1,133 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Edit Guru - E-Rapor SMK</title>
+@extends('layouts.app')
 
-    <style>
+@section('title', 'Edit Data Guru')
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
-            margin: 0;
-        }
+@section('page-title', 'Edit Data Guru')
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-        }
+@section('content')
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.08);
-        }
+<div class="container-fluid">
 
-        h1 {
-            margin-top: 0;
-        }
+    <div class="card shadow-sm border-0">
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+        <div class="card-header bg-white">
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 7px;
-        }
+            <h5 class="mb-0">
+                ✏️ Edit Data Guru
+            </h5>
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
+        </div>
 
-        textarea {
-            min-height: 100px;
-        }
 
-        .buttons {
-            margin-top: 25px;
-        }
+        <div class="card-body">
 
-        button,
-        a {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 6px;
-            border: none;
-            text-decoration: none;
-            cursor: pointer;
-        }
+            <form
+                action="{{ route('data-guru.update', $dataGuru->id) }}"
+                method="POST">
 
-        button {
-            background: #0d6efd;
-            color: white;
-        }
+                @csrf
 
-        .back {
-            background: #6c757d;
-            color: white;
-            margin-left: 5px;
-        }
+                @method('PUT')
 
-        .error {
-            color: red;
-            font-size: 13px;
-            margin-top: 5px;
-        }
 
-    </style>
+                <!-- NAMA -->
 
-</head>
+                <div class="mb-3">
 
-<body>
+                    <label class="form-label">
+                        Nama Guru
+                    </label>
 
-<div class="container">
+                    <input
+                        type="text"
+                        name="nama_guru"
+                        class="form-control"
+                        value="{{ old('nama_nama guru', $dataGuru->nama_guru) }}"
+                        required>
 
-    <div class="card">
+                </div>
 
-        <h1>✏️ Edit Data Guru</h1>
 
-        <form
-            action="{{ route('data-guru.update', $dataGuru->id) }}"
-            method="POST">
+                <!-- ALAMAT -->
 
-            @csrf
+                <div class="mb-3">
 
-            @method('PUT')
+                    <label class="form-label">
+                        Alamat
+                    </label>
 
+                    <textarea
+                        name="alamat"
+                        class="form-control"
+                        rows="4"
+                        required>{{ old('alamat', $dataGuru->alamat) }}</textarea>
 
-            <div class="form-group">
+                </div>
 
-                <label>NIP</label>
 
-                <input
-                    type="text"
-                    name="nip"
-                    value="{{ old('nip', $dataGuru->nip) }}"
-                    required>
+                <!-- EMAIL -->
 
-                @error('nip')
-                    <div class="error">
-                        {{ $message }}
-                    </div>
-                @enderror
+                <div class="mb-3">
 
-            </div>
+                    <label class="form-label">
+                        Email
+                    </label>
 
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        value="{{ old('email', $dataGuru->email) }}">
 
-            <div class="form-group">
+                </div>
 
-                <label>Nama Guru</label>
 
-                <input
-                    type="text"
-                    name="nama_guru"
-                    value="{{ old('nama_guru', $dataGuru->nama_guru) }}"
-                    required>
+                <!-- TELEPON -->
 
-                @error('nama_guru')
-                    <div class="error">
-                        {{ $message }}
-                    </div>
-                @enderror
+                <div class="mb-3">
 
-            </div>
+                    <label class="form-label">
+                        Telepon
+                    </label>
 
+                    <input
+                        type="text"
+                        name="telepon"
+                        class="form-control"
+                        value="{{ old('telepon', $dataGuru->telepon) }}">
 
-            <div class="form-group">
+                </div>
 
-                <label>NIK</label>
 
-                <input
-                    type="text"
-                    name="nik"
-                    value="{{ old('nik', $dataGuru->nik) }}">
+                <!-- BUTTON -->
 
-            </div>
+                <div class="mt-4">
 
+                    <a
+                        href="{{ route('data-guru.index') }}"
+                        class="btn btn-secondary">
 
-            <div class="form-group">
+                        ← Kembali
 
-                <label>Email</label>
+                    </a>
 
-                <input
-                    type="email"
-                    name="email"
-                    value="{{ old('email', $dataGuru->email) }}">
 
-            </div>
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
 
+                        💾 Update
 
-            <div class="form-group">
+                    </button>
 
-                <label>No. Telepon</label>
+                </div>
 
-                <input
-                    type="text"
-                    name="no_telepon"
-                    value="{{ old('no_telepon', $dataGuru->no_telepon) }}">
+            </form>
 
-            </div>
-
-
-            <div class="form-group">
-
-                <label>Jenis Kelamin</label>
-
-                <select name="jenis_kelamin">
-
-                    <option value="">
-                        -- Pilih --
-                    </option>
-
-                    <option
-                        value="Laki-laki"
-                        {{ $dataGuru->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>
-                        Laki-laki
-                    </option>
-
-                    <option
-                        value="Perempuan"
-                        {{ $dataGuru->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>
-                        Perempuan
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>Tempat Lahir</label>
-
-                <input
-                    type="text"
-                    name="tempat_lahir"
-                    value="{{ old('tempat_lahir', $dataGuru->tempat_lahir) }}">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>Tanggal Lahir</label>
-
-                <input
-                    type="date"
-                    name="tanggal_lahir"
-                    value="{{ old('tanggal_lahir', $dataGuru->tanggal_lahir) }}">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>Alamat</label>
-
-                <textarea
-                    name="alamat">{{ old('alamat', $dataGuru->alamat) }}</textarea>
-
-            </div>
-
-
-            <div class="buttons">
-
-                <button type="submit">
-                    💾 Simpan Perubahan
-                </button>
-
-                <a
-                    href="{{ route('data-guru.index') }}"
-                    class="back">
-                    ← Kembali
-                </a>
-
-            </div>
-
-        </form>
+        </div>
 
     </div>
 
 </div>
 
-</body>
-</html>
+@endsection
