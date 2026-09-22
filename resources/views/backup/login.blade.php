@@ -298,7 +298,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login.post') }}">
+            <form id="loginForm">
                 @csrf
 
                 <div class="form-group">
@@ -341,4 +341,51 @@
         </div>
     </div>
 </body>
+<script>
+
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+
+        event.preventDefault();
+
+        let username = document.getElementById('username').value.trim().toLowerCase();
+
+
+        // Jika username Admin
+        if (username === 'admin') {
+
+            window.location.href = "{{ route('admin.dashboard') }}";
+
+            return;
+        }
+
+
+        // Jika username Guru
+        if (username === 'guru') {
+
+            window.location.href = "{{ route('guru.dashboard') }}";
+
+            return;
+        }
+
+
+
+
+        // Jika username Siswa
+        if (username === 'siswa') {
+
+            window.location.href = "{{ route('siswa.dashboard') }}";
+
+            return;
+        }
+
+
+        // ==========================
+        // USERNAME TIDAK DIKENALI
+        // ==========================
+
+        alert('Username demo tidak dikenali. Gunakan Admin, Guru, atau Siswa.');
+
+    });
+
+</script>
 </html>
