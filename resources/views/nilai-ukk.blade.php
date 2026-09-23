@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.app')
 
 @section('content')
@@ -1642,12 +1641,5 @@ function batalEdit(button) {
 </script>
 
 @endsection
-```
 
-Dengan versi ini **tidak ada Controller baru yang perlu dibuat**. File cukup diletakkan di halaman Blade Nilai UKK Anda.
 
-Alurnya sekarang:
-
-**Klik Edit → isi tabel menjadi input/select → ubah data → Simpan atau Batal.**
-
-Untuk sementara **Simpan hanya mengubah tampilan pada halaman**, belum menyimpan ke database.
