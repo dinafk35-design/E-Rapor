@@ -29,8 +29,8 @@
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f9;
-            color: #263238;
+            background: #6a6d72;
+            color: #1d2428;
         }
 
         /* =========================
@@ -44,8 +44,8 @@
             width: 260px;
             height: 100vh;
 
-            background: #193b5d;
-            color: white;
+            background: #273d53;
+            color: rgb(244, 239, 239);
 
             overflow-y: auto;
 
@@ -71,7 +71,7 @@
             font-size: 11px;
             text-transform: uppercase;
 
-            color: #aebdca;
+            color: #f8f9fa;
             font-weight: bold;
         }
 
@@ -86,7 +86,7 @@
 
             margin: 3px 10px;
 
-            color: #ffffff;
+            color: #f9f6f6;
 
             text-decoration: none;
 
@@ -277,9 +277,9 @@
 
             border-radius: 10px;
 
-            background: #eaf2f8;
+            background: #f4f4f7;
 
-            color: #193b5d;
+            color: #080841;
 
             display: flex;
 
@@ -301,7 +301,7 @@
 
             font-size: 13px;
 
-            color: #777;
+            color: #706d75;
         }
 
 

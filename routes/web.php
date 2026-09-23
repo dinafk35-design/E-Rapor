@@ -87,11 +87,6 @@ Route::get('/siswa-dashboard', function () {
     return view('siswa.dashboard');
 })->name('siswa.dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| Profile
-|--------------------------------------------------------------------------
-*/
 Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
@@ -105,6 +100,24 @@ Route::get('/input-nilai/create', function () {
     return view('input-nilai.create');
 })->name('input-nilai-create');
 
+
+Route::get('/nilai-skill-passport', function () {
+    return view('nilai-skill-passport');
+})->name('nilai-skill-passport');
+
+Route::get('/nilai-skill-passport/create', function () {
+    return view('nilai-skill-passport.create');
+})->name('nilai-skill-passport-create');
+
+Route::get('/nilai-ukk', function () {
+    return view('nilai-ukk');
+})->name('nilai-ukk');
+
+Route::get('/nilai-ukk/create', function () {
+    return view('nilai-ukk.create');
+})->name('nilai-ukk-create');
+
+
 /*
 |--------------------------------------------------------------------------
 | User data
@@ -117,18 +130,3 @@ Route::get('/user-data', function () {
 Route::get('/user-data/create', function () {
     return view('user-data-create');
 })->name('user-data.create');
-
-Route::post('/user-data/store', function (\Illuminate\Http\Request $request) {
-
-    $users = session()->get('users', []);
-
-    $users[] = [
-        'nama' => $request->nama,
-        'username' => $request->username,
-        'password' => $request->password,
-        'role' => $request->role,
-    ];
-
-    session()->put('users', $users);
-    return redirect()->route('user-data');
-})->name('user-data.store');

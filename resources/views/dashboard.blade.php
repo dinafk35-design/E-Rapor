@@ -5,7 +5,7 @@
         <!-- WELCOME -->
         <div class="welcome">
             <h2 class="italic font-bold">
-                Selamat Datang, sss!
+                Selamat Datang, Di Dashboard Administrators!
             </h2>
             <p>
                 Kelola seluruh sistem E-Rapor SMK melalui halaman Dashboard Admin.

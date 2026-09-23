@@ -25,7 +25,8 @@
 
     <a href="{{ route('dashboard')}}" class="menu-link {{ request()->routeIs('dashboard') ? 'bg-red-400' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard </a>
     <a href="{{ route('profile') }}" class="menu-link "><i class="fa-solid fa-user"></i><span>Profile</span></a>
-    <a href="{{ route('user-data') }}" class="menu-link "><i class="fa-solid fa-users"></i><span>User Data</span></a>
+    
+    
 
 
 
@@ -143,8 +144,7 @@
     </a>
 
 
-    <a href="#" class="menu-link">
-
+    <a href="{{ route('nilai-skill-passport') }}" class="menu-link {{ request()->routeIs('nilai-skill-passport') ? 'bg-red-400' : '' }}">
         <i class="fa-solid fa-id-card"></i>
 
         Nilai Skill Passport
@@ -152,7 +152,7 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('nilai-ukk') }}" class="menu-link {{ request()->routeIs('nilai-ukk') ? 'bg-red-400' : '' }}">
 
         <i class="fa-solid fa-award"></i>
 
