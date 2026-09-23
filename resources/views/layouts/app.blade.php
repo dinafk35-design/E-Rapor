@@ -29,7 +29,7 @@
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background: #6a6d72;
+            background: #f7f7f8;
             color: #1d2428;
         }
 
@@ -58,7 +58,7 @@
             font-size: 22px;
             font-weight: bold;
 
-            border-bottom: 1px solid rgba(255,255,255,0.15);
+            border-bottom: 1px solid rgba(191, 168, 39, 0.15);
         }
 
         .sidebar-header i {
@@ -135,9 +135,9 @@
 
             height: 70px;
 
-            background: white;
+            background: rgb(163, 218, 241);
 
-            border-bottom: 1px solid #e4e7eb;
+            border-bottom: 1px solid #eef1f4;
 
             display: flex;
 
@@ -218,7 +218,7 @@
 
             background: linear-gradient(
                 135deg,
-                #193b5d,
+                #72a0cd,
                 #2f6494
             );
 
@@ -301,7 +301,7 @@
 
             font-size: 13px;
 
-            color: #706d75;
+            color: #22123d;
         }
 
 
@@ -417,7 +417,7 @@
 
         .activity-box {
 
-            background: white;
+            background: rgb(194, 230, 247);
 
             border: 1px solid #e6e9ed;
 

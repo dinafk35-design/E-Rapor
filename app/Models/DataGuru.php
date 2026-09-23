@@ -19,4 +19,19 @@ class DataGuru extends Model
         'tanggal_lahir',
         'alamat',
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE NILAI SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    public function nilai()
+    {
+        return $this->hasMany(
+            NilaiSiswa::class,
+            'guru_id'
+        );
+    }
 }

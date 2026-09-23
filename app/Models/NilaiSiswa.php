@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class NilaiSiswa extends Model
 {
-    use HasFactory;
-
     protected $table = 'nilai_siswa';
 
     protected $fillable = [
@@ -20,19 +17,36 @@ class NilaiSiswa extends Model
         'nilai',
     ];
 
-    protected $casts = [
-        'nilai' => 'decimal:2',
-    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE DATA SISWA
+    |--------------------------------------------------------------------------
+    */
 
     public function siswa()
     {
         return $this->belongsTo(DataSiswa::class, 'siswa_id');
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE MATA PELAJARAN
+    |--------------------------------------------------------------------------
+    */
+
     public function mataPelajaran()
     {
         return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE GURU
+    |--------------------------------------------------------------------------
+    */
 
     public function guru()
     {

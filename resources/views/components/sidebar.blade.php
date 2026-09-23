@@ -24,7 +24,10 @@
 
 
     <a href="{{ route('dashboard')}}" class="menu-link {{ request()->routeIs('dashboard') ? 'bg-red-400' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard </a>
-    <a href="{{ route('profile') }}" class="menu-link "><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    <a href="{{ route('profile') }}" class="menu-link  {{ request()->routeIs('profile') ? 'bg-red-400' : '' }}">
+        <i i class="fa-solid fa-user"></i>
+            Profile
+        </a>
     
     
 
@@ -37,7 +40,7 @@
     </div>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('data-sekolah') }}" class="menu-link {{ request()->routeIs('data-sekolah') ? 'bg-red-400' : '' }}">
 
         <i class="fa-solid fa-school"></i>
 
@@ -46,7 +49,7 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('data-guru') }}" class="menu-link {{ request()->routeIs('data-guru') ? 'bg-red-400' : '' }}">
 
         <i class="fa-solid fa-chalkboard-user"></i>
 
@@ -55,7 +58,7 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('data-siswa') }}" class="menu-link {{ request()->routeIs('data-siswa') ? 'bg-red-400' : '' }}">
 
         <i class="fa-solid fa-user-graduate"></i>
 
@@ -64,7 +67,7 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('mata-pelajaran') }}" class="menu-link {{ request()->routeIs('mata-pelajaran') ? 'bg-red-400' : '' }}">
 
         <i class="fa-solid fa-book"></i>
 
@@ -73,7 +76,7 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('rombel') }}" class="menu-link {{ request()->routeIs('rombel') ? 'bg-red-400' : '' }}">
 
         <i class="fa-solid fa-people-group"></i>
 

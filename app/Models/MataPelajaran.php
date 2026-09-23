@@ -3,21 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MataPelajaran extends Model
 {
     protected $table = 'mata_pelajaran';
 
     protected $fillable = [
-        'nama_mata_pelajaran',
-        'kode_mata_pelajaran',
-        'kelompok',
         'sekolah_id',
+        'kode_mata_pelajaran',
+        'nama_mata_pelajaran',
+        'kelompok',
     ];
 
-    public function nilaiSiswa()
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE NILAI SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    public function nilai()
     {
         return $this->hasMany(
             NilaiSiswa::class,

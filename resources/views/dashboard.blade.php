@@ -19,7 +19,7 @@
 
             <div class="col-md-6 col-xl-3">
 
-                <div class="stat-card">
+                <div class="stat-card bg-primary">
 
                     <div class="stat-icon">
 
@@ -30,7 +30,7 @@
                     <div>
 
                         <div class="stat-number">
-                            0
+                            350
                         </div>
 
                         <div class="stat-title">
@@ -59,7 +59,7 @@
                     <div>
 
                         <div class="stat-number">
-                            0
+                            70
                         </div>
 
                         <div class="stat-title">
@@ -89,7 +89,7 @@
                     <div>
 
                         <div class="stat-number">
-                            0
+                            10
                         </div>
 
                         <div class="stat-title">
@@ -119,7 +119,7 @@
                     <div>
 
                         <div class="stat-number">
-                            0
+                            100
                         </div>
 
                         <div class="stat-title">
@@ -173,13 +173,15 @@
                         Mengelola identitas dan informasi sekolah yang digunakan dalam sistem E-Rapor.
                     </p>
 
-                    <a href="#" class="task-button">
+                    <a href="{{ url('/data-sekolah') }}" class="task-button">
                         Kelola Data
                     </a>
 
                 </div>
 
             </div>
+
+            
 
 
 
@@ -203,7 +205,7 @@
                         Menambah, mengubah, melihat dan mengelola data guru.
                     </p>
 
-                    <a href="#" class="task-button">
+                    <a href="{{ url('/data-guru') }}" class="task-button">
                         Kelola Data
                     </a>
 
@@ -233,7 +235,7 @@
                         Mengelola data siswa yang terdaftar pada sistem E-Rapor.
                     </p>
 
-                    <a href="#" class="task-button">
+                    <a href="{{ url('/data-siswa') }}" class="task-button">
                         Kelola Data
                     </a>
 
@@ -263,7 +265,7 @@
                         Mengatur daftar mata pelajaran yang digunakan dalam penilaian.
                     </p>
 
-                    <a href="#" class="task-button">
+                    <a href="{{ url('/mata-pelajaran') }}" class="task-button">
                         Kelola Data
                     </a>
 
@@ -293,7 +295,7 @@
                         Mengatur rombongan belajar dan pembagian siswa.
                     </p>
 
-                    <a href="#" class="task-button">
+                    <a href="{{ url('/rombel') }}" class="task-button">
                         Kelola Data
                     </a>
 
@@ -323,7 +325,7 @@
                         Memantau proses input dan pengelolaan nilai siswa.
                     </p>
 
-                    <a href="#" class="task-button">
+                    <a href="{{ url('/penilaian') }}" class="task-button">
                         Kelola Nilai
                     </a>
 

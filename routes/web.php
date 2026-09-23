@@ -4,21 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-
-/*
-|--------------------------------------------------------------------------
-| LOGIN
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/', function () {
-    return view('login');
-})->name('login');
-
-
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->name('dashboard');
+    })->name('dashboard');
 
 Route::post('/login', function (Request $request) {
 
@@ -56,37 +44,6 @@ Route::post('/login', function (Request $request) {
 })->name('login.post');
 
 
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD ADMIN
-|--------------------------------------------------------------------------
-*/
-Route::get('/admin-dashboard', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
-
-
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD GURU
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/guru-dashboard', function () {
-    return view('guru.dashboard');
-})->name('guru.dashboard');
-
-
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD SISWA
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/siswa-dashboard', function () {
-    return view('siswa.dashboard');
-})->name('siswa.dashboard');
-
 Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
@@ -117,16 +74,27 @@ Route::get('/nilai-ukk/create', function () {
     return view('nilai-ukk.create');
 })->name('nilai-ukk-create');
 
+Route::get('/data-sekolah', function () {
+    return view('data-sekolah');
+})->name('data-sekolah');
 
-/*
-|--------------------------------------------------------------------------
-| User data
-|--------------------------------------------------------------------------
-*/
-Route::get('/user-data', function () {
-    return view('user-data');
-})->name('user-data');
+Route::get('/data-guru', function () {
+    return view('data-guru');
+})->name('data-guru');
 
-Route::get('/user-data/create', function () {
-    return view('user-data-create');
-})->name('user-data.create');
+Route::get('/data-siswa', function () {
+    return view('data-siswa');
+})->name('data-siswa');
+
+Route::get('/mata-pelajaran', function () {
+    return view('mata-pelajaran');
+})->name('mata-pelajaran');
+
+Route::get('/rombel', function () {
+    return view('rombel');
+})->name('rombel');
+
+Route::get('/penilaian', function () {
+    return view('penilaian');
+})->name('penilaian');
+
