@@ -5,10 +5,10 @@
         <!-- WELCOME -->
         <div class="welcome">
             <h2 class="italic font-bold">
-                Selamat Datang, Di Dashboard Administrators!
+                Selamat Datang, {{ auth()->user()?->name ?? auth()->user()?->username ?? 'Pengguna' }}!
             </h2>
             <p>
-                Kelola seluruh sistem E-Rapor SMK melalui halaman Dashboard Admin.
+                Kelola sistem E-Rapor SMK sesuai hak akses akun Anda.
             </p>
         </div>
 
@@ -23,7 +23,7 @@
 
                     <div class="stat-icon">
 
-                        <i class="fa-solid fa-user-graduate"></i>
+                        <i class="ph ph-student"></i>
 
                     </div>
 
@@ -52,7 +52,7 @@
 
                     <div class="stat-icon">
 
-                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <i class="ph ph-chalkboard-teacher"></i>
 
                     </div>
 
@@ -82,7 +82,7 @@
 
                     <div class="stat-icon">
 
-                        <i class="fa-solid fa-book"></i>
+                        <i class="ph ph-book"></i>
 
                     </div>
 
@@ -112,7 +112,7 @@
 
                     <div class="stat-icon">
 
-                        <i class="fa-solid fa-people-group"></i>
+                        <i class="ph ph-users-three"></i>
 
                     </div>
 
@@ -143,7 +143,7 @@
 
         <div class="section-title">
 
-            <i class="fa-solid fa-list-check"></i>
+            <i class="ph ph-list-checks"></i>
 
             Tugas Admin
 
@@ -161,7 +161,7 @@
 
                     <div class="task-icon">
 
-                        <i class="fa-solid fa-school"></i>
+                        <i class="ph ph-graduation-cap"></i>
 
                     </div>
 
@@ -193,7 +193,7 @@
 
                     <div class="task-icon">
 
-                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <i class="ph ph-chalkboard-teacher"></i>
 
                     </div>
 
@@ -223,7 +223,7 @@
 
                     <div class="task-icon">
 
-                        <i class="fa-solid fa-user-graduate"></i>
+                        <i class="ph ph-student"></i>
 
                     </div>
 
@@ -253,7 +253,7 @@
 
                     <div class="task-icon">
 
-                        <i class="fa-solid fa-book"></i>
+                        <i class="ph ph-book"></i>
 
                     </div>
 
@@ -283,7 +283,7 @@
 
                     <div class="task-icon">
 
-                        <i class="fa-solid fa-people-group"></i>
+                        <i class="ph ph-users-three"></i>
 
                     </div>
 
@@ -313,7 +313,7 @@
 
                     <div class="task-icon">
 
-                        <i class="fa-solid fa-pen-to-square"></i>
+                        <i class="ph ph-pencil-simple"></i>
 
                     </div>
 
@@ -344,7 +344,7 @@
 
         <div class="section-title">
 
-            <i class="fa-solid fa-clock-rotate-left"></i>
+            <i class="ph ph-clock-counter-clockwise"></i>
 
             Aktivitas Sistem
 
@@ -358,7 +358,7 @@
 
                 <div class="activity-icon">
 
-                    <i class="fa-solid fa-user"></i>
+                    <i class="ph ph-user"></i>
 
                 </div>
 
@@ -381,7 +381,7 @@
 
                 <div class="activity-icon">
 
-                    <i class="fa-solid fa-database"></i>
+                    <i class="ph ph-database"></i>
 
                 </div>
 
@@ -404,7 +404,7 @@
 
                 <div class="activity-icon">
 
-                    <i class="fa-solid fa-shield-halved"></i>
+                    <i class="ph ph-shield-check"></i>
 
                 </div>
 

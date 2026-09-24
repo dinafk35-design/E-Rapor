@@ -2,22 +2,32 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        User::create([
-            'username' => 'operator',
-            'password' => Hash::make('password123'),
-        ]);
+        User::updateOrCreate(
+            ['username' => 'operator'],
+            [
+                'name' => 'Operator E-Rapor',
+                'email' => 'operator@erapor.test',
+                'password' => Hash::make('password123'),
+                'role' => 'admin',
+            ]
+        );
 
-        User::create([
-            'username' => 'admin',
-            'password' => Hash::make('admin123'),
-        ]);
+        User::updateOrCreate(
+            ['username' => 'admin'],
+            [
+                'name' => 'Administrator',
+                'email' => 'admin@erapor.test',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+            ]
+        );
     }
 }

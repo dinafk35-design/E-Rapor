@@ -15,7 +15,7 @@
                 href="{{ url('/input-nilai') }}"
                 class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-gray-600 shadow-sm transition hover:bg-gray-100"
             >
-                ←
+                <i class="ph ph-arrow-left"></i>
             </a>
 
             <div>

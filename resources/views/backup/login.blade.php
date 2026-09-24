@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>E-Rapor SMK - Login</title>
+    <link rel="preconnect" href="https://api.fontshare.com">
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
     <style>
         * {
             margin: 0;
@@ -13,7 +16,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Satoshi', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
             min-height: 100vh;
             display: flex;
@@ -89,7 +92,8 @@
         }
 
         .left-panel .features li::before {
-            content: "✓";
+            content: "\e182";
+            font-family: "Phosphor";
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -298,7 +302,7 @@
                 </div>
             @endif
 
-            <form id="loginForm">
+            <form id="loginForm" action="{{ route('login.post') }}" method="POST">
                 @csrf
 
                 <div class="form-group">
@@ -341,51 +345,4 @@
         </div>
     </div>
 </body>
-<script>
-
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-
-        event.preventDefault();
-
-        let username = document.getElementById('username').value.trim().toLowerCase();
-
-
-        // Jika username Admin
-        if (username === 'admin') {
-
-            window.location.href = "{{ route('admin.dashboard') }}";
-
-            return;
-        }
-
-
-        // Jika username Guru
-        if (username === 'guru') {
-
-            window.location.href = "{{ route('guru.dashboard') }}";
-
-            return;
-        }
-
-
-
-
-        // Jika username Siswa
-        if (username === 'siswa') {
-
-            window.location.href = "{{ route('siswa.dashboard') }}";
-
-            return;
-        }
-
-
-        // ==========================
-        // USERNAME TIDAK DIKENALI
-        // ==========================
-
-        alert('Username demo tidak dikenali. Gunakan Admin, Guru, atau Siswa.');
-
-    });
-
-</script>
 </html>

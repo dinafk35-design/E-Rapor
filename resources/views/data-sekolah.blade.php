@@ -22,7 +22,7 @@
     <!-- ============================= -->
 
     <div class="section-title">
-        <i class="fa-solid fa-school"></i>
+        <i class="ph ph-graduation-cap"></i>
         Input Data Sekolah
     </div>
 
@@ -186,7 +186,7 @@
                     type="submit"
                     class="px-5 py-2 rounded-lg bg-blue-600 text-white"
                 >
-                    <i class="fa-solid fa-save mr-1"></i>
+                    <i class="ph ph-floppy-disk mr-1"></i>
                     Simpan
                 </button>
 
@@ -203,7 +203,7 @@
 
     <div class="section-title">
 
-        <i class="fa-solid fa-table"></i>
+        <i class="ph ph-table"></i>
 
         Data Sekolah
 
@@ -280,7 +280,7 @@
                                 onclick="editData()"
                                 class="px-3 py-2 rounded-lg bg-yellow-500 text-white"
                             >
-                                <i class="fa-solid fa-pen-to-square"></i>
+                                <i class="ph ph-pencil-simple"></i>
                                 Edit
                             </button>
 
@@ -351,7 +351,7 @@ function simpanData(event) {
     event.preventDefault();
 
     // Menampilkan pesan berhasil
-    alert("✅ Data Sekolah Berhasil Disimpan!");
+    alert("Data Sekolah Berhasil Disimpan!");
 
     // Setelah klik OK, kembali ke Dashboard
     window.location.href = "{{ url('/dashboard') }}";

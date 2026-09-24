@@ -9,11 +9,15 @@
 
     <title>Tambah User - E-Rapor SMK</title>
 
+    <link rel="preconnect" href="https://api.fontshare.com">
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap">
+
     <style>
 
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Satoshi', Arial, sans-serif;
             background: #f5f6fa;
         }
 

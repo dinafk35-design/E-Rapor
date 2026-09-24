@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="fw-bold mb-1">
-                <i class="fas fa-user-graduate me-2"></i>
+                <i class="ph ph-student me-2"></i>
                 Data Siswa
             </h3>
 
@@ -20,7 +20,7 @@
         @if($mode === 'index')
             <a href="{{ route('data-siswa.create') }}"
                class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i>
+                <i class="ph ph-plus me-1"></i>
                 Tambah Siswa
             </a>
         @endif
@@ -30,7 +30,7 @@
     {{-- PESAN SUKSES --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i>
+            <i class="ph ph-check-circle me-2"></i>
             {{ session('success') }}
 
             <button type="button"
@@ -111,7 +111,7 @@
                                        class="btn btn-sm btn-info text-white"
                                        title="Lihat Biodata">
 
-                                        <i class="fas fa-eye"></i>
+                                        <i class="ph ph-eye"></i>
 
                                     </a>
 
@@ -119,7 +119,7 @@
                                        class="btn btn-sm btn-warning"
                                        title="Edit">
 
-                                        <i class="fas fa-edit"></i>
+                                        <i class="ph ph-pencil-simple"></i>
 
                                     </a>
 
@@ -135,7 +135,7 @@
                                                 onclick="return confirm('Yakin ingin menghapus siswa ini?')"
                                                 title="Hapus">
 
-                                            <i class="fas fa-trash"></i>
+                                            <i class="ph ph-trash"></i>
 
                                         </button>
 
@@ -152,7 +152,7 @@
                                 <td colspan="7"
                                     class="text-center py-5">
 
-                                    <i class="fas fa-user-graduate fa-3x text-muted mb-3"></i>
+                                    <i class="ph ph-student text-3xl text-muted mb-3"></i>
 
                                     <p class="text-muted mb-0">
                                         Belum ada data siswa.
@@ -185,7 +185,7 @@
 
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">
-                    <i class="fas fa-user-plus me-2"></i>
+                    <i class="ph ph-user-plus me-2"></i>
                     Tambah Biodata Siswa
                 </h5>
             </div>
@@ -217,7 +217,7 @@
             <div class="card-header bg-primary text-white">
 
                 <h5 class="mb-0">
-                    <i class="fas fa-id-card me-2"></i>
+                    <i class="ph ph-identification-card me-2"></i>
                     Biodata Lengkap Siswa
                 </h5>
 
@@ -232,7 +232,7 @@
 
                         <div class="border rounded p-4">
 
-                            <i class="fas fa-user-graduate fa-5x text-primary mb-3"></i>
+                            <i class="ph ph-student text-5xl text-primary mb-3"></i>
 
                             <h5 class="fw-bold">
                                 {{ $siswa->nama_siswa }}
@@ -358,7 +358,7 @@
 
                 <h5 class="fw-bold border-bottom pb-2 mb-3">
 
-                    <i class="fas fa-users me-2"></i>
+                    <i class="ph ph-users me-2"></i>
 
                     Data Orang Tua
 
@@ -415,7 +415,7 @@
                     <a href="{{ route('data-siswa.index') }}"
                        class="btn btn-secondary">
 
-                        <i class="fas fa-arrow-left me-1"></i>
+                        <i class="ph ph-arrow-left me-1"></i>
                         Kembali
 
                     </a>
@@ -423,7 +423,7 @@
                     <a href="{{ route('data-siswa.edit', $siswa->id) }}"
                        class="btn btn-warning">
 
-                        <i class="fas fa-edit me-1"></i>
+                        <i class="ph ph-pencil-simple me-1"></i>
                         Edit Biodata
 
                     </a>
@@ -446,7 +446,7 @@
             <div class="card-header bg-warning">
 
                 <h5 class="mb-0">
-                    <i class="fas fa-user-edit me-2"></i>
+                    <i class="ph ph-user-plus me-2"></i>
                     Edit Biodata Siswa
                 </h5>
 

@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Login E-Rapor SMK</title>
 
+    <link rel="preconnect" href="https://api.fontshare.com">
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap">
+
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Satoshi', Arial, sans-serif;
         }
 
         body {
@@ -27,7 +32,7 @@
             background: white;
             padding: 35px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
         }
 
         .logo {
@@ -125,70 +130,63 @@
 
 <body>
 
-<div class="login-container">
+    <div class="login-container">
 
-    <div class="logo">
-        <div class="logo-icon">
-            ER
+        <div class="logo">
+            <div class="logo-icon">
+                ER
+            </div>
+
+            <h2>E-Rapor SMK</h2>
+            <p>Silakan login untuk melanjutkan</p>
         </div>
 
-        <h2>E-Rapor SMK</h2>
-        <p>Silakan login untuk melanjutkan</p>
+        @if (session('status'))
+            <div class="alert" style="background:#dcfce7; color:#166534;">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form action="{{ route('login.post') }}" method="POST">
+
+            @csrf
+
+            <div class="form-group">
+                <label for="username">
+                    Username
+                </label>
+
+                <input type="text" id="username" name="username" class="form-control" value="{{ old('username') }}"
+                    placeholder="Masukkan username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    Password
+                </label>
+
+                <input type="password" id="password" name="password" class="form-control"
+                    placeholder="Masukkan password" required>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Login
+            </button>
+
+        </form>
+
+        <div class="footer">
+            Sistem Informasi E-Rapor SMK
+        </div>
+
     </div>
-
-    @if ($errors->any())
-        <div class="alert">
-            {{ $errors->first() }}
-        </div>
-    @endif
-
-    <form action="{{ route('login.process') }}" method="POST">
-
-        @csrf
-
-        <div class="form-group">
-            <label for="username">
-                Username
-            </label>
-
-            <input
-                type="text"
-                id="username"
-                name="username"
-                class="form-control"
-                value="{{ old('username') }}"
-                placeholder="Masukkan username"
-                required
-                autofocus
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="password">
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="password"
-                name="password"
-                class="form-control"
-                placeholder="Masukkan password"
-                required
-            >
-        </div>
-
-        <button type="submit" class="btn-login">
-            Login
-        </button>
-
-    </form>
-
-    <div class="footer">
-        Sistem Informasi E-Rapor SMK
-    </div>
-
-</div>
 
 </body>
+
 </html>

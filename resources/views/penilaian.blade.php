@@ -21,7 +21,7 @@
     <!-- ============================= -->
 
     <div class="section-title">
-        <i class="fa-solid fa-pen-to-square"></i>
+        <i class="ph ph-pencil-simple"></i>
         Input Penilaian
     </div>
 
@@ -264,7 +264,7 @@
                     href="{{ url('/dashboard') }}"
                     class="px-5 py-2 rounded-lg bg-gray-500 text-white"
                 >
-                    <i class="fa-solid fa-arrow-left mr-1"></i>
+                    <i class="ph ph-arrow-left mr-1"></i>
                     Kembali
                 </a>
 
@@ -274,7 +274,7 @@
                     class="px-5 py-2 rounded-lg bg-blue-600 text-white"
                 >
 
-                    <i class="fa-solid fa-save mr-1"></i>
+                    <i class="ph ph-floppy-disk mr-1"></i>
 
                     Simpan
 
@@ -293,7 +293,7 @@
 
     <div class="section-title">
 
-        <i class="fa-solid fa-table"></i>
+        <i class="ph ph-table"></i>
 
         Data Penilaian
 
@@ -395,7 +395,7 @@
                                 class="px-3 py-2 rounded-lg bg-yellow-500 text-white"
                             >
 
-                                <i class="fa-solid fa-pen-to-square"></i>
+                                <i class="ph ph-pencil-simple"></i>
 
                                 Edit
 
@@ -486,7 +486,7 @@ function simpanData(event) {
 
     // Menampilkan pesan berhasil
 
-    alert("✅ Data Penilaian Berhasil Disimpan!");
+    alert("Data Penilaian Berhasil Disimpan!");
 
 
     // Kembali ke Dashboard

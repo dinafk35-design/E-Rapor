@@ -30,7 +30,7 @@
 
             <div class="relative">
                 <span class="absolute left-3 top-3 text-gray-400">
-                    🔍
+                    <i class="ph ph-magnifying-glass"></i>
                 </span>
 
                 <input
@@ -107,7 +107,7 @@
             type="button"
             class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
 
-            🔍 Cari
+            <i class="ph ph-magnifying-glass"></i> Cari
 
         </button>
 
@@ -116,7 +116,7 @@
             type="button"
             class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
 
-            ↻ Reset
+            <i class="ph ph-arrow-counter-clockwise"></i> Reset
 
         </button>
 
@@ -360,7 +360,7 @@
                                 onclick="editNilai(this)"
                                 class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -370,7 +370,7 @@
                                 onclick="saveNilai(this)"
                                 class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
 
-                                💾 Simpan
+                                <i class="ph ph-floppy-disk"></i> Simpan
 
                             </button>
 
@@ -380,7 +380,7 @@
                                 onclick="cancelEdit(this)"
                                 class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
 
-                                ✕ Batal
+                                <i class="ph ph-x"></i> Batal
 
                             </button>
 
@@ -546,7 +546,7 @@
                                 onclick="editNilai(this)"
                                 class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -556,7 +556,7 @@
                                 onclick="saveNilai(this)"
                                 class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
 
-                                💾 Simpan
+                                <i class="ph ph-floppy-disk"></i> Simpan
 
                             </button>
 
@@ -566,7 +566,7 @@
                                 onclick="cancelEdit(this)"
                                 class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
 
-                                ✕ Batal
+                                <i class="ph ph-x"></i> Batal
 
                             </button>
 
@@ -732,7 +732,7 @@
                                 onclick="editNilai(this)"
                                 class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -742,7 +742,7 @@
                                 onclick="saveNilai(this)"
                                 class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
 
-                                💾 Simpan
+                                <i class="ph ph-floppy-disk"></i> Simpan
 
                             </button>
 
@@ -752,7 +752,7 @@
                                 onclick="cancelEdit(this)"
                                 class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
 
-                                ✕ Batal
+                                <i class="ph ph-x"></i> Batal
 
                             </button>
 

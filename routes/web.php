@@ -1,100 +1,94 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/', function (Request $request) {
+    return $request->user()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
+})->name('home');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->middleware('throttle:login')
+        ->name('login.post');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
     })->name('dashboard');
 
-Route::post('/login', function (Request $request) {
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
 
-    $credentials = [
-        'username' => $request->username,
-        'password' => $request->password,
-    ];
+    Route::put('/profile/password', [AuthController::class, 'updatePassword'])
+        ->name('profile.password.update');
 
-    if (Auth::attempt($credentials)) {
+    Route::get('/input-nilai', function () {
+        return view('input-nilai');
+    })->name('input-nilai');
 
-        $request->session()->regenerate();
+    Route::get('/input-nilai/create', function () {
+        return view('input-nilai.create');
+    })->name('input-nilai-create');
 
-        $user = Auth::user();
+    Route::get('/nilai-skill-passport', function () {
+        return view('nilai-skill-passport');
+    })->name('nilai-skill-passport');
 
-        // Jika ADMIN
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
+    Route::get('/nilai-skill-passport/create', function () {
+        return view('nilai-skill-passport.create');
+    })->name('nilai-skill-passport-create');
 
-        // Jika GURU
-        if ($user->role === 'guru') {
-            return redirect()->route('guru.dashboard');
-        }
+    Route::get('/nilai-ukk', function () {
+        return view('nilai-ukk');
+    })->name('nilai-ukk');
 
-        // Jika SISWA
-        if ($user->role === 'siswa') {
-            return redirect()->route('siswa.dashboard');
-        }
-    }
+    Route::get('/nilai-ukk/create', function () {
+        return view('nilai-ukk.create');
+    })->name('nilai-ukk-create');
 
-    return redirect()
-        ->route('login')
-        ->with('error', 'Username atau password salah.');
+    Route::get('/data-sekolah', function () {
+        return view('data-sekolah');
+    })->name('data-sekolah');
 
-})->name('login.post');
+    Route::get('/data-guru', function () {
+        return view('data-guru');
+    })->name('data-guru');
 
+    Route::get('/data-siswa', function () {
+        return view('data-siswa');
+    })->name('data-siswa');
 
-Route::get('/profile', function () {
-    return view('profile');
-})->name('profile');
+    Route::get('/mata-pelajaran', function () {
+        return view('mata-pelajaran');
+    })->name('mata-pelajaran');
 
+    Route::get('/rombel', function () {
+        return view('rombel');
+    })->name('rombel');
 
-Route::get('/input-nilai', function () {
-    return view('input-nilai');
-})->name('input-nilai');
+    Route::get('/penilaian', function () {
+        return view('penilaian');
+    })->name('penilaian');
 
-Route::get('/input-nilai/create', function () {
-    return view('input-nilai.create');
-})->name('input-nilai-create');
+    Route::get('/admin-dashboard', function () {
+        return view('dashboard');
+    })->middleware('role:admin')->name('admin.dashboard');
 
+    Route::get('/guru-dashboard', function () {
+        return view('dashboard');
+    })->middleware('role:guru')->name('guru.dashboard');
 
-Route::get('/nilai-skill-passport', function () {
-    return view('nilai-skill-passport');
-})->name('nilai-skill-passport');
-
-Route::get('/nilai-skill-passport/create', function () {
-    return view('nilai-skill-passport.create');
-})->name('nilai-skill-passport-create');
-
-Route::get('/nilai-ukk', function () {
-    return view('nilai-ukk');
-})->name('nilai-ukk');
-
-Route::get('/nilai-ukk/create', function () {
-    return view('nilai-ukk.create');
-})->name('nilai-ukk-create');
-
-Route::get('/data-sekolah', function () {
-    return view('data-sekolah');
-})->name('data-sekolah');
-
-Route::get('/data-guru', function () {
-    return view('data-guru');
-})->name('data-guru');
-
-Route::get('/data-siswa', function () {
-    return view('data-siswa');
-})->name('data-siswa');
-
-Route::get('/mata-pelajaran', function () {
-    return view('mata-pelajaran');
-})->name('mata-pelajaran');
-
-Route::get('/rombel', function () {
-    return view('rombel');
-})->name('rombel');
-
-Route::get('/penilaian', function () {
-    return view('penilaian');
-})->name('penilaian');
-
+    Route::get('/siswa-dashboard', function () {
+        return view('dashboard');
+    })->middleware('role:siswa')->name('siswa.dashboard');
+});

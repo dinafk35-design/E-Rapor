@@ -9,7 +9,7 @@
 
     <div class="sidebar-header">
 
-        <i class="fa-solid fa-school"></i>
+        <i class="ph ph-graduation-cap"></i>
 
         E-RAPOR SMK
 
@@ -23,13 +23,14 @@
     </div>
 
 
-    <a href="{{ route('dashboard')}}" class="menu-link {{ request()->routeIs('dashboard') ? 'bg-red-400' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard </a>
-    <a href="{{ route('profile') }}" class="menu-link  {{ request()->routeIs('profile') ? 'bg-red-400' : '' }}">
-        <i i class="fa-solid fa-user"></i>
-            Profile
-        </a>
-    
-    
+    <a href="{{ route('dashboard') }}" class="menu-link {{ request()->routeIs('dashboard') ? 'bg-slate-800' : '' }}"><i
+            class="ph ph-gauge"></i> Dashboard </a>
+    <a href="{{ route('profile') }}" class="menu-link  {{ request()->routeIs('profile') ? 'bg-slate-800' : '' }}">
+        <i class="ph ph-user"></i>
+        Profile
+    </a>
+
+
 
 
 
@@ -40,45 +41,47 @@
     </div>
 
 
-    <a href="{{ route('data-sekolah') }}" class="menu-link {{ request()->routeIs('data-sekolah') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('data-sekolah') }}"
+        class="menu-link {{ request()->routeIs('data-sekolah') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-school"></i>
+        <i class="ph ph-graduation-cap"></i>
 
         Data Sekolah
 
     </a>
 
 
-    <a href="{{ route('data-guru') }}" class="menu-link {{ request()->routeIs('data-guru') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('data-guru') }}" class="menu-link {{ request()->routeIs('data-guru') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-chalkboard-user"></i>
+        <i class="ph ph-chalkboard-teacher"></i>
 
         Data Guru
 
     </a>
 
 
-    <a href="{{ route('data-siswa') }}" class="menu-link {{ request()->routeIs('data-siswa') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('data-siswa') }}" class="menu-link {{ request()->routeIs('data-siswa') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-user-graduate"></i>
+        <i class="ph ph-student"></i>
 
         Data Siswa
 
     </a>
 
 
-    <a href="{{ route('mata-pelajaran') }}" class="menu-link {{ request()->routeIs('mata-pelajaran') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('mata-pelajaran') }}"
+        class="menu-link {{ request()->routeIs('mata-pelajaran') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-book"></i>
+        <i class="ph ph-book"></i>
 
         Mata Pelajaran
 
     </a>
 
 
-    <a href="{{ route('rombel') }}" class="menu-link {{ request()->routeIs('rombel') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('rombel') }}" class="menu-link {{ request()->routeIs('rombel') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-people-group"></i>
+        <i class="ph ph-users-three"></i>
 
         Rombel
 
@@ -87,7 +90,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-users-viewfinder"></i>
+        <i class="ph ph-users"></i>
 
         Anggota Rombel
 
@@ -96,7 +99,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-chalkboard"></i>
+        <i class="ph ph-chalkboard"></i>
 
         Guru Mengajar
 
@@ -105,7 +108,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-user-tie"></i>
+        <i class="ph ph-user"></i>
 
         Wali Kelas
 
@@ -120,9 +123,10 @@
     </div>
 
 
-    <a href="{{ route('input-nilai') }}" class="menu-link {{ request()->routeIs('input-nilai') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('input-nilai') }}"
+        class="menu-link {{ request()->routeIs('input-nilai') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-pen-to-square"></i>
+        <i class="ph ph-pencil-simple"></i>
 
         Input Nilai
 
@@ -131,7 +135,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-circle-check"></i>
+        <i class="ph ph-check-circle"></i>
 
         Status Penilaian
 
@@ -140,24 +144,25 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-chart-line"></i>
+        <i class="ph ph-chart-line-up"></i>
 
         Perkembangan Nilai
 
     </a>
 
 
-    <a href="{{ route('nilai-skill-passport') }}" class="menu-link {{ request()->routeIs('nilai-skill-passport') ? 'bg-red-400' : '' }}">
-        <i class="fa-solid fa-id-card"></i>
+    <a href="{{ route('nilai-skill-passport') }}"
+        class="menu-link {{ request()->routeIs('nilai-skill-passport') ? 'bg-slate-800' : '' }}">
+        <i class="ph ph-identification-card"></i>
 
         Nilai Skill Passport
 
     </a>
 
 
-    <a href="{{ route('nilai-ukk') }}" class="menu-link {{ request()->routeIs('nilai-ukk') ? 'bg-red-400' : '' }}">
+    <a href="{{ route('nilai-ukk') }}" class="menu-link {{ request()->routeIs('nilai-ukk') ? 'bg-slate-800' : '' }}">
 
-        <i class="fa-solid fa-award"></i>
+        <i class="ph ph-medal"></i>
 
         Nilai UKK
 
@@ -173,7 +178,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-print"></i>
+        <i class="ph ph-printer"></i>
 
         Cetak Nilai
 
@@ -189,7 +194,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-calendar"></i>
+        <i class="ph ph-calendar"></i>
 
         Tahun Ajaran
 
@@ -198,7 +203,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-calendar-days"></i>
+        <i class="ph ph-calendar-dots"></i>
 
         Semester
 
@@ -207,7 +212,7 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-user-gear"></i>
+        <i class="ph ph-gear"></i>
 
         Pengguna
 
@@ -216,20 +221,18 @@
 
     <a href="#" class="menu-link">
 
-        <i class="fa-solid fa-database"></i>
+        <i class="ph ph-database"></i>
 
         Backup & Restore
 
     </a>
 
 
-    <a href="#" class="menu-link">
-
-        <i class="fa-solid fa-right-from-bracket"></i>
-
-        Logout
-
-    </a>
+    <form action="{{ route('logout') }}" method="POST" class="menu-link bg-transparent border-0 w-full text-left">
+        @csrf
+        <i class="ph ph-sign-out"></i>
+        <span>Logout</span>
+    </form>
 
 
 </div>

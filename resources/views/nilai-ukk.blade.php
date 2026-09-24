@@ -165,7 +165,7 @@
                     onclick="filterData()"
                     class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
 
-                    🔍 Cari
+                    <i class="ph ph-magnifying-glass"></i> Cari
 
                 </button>
 
@@ -332,7 +332,7 @@
                                 onclick="editData(this)"
                                 class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -412,7 +412,7 @@
                                 onclick="editData(this)"
                                 class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -492,7 +492,7 @@
                                 onclick="editData(this)"
                                 class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -572,7 +572,7 @@
                                 onclick="editData(this)"
                                 class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -652,7 +652,7 @@
                                 onclick="editData(this)"
                                 class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                                ✏ Edit
+                                <i class="ph ph-pencil-simple"></i> Edit
 
                             </button>
 
@@ -1098,7 +1098,7 @@ function editData(button) {
                 onclick="simpanData(this)"
                 class="rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
 
-                ✓ Simpan
+                <i class="ph ph-check"></i> Simpan
 
             </button>
 
@@ -1107,7 +1107,7 @@ function editData(button) {
                 onclick="batalEdit(this)"
                 class="rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
 
-                ✕ Batal
+                <i class="ph ph-x"></i> Batal
 
             </button>
 
@@ -1412,7 +1412,7 @@ function simpanData(button) {
             onclick="editData(this)"
             class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-            ✏ Edit
+            <i class="ph ph-pencil-simple"></i> Edit
 
         </button>
 
@@ -1627,7 +1627,7 @@ function batalEdit(button) {
             onclick="editData(this)"
             class="rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-            ✏ Edit
+            <i class="ph ph-pencil-simple"></i> Edit
 
         </button>
 
