@@ -153,7 +153,7 @@
             </div>
         @endif
 
-        <form action="{{ route('login.post') }}" method="POST">
+        <form action="{{ route('login') }}" method="POST">
 
             @csrf
 
@@ -162,7 +162,7 @@
                     Username
                 </label>
 
-                <input type="text" id="username" name="username" class="form-control" value="{{ old('username') }}"
+                <input type="text" id="username" name="username" class="form-control"
                     placeholder="Masukkan username" required autofocus>
             </div>
 

@@ -2,810 +2,370 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gray-100 p-6">
+<form
+    method="POST"
+    action="{{ route('input-nilai.store') }}"
+    id="formNilai"
+>
 
-```
-<!-- Header -->
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">
-        Input Nilai Siswa
-    </h1>
+    @csrf
 
-    <p class="mt-1 text-sm text-gray-500">
-        Kelola nilai siswa berdasarkan tahun ajaran, kelas, dan mata pelajaran.
-    </p>
-</div>
+    <input type="hidden" name="tahun_ajaran" value="{{ $tahunAjaran }}">
+    <input type="hidden" name="semester" value="{{ $semester }}">
+    <input type="hidden" name="rombel_id" value="{{ $rombelId }}">
 
+    <div class="min-h-screen bg-gray-100 p-6">
 
-<!-- Filter & Pencarian -->
-<div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+        @if (session('status'))
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-
-        <!-- Pencarian -->
-        <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Cari Siswa
-            </label>
-
-            <div class="relative">
-                <span class="absolute left-3 top-3 text-gray-400">
-                    <i class="ph ph-magnifying-glass"></i>
-                </span>
-
-                <input
-                    type="text"
-                    placeholder="Cari nama siswa..."
-                    class="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+            <div class="mb-4 rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-800">
+                <i class="ph ph-check-circle mr-1"></i>
+                {{ session('status') }}
             </div>
+
+        @endif
+
+        @if ($errors->any())
+
+            <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800">
+                <i class="ph ph-warning-circle mr-1"></i>
+                {{ $errors->first() }}
+            </div>
+
+        @endif
+
+        <!-- Header -->
+        <div class="mb-6">
+
+            <h1 class="text-2xl font-bold text-gray-800">
+                Input Nilai Siswa
+            </h1>
+
+            <p class="mt-1 text-sm text-gray-500">
+                Kelola nilai siswa berdasarkan tahun ajaran, kelas, dan mata pelajaran.
+            </p>
+
         </div>
 
 
-        <!-- Tahun Ajaran -->
-        <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Tahun Ajaran
-            </label>
+        <!-- Filter & Pencarian -->
+        <form
+            method="GET"
+            action="{{ route('input-nilai') }}"
+            class="mb-6 rounded-xl bg-white p-6 shadow-sm">
 
-            <select
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 
-                <option value="">Semua Tahun Ajaran</option>
-                <option value="2025/2026">2025/2026</option>
-                <option value="2026/2027">2026/2027</option>
+                <!-- Tahun Ajaran -->
+                <div>
 
-            </select>
-        </div>
-
-
-        <!-- Kelas -->
-        <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Kelas
-            </label>
-
-            <select
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                <option value="">Semua Kelas</option>
-                <option value="X RPL 1">X RPL 1</option>
-                <option value="X RPL 2">X RPL 2</option>
-                <option value="XI RPL 1">XI RPL 1</option>
-                <option value="XI RPL 2">XI RPL 2</option>
-                <option value="XII RPL 1">XII RPL 1</option>
-
-            </select>
-        </div>
-
-
-        <!-- Mata Pelajaran -->
-        <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Mata Pelajaran
-            </label>
-
-            <select
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                <option value="">Semua Mata Pelajaran</option>
-                <option value="Matematika">Matematika</option>
-                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                <option value="Bahasa Inggris">Bahasa Inggris</option>
-                <option value="Pemrograman Web">Pemrograman Web</option>
-                <option value="Basis Data">Basis Data</option>
-
-            </select>
-        </div>
-
-    </div>
-
-
-    <!-- Tombol -->
-    <div class="mt-5 flex flex-wrap gap-3">
-
-        <button
-            type="button"
-            class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
-
-            <i class="ph ph-magnifying-glass"></i> Cari
-
-        </button>
-
-
-        <button
-            type="button"
-            class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
-
-            <i class="ph ph-arrow-counter-clockwise"></i> Reset
-
-        </button>
-
-
-        <a
-            href="{{ route('input-nilai-create') }}"
-            class="ml-auto rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700">
-
-            + Tambah Nilai
-
-        </a>
-
-    </div>
-
-</div>
-
-
-<!-- Tabel Nilai -->
-<div class="overflow-hidden rounded-xl bg-white shadow-sm">
-
-    <!-- Header tabel -->
-    <div class="border-b border-gray-200 px-6 py-4">
-
-        <h2 class="text-lg font-bold text-gray-800">
-            Daftar Nilai Siswa
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-500">
-            Setiap siswa dapat memiliki beberapa mata pelajaran dan nilai.
-        </p>
-
-    </div>
-
-
-    <!-- Responsive Table -->
-    <div class="overflow-x-auto">
-
-        <table class="w-full min-w-[1100px] text-left text-sm">
-
-            <thead class="bg-gray-50 text-xs uppercase text-gray-600">
-
-                <tr>
-
-                    <th class="px-6 py-4">
-                        No
-                    </th>
-
-                    <th class="px-6 py-4">
-                        NISN
-                    </th>
-
-                    <th class="px-6 py-4">
-                        Nama Siswa
-                    </th>
-
-                    <th class="px-6 py-4">
-                        Kelas
-                    </th>
-
-                    <th class="px-6 py-4">
-                        Mata Pelajaran & Nilai
-                    </th>
-
-                    <th class="px-6 py-4 text-center">
+                    <label class="mb-2 block text-sm font-semibold text-gray-700">
                         Tahun Ajaran
-                    </th>
+                    </label>
 
-                    <th class="px-6 py-4 text-center">
-                        Aksi
-                    </th>
+                    <select
+                        name="tahun_ajaran"
+                        onchange="this.form.submit()"
+                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
-                </tr>
+                        <option value="2025/2026" @selected($tahunAjaran === '2025/2026')>
+                            2025/2026
+                        </option>
 
-            </thead>
+                        <option value="2026/2027" @selected($tahunAjaran === '2026/2027')>
+                            2026/2027
+                        </option>
 
+                    </select>
 
-            <tbody class="divide-y divide-gray-200">
-
-
-                <!-- ================================================= -->
-                <!-- SISWA 1 -->
-                <!-- ================================================= -->
-
-                <tr
-                    class="nilai-row transition hover:bg-gray-50"
-                    data-row="1">
-
-                    <td class="px-6 py-5">
-                        1
-                    </td>
+                </div>
 
 
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654321
-                    </td>
+                <!-- Semester -->
+                <div>
+
+                    <label class="mb-2 block text-sm font-semibold text-gray-700">
+                        Semester
+                    </label>
+
+                    <select
+                        name="semester"
+                        onchange="this.form.submit()"
+                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+
+                        <option value="Ganjil" @selected($semester === 'Ganjil')>
+                            Ganjil
+                        </option>
+
+                        <option value="Genap" @selected($semester === 'Genap')>
+                            Genap
+                        </option>
+
+                    </select>
+
+                </div>
 
 
-                    <td class="px-6 py-5">
+                <!-- Kelas -->
+                <div>
 
-                        <div class="font-semibold text-gray-800">
-                            Ahmad Fauzan
-                        </div>
+                    <label class="mb-2 block text-sm font-semibold text-gray-700">
+                        Kelas
+                    </label>
 
-                    </td>
+                    <select
+                        name="rombel_id"
+                        onchange="this.form.submit()"
+                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+
+                        <option value="">Semua Kelas</option>
+
+                        @foreach ($rombel as $item)
+                            <option value="{{ $item->id }}" @selected((string) $rombelId === (string) $item->id)>
+                                {{ $item->nama_rombel }}
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                </div>
 
 
-                    <td class="px-6 py-5">
+                <!-- Mata Pelajaran -->
+                <div>
 
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 1
-                        </span>
+                    <label class="mb-2 block text-sm font-semibold text-gray-700">
+                        Mata Pelajaran
+                    </label>
 
-                    </td>
+                    <select
+                        name="filter_mata_pelajaran"
+                        onchange="this.form.submit()"
+                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+
+                        <option value="">Semua Mata Pelajaran</option>
+
+                        @foreach ($mataPelajaran as $item)
+                            <option value="{{ $item->id }}" @selected((string) request('filter_mata_pelajaran') === (string) $item->id)>
+                                {{ $item->nama_mata_pelajaran }}
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </form>
 
 
-                    <!-- NILAI -->
-                    <td class="px-6 py-5">
+        <!-- Tabel Nilai -->
+        <div class="overflow-hidden rounded-xl bg-white shadow-sm">
 
-                        <div class="space-y-2">
+            <!-- Header tabel -->
+            <div class="border-b border-gray-200 px-6 py-4">
 
-                            <!-- Pemrograman Web -->
-                            <div class="flex items-center justify-between gap-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    Daftar Nilai Siswa
+                </h2>
 
-                                <span>
-                                    Pemrograman Web
-                                </span>
+                <p class="mt-1 text-sm text-gray-500">
+                    Setiap siswa dapat memiliki beberapa mata pelajaran dan nilai.
+                </p>
 
-                                <div class="nilai-container">
+            </div>
 
-                                    <span
-                                        class="nilai-text font-bold text-green-600">
-                                        88
+
+            <!-- Responsive Table -->
+            <div class="overflow-x-auto">
+
+                <table class="w-full min-w-[1100px] text-left text-sm">
+
+                    <thead class="bg-gray-50 text-xs uppercase text-gray-600">
+
+                        <tr>
+
+                            <th class="px-6 py-4">No</th>
+                            <th class="px-6 py-4">NISN</th>
+                            <th class="px-6 py-4">Nama Siswa</th>
+                            <th class="px-6 py-4">Kelas</th>
+                            <th class="px-6 py-4">Nilai</th>
+                            <th class="px-6 py-4 text-center">Periode</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-200">
+
+                        @forelse ($siswa as $item)
+
+                            <tr
+                                class="nilai-row transition hover:bg-gray-50"
+                                data-row="{{ $item->id }}">
+
+                                <td class="px-6 py-5">
+                                    {{ $loop->iteration }}
+                                </td>
+
+                                <td class="px-6 py-5">
+                                    {{ $item->nisn ?? '-' }}
+                                </td>
+
+                                <td class="px-6 py-5">
+
+                                    <div class="font-semibold text-gray-800">
+                                        {{ $item->nama_siswa }}
+                                    </div>
+
+                                </td>
+
+                                <td class="px-6 py-5">
+
+                                    <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                                        {{ $item->rombel?->nama_rombel ?? '-' }}
                                     </span>
 
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="88"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                                </td>
 
-                                </div>
+                                <td class="px-6 py-5">
 
-                            </div>
+                                    <div class="space-y-2" id="daftar-nilai-{{ $item->id }}">
 
+                                        @forelse ($mataPelajaran as $mapel)
 
-                            <!-- Basis Data -->
-                            <div class="flex items-center justify-between gap-6">
+                                            @php
+                                                $kunci = $item->id . '-' . $mapel->id;
+                                                $nilai = $nilaiTersimpan[$kunci] ?? null;
+                                            @endphp
 
-                                <span>
-                                    Basis Data
-                                </span>
+                                            <div class="flex items-center justify-between gap-6">
 
-                                <div class="nilai-container">
+                                                <span>
+                                                    {{ $mapel->nama_mata_pelajaran }}
+                                                </span>
 
-                                    <span
-                                        class="nilai-text font-bold text-green-600">
-                                        90
-                                    </span>
+                                                <div class="nilai-container">
 
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="90"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                                                    <span
+                                                        class="nilai-text font-bold {{ $nilai !== null ? 'text-green-600' : 'text-gray-400' }}">
+                                                        {{ $nilai !== null ? rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.') : '-' }}
+                                                    </span>
 
-                                </div>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        step="0.01"
+                                                        name="nilai[{{ $item->id }}][{{ $mapel->id }}]"
+                                                        value="{{ $nilai !== null ? rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.') : '' }}"
+                                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
-                            </div>
+                                                </div>
 
+                                            </div>
 
-                            <!-- Matematika -->
-                            <div class="flex items-center justify-between gap-6">
+                                        @empty
 
-                                <span>
-                                    Matematika
-                                </span>
+                                            <span class="text-xs text-gray-400">
+                                                Belum ada mata pelajaran.
+                                            </span>
 
-                                <div class="nilai-container">
+                                        @endforelse
 
-                                    <span
-                                        class="nilai-text font-bold text-green-600">
-                                        85
-                                    </span>
+                                    </div>
 
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="85"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
-                                </div>
+                                    <!-- TAMBAH NILAI BARU UNTUK SISWA INI -->
 
-                            </div>
+                                    <button
+                                        type="button"
+                                        data-siswa="{{ $item->id }}"
+                                        onclick="tambahNilaiBaris(this)"
+                                        class="mt-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
 
+                                        <i class="ph ph-plus"></i> Tambah Nilai
 
-                            <!-- Bahasa Indonesia -->
-                            <div class="flex items-center justify-between gap-6">
+                                    </button>
 
-                                <span>
-                                    Bahasa Indonesia
-                                </span>
+                                </td>
 
-                                <div class="nilai-container">
+                                <td class="px-6 py-5 text-center">
+                                    {{ $tahunAjaran }} / {{ $semester }}
+                                </td>
 
-                                    <span
-                                        class="nilai-text font-bold text-green-600">
-                                        87
-                                    </span>
+                                <td class="px-6 py-5 text-center">
 
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="87"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                                    <div class="flex items-center justify-center gap-2">
 
-                                </div>
+                                        <button
+                                            type="button"
+                                            onclick="editNilai(this)"
+                                            class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
 
-                            </div>
+                                            <i class="ph ph-pencil-simple"></i> Edit
 
-                        </div>
+                                        </button>
 
-                    </td>
+                                        <button
+                                            type="button"
+                                            onclick="simpanNilai(this)"
+                                            class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
 
+                                            <i class="ph ph-floppy-disk"></i> Simpan
 
-                    <td class="px-6 py-5 text-center">
-                        2026/2027
-                    </td>
+                                        </button>
 
+                                        <button
+                                            type="button"
+                                            onclick="batalEdit(this)"
+                                            class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
 
-                    <!-- AKSI -->
-                    <td class="px-6 py-5 text-center">
+                                            <i class="ph ph-x"></i> Batal
 
-                        <div class="flex items-center justify-center gap-2">
+                                        </button>
 
-                            <button
-                                type="button"
-                                onclick="editNilai(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
+                                    </div>
 
-                                <i class="ph ph-pencil-simple"></i> Edit
+                                </td>
 
-                            </button>
+                            </tr>
 
+                        @empty
 
-                            <button
-                                type="button"
-                                onclick="saveNilai(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
+                            <tr>
+                                <td colspan="7" class="px-6 py-10 text-center text-gray-500">
+                                    Belum ada data siswa. Tambahkan data siswa terlebih dahulu.
+                                </td>
+                            </tr>
 
-                                <i class="ph ph-floppy-disk"></i> Simpan
+                        @endforelse
 
-                            </button>
+                    </tbody>
 
+                </table>
 
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
+            </div>
 
-                                <i class="ph ph-x"></i> Batal
+        </div>
 
-                            </button>
 
-                        </div>
+        <!-- Tombol Simpan -->
+        <div class="mt-6 flex justify-end gap-3">
 
-                    </td>
-
-                </tr>
-
-
-
-                <!-- ================================================= -->
-                <!-- SISWA 2 -->
-                <!-- ================================================= -->
-
-                <tr
-                    class="nilai-row transition hover:bg-gray-50"
-                    data-row="2">
-
-                    <td class="px-6 py-5">
-                        2
-                    </td>
-
-
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654322
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <div class="font-semibold text-gray-800">
-                            Budi Santoso
-                        </div>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 1
-                        </span>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <div class="space-y-2">
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Pemrograman Web
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        92
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="92"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Basis Data
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        87
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="87"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Matematika
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        89
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="89"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Bahasa Inggris
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        91
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="91"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-                        2026/2027
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <div class="flex items-center justify-center gap-2">
-
-                            <button
-                                type="button"
-                                onclick="editNilai(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
-
-                                <i class="ph ph-pencil-simple"></i> Edit
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                onclick="saveNilai(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
-
-                                <i class="ph ph-floppy-disk"></i> Simpan
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
-
-                                <i class="ph ph-x"></i> Batal
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-
-
-                <!-- ================================================= -->
-                <!-- SISWA 3 -->
-                <!-- ================================================= -->
-
-                <tr
-                    class="nilai-row transition hover:bg-gray-50"
-                    data-row="3">
-
-                    <td class="px-6 py-5">
-                        3
-                    </td>
-
-
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654323
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <div class="font-semibold text-gray-800">
-                            Citra Lestari
-                        </div>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 1
-                        </span>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <div class="space-y-2">
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Pemrograman Web
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        86
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="86"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Basis Data
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        90
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="90"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Matematika
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        88
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="88"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex items-center justify-between gap-6">
-
-                                <span>
-                                    Bahasa Indonesia
-                                </span>
-
-                                <div class="nilai-container">
-
-                                    <span class="nilai-text font-bold text-green-600">
-                                        89
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        value="89"
-                                        class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-                        2026/2027
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <div class="flex items-center justify-center gap-2">
-
-                            <button
-                                type="button"
-                                onclick="editNilai(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-yellow-600">
-
-                                <i class="ph ph-pencil-simple"></i> Edit
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                onclick="saveNilai(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700">
-
-                                <i class="ph ph-floppy-disk"></i> Simpan
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-gray-600">
-
-                                <i class="ph ph-x"></i> Batal
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-
-    <!-- Footer -->
-    <div
-        class="flex flex-col gap-3 border-t border-gray-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-
-        <p class="text-sm text-gray-500">
-
-            Menampilkan
-            <span class="font-semibold text-gray-700">
-                3
-            </span>
-            siswa
-
-        </p>
-
-
-        <div class="flex gap-2">
+            <a
+                href="{{ route('input-nilai') }}"
+                class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
+                Refresh
+            </a>
 
             <button
-                class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+                type="submit"
+                class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
 
-                Sebelumnya
-
-            </button>
-
-
-            <button
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
-
-                1
-
-            </button>
-
-
-            <button
-                class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
-
-                Berikutnya
+                <i class="ph ph-floppy-disk mr-1"></i> Simpan Nilai
 
             </button>
 
@@ -813,10 +373,23 @@
 
     </div>
 
-</div>
-```
+</form>
 
-</div>
+
+<!-- ========================================================= -->
+
+<!-- DATA MATA PELAJARAN (untuk tombol tambah nilai) -->
+
+<!-- ========================================================= -->
+
+<script>
+
+    const daftarMataPelajaran = @json(
+        $mataPelajaran->pluck('nama_mata_pelajaran', 'id')
+    );
+
+</script>
+
 
 <!-- ========================================================= -->
 
@@ -834,138 +407,64 @@
 
     function editNilai(button) {
 
-        // Mengambil baris siswa
         const row = button.closest('.nilai-row');
 
-        // Cari semua text nilai
-        const nilaiText = row.querySelectorAll('.nilai-text');
-
-        // Cari semua input nilai
-        const nilaiInput = row.querySelectorAll('.nilai-input');
-
-        // Tampilkan input
-        nilaiInput.forEach(function(input) {
+        row.querySelectorAll('.nilai-input').forEach(function (input) {
 
             input.classList.remove('hidden');
 
         });
 
-        // Sembunyikan angka biasa
-        nilaiText.forEach(function(text) {
+        row.querySelectorAll('.nilai-text').forEach(function (teks) {
 
-            text.classList.add('hidden');
+            teks.classList.add('hidden');
 
         });
 
+        button.classList.add('hidden');
 
-        // Simpan nilai awal
-        row.dataset.originalValues = JSON.stringify(
-            Array.from(nilaiInput).map(input => input.value)
-        );
-
-
-        // Tampilkan tombol Simpan
         row.querySelector('.save-btn').classList.remove('hidden');
 
-        // Tampilkan tombol Batal
         row.querySelector('.cancel-btn').classList.remove('hidden');
-
-        // Sembunyikan tombol Edit
-        row.querySelector('.edit-btn').classList.add('hidden');
 
     }
 
 
-
     /*
     |--------------------------------------------------------------------------
-    | Tombol SIMPAN
+    | Tombol SIMPAN (per baris)
     |--------------------------------------------------------------------------
     */
 
-    function saveNilai(button) {
+    function simpanNilai(button) {
+
+        // Perbarui tampilan teks di baris tersebut
 
         const row = button.closest('.nilai-row');
 
-        const nilaiText = row.querySelectorAll('.nilai-text');
+        row.querySelectorAll('.nilai-container').forEach(function (container) {
 
-        const nilaiInput = row.querySelectorAll('.nilai-input');
+            const input = container.querySelector('.nilai-input');
 
+            const teks = container.querySelector('.nilai-text');
 
-        // Validasi nilai
-        let valid = true;
+            teks.textContent = input.value === '' ? '-' : input.value;
 
-        nilaiInput.forEach(function(input) {
+            teks.classList.remove('hidden');
 
-            let nilai = Number(input.value);
-
-            if (nilai < 0 || nilai > 100 || input.value === '') {
-
-                valid = false;
-
-                input.classList.add('border-red-500');
-
-            } else {
-
-                input.classList.remove('border-red-500');
-
-            }
-
-        });
-
-
-        // Jika nilai tidak valid
-        if (!valid) {
-
-            alert('Nilai harus diisi antara 0 sampai 100.');
-
-            return;
-
-        }
-
-
-        // Pindahkan nilai input ke tampilan
-        nilaiInput.forEach(function(input, index) {
-
-            nilaiText[index].textContent = input.value;
-
-        });
-
-
-        // Sembunyikan input
-        nilaiInput.forEach(function(input) {
+            teks.classList.add('text-green-600');
 
             input.classList.add('hidden');
 
         });
 
+        button.classList.add('hidden');
 
-        // Tampilkan angka
-        nilaiText.forEach(function(text) {
-
-            text.classList.remove('hidden');
-
-        });
-
-
-        // Tampilkan tombol Edit
         row.querySelector('.edit-btn').classList.remove('hidden');
 
-        // Sembunyikan tombol Simpan
-        row.querySelector('.save-btn').classList.add('hidden');
-
-        // Sembunyikan tombol Batal
         row.querySelector('.cancel-btn').classList.add('hidden');
 
-
-        // Hapus data nilai lama
-        delete row.dataset.originalValues;
-
-
-        alert('Nilai berhasil diubah.');
-
     }
-
 
 
     /*
@@ -974,64 +473,145 @@
     |--------------------------------------------------------------------------
     */
 
-    function cancelEdit(button) {
+    function batalEdit(button) {
 
         const row = button.closest('.nilai-row');
 
-        const nilaiText = row.querySelectorAll('.nilai-text');
+        row.querySelectorAll('.nilai-container').forEach(function (container) {
 
-        const nilaiInput = row.querySelectorAll('.nilai-input');
+            container.querySelector('.nilai-input').classList.add('hidden');
 
-
-        // Ambil nilai sebelum diedit
-        const originalValues = JSON.parse(
-            row.dataset.originalValues || '[]'
-        );
-
-
-        // Kembalikan nilai awal
-        nilaiInput.forEach(function(input, index) {
-
-            if (originalValues[index] !== undefined) {
-
-                input.value = originalValues[index];
-
-            }
+            container.querySelector('.nilai-text').classList.remove('hidden');
 
         });
 
+        button.classList.add('hidden');
 
-        // Sembunyikan input
-        nilaiInput.forEach(function(input) {
-
-            input.classList.add('hidden');
-
-        });
-
-
-        // Tampilkan angka
-        nilaiText.forEach(function(text) {
-
-            text.classList.remove('hidden');
-
-        });
-
-
-        // Tampilkan tombol Edit
         row.querySelector('.edit-btn').classList.remove('hidden');
 
-        // Sembunyikan tombol Simpan
         row.querySelector('.save-btn').classList.add('hidden');
 
-        // Sembunyikan tombol Batal
-        row.querySelector('.cancel-btn').classList.add('hidden');
+    }
 
 
-        // Hapus penyimpanan sementara
-        delete row.dataset.originalValues;
+    /*
+    |--------------------------------------------------------------------------
+    | TAMBAH NILAI UNTUK SATU SISWA
+    |--------------------------------------------------------------------------
+    |
+    | Menambah satu baris nilai baru pada siswa yang dipilih, lengkap dengan
+    | pilihan mata pelajaran. Baris ini ikut tersimpan seperti nilai lainnya.
+    |
+    */
+
+    function tambahNilaiBaris(button) {
+
+        const idSiswa = button.dataset.siswa;
+
+        const wrapper = document.getElementById('daftar-nilai-' + idSiswa);
+
+        if (!wrapper) {
+            return;
+        }
+
+
+        // Longitudinal id agar tidak bentrok dengan baris sebelumnya
+
+        const baris = document.createElement('div');
+
+        baris.className = 'flex items-center justify-between gap-6';
+        baris.setAttribute('data-tambahan', '1');
+
+
+        // Opsi mata pelajaran
+
+        let opsi = '<option value="">-- Pilih Mata Pelajaran --</option>';
+
+        Object.entries(daftarMataPelajaran).forEach(function ([id, nama]) {
+
+            opsi += '<option value="' + id + '">' + nama + '</option>';
+
+        });
+
+        baris.innerHTML = `
+
+            <select
+                onchange="gantiNamaInputNilai(this)"
+                class="w-48 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                ${opsi}
+            </select>
+
+            <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                disabled
+                class="nilai-input w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+
+            <button
+                type="button"
+                onclick="hapusNilaiBaris(this)"
+                class="rounded-lg bg-red-500 px-2 py-1.5 text-xs font-semibold text-white transition hover:bg-red-600">
+
+                <i class="ph ph-trash"></i>
+
+            </button>
+
+        `;
+
+        wrapper.appendChild(baris);
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS NILAI TAMBAHAN
+    |--------------------------------------------------------------------------
+    */
+
+    function hapusNilaiBaris(button) {
+
+        button.closest('[data-tambahan]').remove();
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SESUAIKAN NAME INPUT DENGAN MATA PELAJARAN DIPILIH
+    |--------------------------------------------------------------------------
+    |
+    | Input baru disimpan sebagai nilai[<id siswa>][<id mata pelajaran>],
+    | sama dengan format nilai bawaan agar langsung diproses server.
+    |
+    */
+
+    function gantiNamaInputNilai(select) {
+
+        const baris = select.closest('[data-tambahan]');
+
+        const input = baris.querySelector('.nilai-input');
+
+        const idSiswa = select.closest('.nilai-row').dataset.row;
+
+        if (select.value === '') {
+
+            input.removeAttribute('name');
+
+            input.disabled = true;
+
+            return;
+        }
+
+        input.name = 'nilai[' + idSiswa + '][' + select.value + ']';
+
+        input.disabled = false;
 
     }
 
 </script>
+
 
 @endsection

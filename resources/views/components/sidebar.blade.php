@@ -70,7 +70,7 @@
 
 
     <a href="{{ route('mata-pelajaran') }}"
-        class="menu-link {{ request()->routeIs('mata-pelajaran') ? 'bg-slate-800' : '' }}">
+        class="menu-link {{ request()->routeIs('mata-pelajaran*') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-book"></i>
 
@@ -79,7 +79,7 @@
     </a>
 
 
-    <a href="{{ route('rombel') }}" class="menu-link {{ request()->routeIs('rombel') ? 'bg-slate-800' : '' }}">
+    <a href="{{ route('rombel') }}" class="menu-link {{ request()->routeIs('rombel*') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-users-three"></i>
 
@@ -88,25 +88,8 @@
     </a>
 
 
-    <a href="#" class="menu-link">
-
-        <i class="ph ph-users"></i>
-
-        Anggota Rombel
-
-    </a>
-
-
-    <a href="#" class="menu-link">
-
-        <i class="ph ph-chalkboard"></i>
-
-        Guru Mengajar
-
-    </a>
-
-
-    <a href="#" class="menu-link">
+    <a href="{{ route('wali-kelas') }}"
+        class="menu-link {{ request()->routeIs('wali-kelas*') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-user"></i>
 
@@ -133,7 +116,8 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('status-penilaian') }}"
+        class="menu-link {{ request()->routeIs('status-penilaian') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-check-circle"></i>
 
@@ -142,7 +126,8 @@
     </a>
 
 
-    <a href="#" class="menu-link">
+     <a href="{{ route('perkembangan-nilai') }}"
+        class="menu-link {{ request()->routeIs('perkembangan-nilai') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-chart-line-up"></i>
 
@@ -176,7 +161,8 @@
     </div>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('cetak-nilai') }}"
+        class="menu-link {{ request()->routeIs('cetak-nilai*') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-printer"></i>
 
@@ -192,16 +178,8 @@
     </div>
 
 
-    <a href="#" class="menu-link">
-
-        <i class="ph ph-calendar"></i>
-
-        Tahun Ajaran
-
-    </a>
-
-
-    <a href="#" class="menu-link">
+    <a href="{{ route('semester') }}"
+        class="menu-link {{ request()->routeIs('semester') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-calendar-dots"></i>
 
@@ -209,29 +187,39 @@
 
     </a>
 
+    <a href="{{ route('pengguna') }}"
+        class="menu-link {{ request()->routeIs('pengguna') ? 'bg-slate-800' : '' }}">
 
-    <a href="#" class="menu-link">
-
-        <i class="ph ph-gear"></i>
+        <i class="ph ph-users"></i>
 
         Pengguna
 
     </a>
 
 
-    <a href="#" class="menu-link">
+    <a href="{{ route('backup.index') }}"
+        class="menu-link {{ request()->routeIs('backup*') ? 'bg-slate-800' : '' }}">
 
         <i class="ph ph-database"></i>
 
-        Backup & Restore
+        Backup &amp; Restore
 
     </a>
 
 
     <form action="{{ route('logout') }}" method="POST" class="menu-link bg-transparent border-0 w-full text-left">
         @csrf
-        <i class="ph ph-sign-out"></i>
-        <span>Logout</span>
+
+        <button
+            type="submit"
+            class="flex w-full items-center gap-3 border-0 bg-transparent p-0 text-left text-white">
+
+            <i class="ph ph-sign-out"></i>
+
+            <span>Logout</span>
+
+        </button>
+
     </form>
 
 

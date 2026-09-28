@@ -20,6 +20,10 @@ class DataGuru extends Model
         'alamat',
     ];
 
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
 
     /*
     |--------------------------------------------------------------------------

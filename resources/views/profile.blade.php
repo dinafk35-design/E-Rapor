@@ -15,18 +15,7 @@
         </p>
     </div>
 
-    @if (session('status'))
-        <div class="mb-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-            {{ session('status') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-            {{ $errors->first() }}
-        </div>
-    @endif
-
+    
     <!-- PROFIL PENGGUNA -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
@@ -55,7 +44,7 @@
                     "
                 >
                     <i
-                        class="ph ph-user"
+                        class="fa-solid fa-user"
                         style="
                             color:white;
                             font-size:42px;
@@ -71,7 +60,7 @@
                 class="font-bold"
                 style="color:white;"
             >
-                {{ auth()->user()->name ?? auth()->user()->username }}
+                Administrator
             </h3>
 
 
@@ -80,7 +69,7 @@
                 class="text-sm"
                 style="color:white;"
             >
-                Username : {{ auth()->user()->username }}
+                Username : Administrator
             </p>
 
 
@@ -89,7 +78,7 @@
                 class="text-sm"
                 style="color:white;"
             >
-                Level : {{ ucfirst(auth()->user()->role ?? 'Pengguna') }}
+                Level : Pengguna
             </p>
 
 
@@ -105,7 +94,7 @@
                         color:white;
                     "
                 >
-                    <i class="ph ph-lock"></i> Ubah Password
+                    🔒 Ubah Password
                 </button>
 
             </div>
@@ -145,7 +134,7 @@
             >
                 Nama :
                 <span class="ml-1">
-                    {{ auth()->user()->name ?? auth()->user()->username }}
+                    Administrator
                 </span>
             </div>
 
@@ -161,7 +150,7 @@
             >
                 Username :
                 <span class="ml-1">
-                    {{ auth()->user()->username }}
+                    Administrator
                 </span>
             </div>
 
@@ -177,7 +166,7 @@
             >
                 Level :
                 <span class="ml-1">
-                    {{ ucfirst(auth()->user()->role ?? 'Pengguna') }}
+                    Admin
                 </span>
             </div>
 
@@ -193,7 +182,7 @@
             >
                 E-mail :
                 <span class="ml-1">
-                    {{ auth()->user()->email ?? '-' }}
+                    Adm.rapotsmk@gmail.com
                 </span>
             </div>
 
@@ -209,14 +198,11 @@
                     overflow:hidden;
                 "
             >
-                Terakhir diperbarui :
+                Login terakhir :
                 <span class="ml-1">
-                    {{ auth()->user()->updated_at?->format('d-m-Y H:i:s') ?? '-' }}
+                    2026-07-29 17:22:21
                 </span>
             </div>
-
-
-          
 
         </div>
 
@@ -227,18 +213,14 @@
     <!-- FORM UBAH PASSWORD -->
     <!-- ============================= -->
 
-    <form
+    <div
         id="passwordBox"
-        action="{{ route('profile.password.update') }}"
-        method="POST"
         class="bg-white rounded-2xl shadow p-6 mt-6"
-        style="display: {{ $errors->hasAny(['current_password', 'password']) ? 'block' : 'none' }};"
+        style="display:none;"
     >
-        @csrf
-        @method('PUT')
 
         <div class="section-title">
-            <i class="ph ph-lock"></i>
+            <i class="fa-solid fa-lock"></i>
             Ubah Password
         </div>
 
@@ -255,10 +237,8 @@
                 <input
                     type="password"
                     id="password_lama"
-                    name="current_password"
                     class="w-full border rounded-lg px-4 py-2"
                     placeholder="Masukkan password lama"
-                    required
                 >
             </div>
 
@@ -273,10 +253,8 @@
                 <input
                     type="password"
                     id="password_baru"
-                    name="password"
                     class="w-full border rounded-lg px-4 py-2"
                     placeholder="Masukkan password baru"
-                    required
                 >
             </div>
 
@@ -291,10 +269,8 @@
                 <input
                     type="password"
                     id="password_konfirmasi"
-                    name="password_confirmation"
                     class="w-full border rounded-lg px-4 py-2"
                     placeholder="Ulangi password baru"
-                    required
                 >
             </div>
 
@@ -306,10 +282,11 @@
         <div class="flex gap-3 mt-5">
 
             <button
-                type="submit"
+                type="button"
+                onclick="simpanPassword()"
                 class="px-5 py-2 rounded-lg bg-blue-600 text-white"
             >
-                <i class="ph ph-floppy-disk mr-1"></i>
+                <i class="fa-solid fa-save mr-1"></i>
                 Simpan Password
             </button>
 
@@ -324,7 +301,7 @@
 
         </div>
 
-    </form>
+    </div>
 
 </div>
 
@@ -353,7 +330,59 @@ function tutupPassword() {
 }
 
 
+function simpanPassword() {
 
+    let passwordLama =
+        document.getElementById('password_lama').value;
+
+    let passwordBaru =
+        document.getElementById('password_baru').value;
+
+    let passwordKonfirmasi =
+        document.getElementById('password_konfirmasi').value;
+
+
+    if (passwordLama === '') {
+
+        alert('⚠️ Password lama harus diisi!');
+        return;
+
+    }
+
+
+    if (passwordBaru === '') {
+
+        alert('⚠️ Password baru harus diisi!');
+        return;
+
+    }
+
+
+    if (passwordKonfirmasi === '') {
+
+        alert('⚠️ Konfirmasi password harus diisi!');
+        return;
+
+    }
+
+
+    if (passwordBaru !== passwordKonfirmasi) {
+
+        alert('❌ Konfirmasi password tidak sama!');
+        return;
+
+    }
+
+
+    alert('✅ Password berhasil diubah!');
+
+    document.getElementById('password_lama').value = '';
+    document.getElementById('password_baru').value = '';
+    document.getElementById('password_konfirmasi').value = '';
+
+    document.getElementById('passwordBox').style.display = 'none';
+
+}
 
 </script>
 

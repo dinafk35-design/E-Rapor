@@ -18,6 +18,10 @@ class DataSiswa extends Model
         'rombel_id',
     ];
 
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
 
     /*
     |--------------------------------------------------------------------------

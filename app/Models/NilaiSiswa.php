@@ -17,6 +17,10 @@ class NilaiSiswa extends Model
         'nilai',
     ];
 
+    protected $casts = [
+        'nilai' => 'decimal:2',
+    ];
+
 
     /*
     |--------------------------------------------------------------------------

@@ -528,6 +528,74 @@
 
         }
 
+
+        /* =========================
+           PRINT
+        ========================= */
+
+        @page {
+
+            size: A4;
+
+            margin: 15mm 12mm;
+
+        }
+
+        @media print {
+
+            html,
+            body {
+
+                background: white !important;
+            }
+
+            /* Sembunyikan sidebar dan topbar */
+
+            .sidebar,
+            .topbar {
+
+                display: none !important;
+            }
+
+            /* Hilangkan pergeseran konten akibat sidebar */
+
+            .main {
+
+                margin-left: 0 !important;
+
+                min-height: auto !important;
+            }
+
+            .content {
+
+                padding: 0 !important;
+            }
+
+            /* Hindari isi terpotong antar halaman */
+
+            tr,
+            .cetak-avoid {
+
+                page-break-inside: avoid;
+
+                break-inside: avoid;
+
+            }
+
+            thead {
+
+                display: table-header-group;
+
+            }
+
+            tfoot {
+
+                display: table-footer-group;
+
+            }
+
+        }
+
     </style>
 
 </head>

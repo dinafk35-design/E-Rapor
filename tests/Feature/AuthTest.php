@@ -23,6 +23,24 @@ class AuthTest extends TestCase
         $this->get('/dashboard')->assertRedirect(route('login'));
     }
 
+    public function test_all_role_dashboards_redirect_guests_to_login(): void
+    {
+        foreach (['/admin-dashboard', '/guru-dashboard', '/siswa-dashboard'] as $uri) {
+            $this->get($uri)->assertRedirect(route('login'));
+        }
+    }
+
+    public function test_authenticated_users_are_redirected_to_their_role_dashboard(): void
+    {
+        foreach (['admin', 'guru', 'siswa'] as $role) {
+            $user = User::factory()->create(['role' => $role]);
+
+            $this->actingAs($user)
+                ->get('/')
+                ->assertRedirect(route("{$role}.dashboard"));
+        }
+    }
+
     public function test_user_can_login_with_valid_credentials(): void
     {
         $user = User::factory()->create([
@@ -37,6 +55,26 @@ class AuthTest extends TestCase
 
         $response->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_guru_and_siswa_are_redirected_to_their_role_dashboards(): void
+    {
+        foreach (['guru', 'siswa'] as $role) {
+            $user = User::factory()->create([
+                'username' => $role,
+                'role' => $role,
+            ]);
+
+            $response = $this->post('/login', [
+                'username' => $role,
+                'password' => 'password',
+            ]);
+
+            $response->assertRedirect(route("{$role}.dashboard"));
+            $this->assertAuthenticatedAs($user);
+
+            $this->post('/logout');
+        }
     }
 
     public function test_invalid_credentials_are_rejected(): void
@@ -56,6 +94,14 @@ class AuthTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_logout_control_is_rendered_in_sidebar(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('dashboard'))
+            ->assertSee(route('logout'), false)
+            ->assertSee('type="submit"', false);
+    }
+
     public function test_authenticated_users_can_logout(): void
     {
         $user = User::factory()->create();
@@ -65,6 +111,30 @@ class AuthTest extends TestCase
             ->assertRedirect(route('login'));
 
         $this->assertGuest();
+    }
+
+    public function test_authenticated_user_can_view_semester_page(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('semester'))
+            ->assertOk()
+            ->assertSee('Daftar Semester')
+            ->assertSee('2026/2027');
+    }
+
+    public function test_authenticated_user_can_view_pengguna_page(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Administrator',
+            'username' => 'admin',
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('pengguna'))
+            ->assertOk()
+            ->assertSee('Daftar Pengguna')
+            ->assertSee('admin');
     }
 
     public function test_role_middleware_rejects_an_unauthorized_role(): void

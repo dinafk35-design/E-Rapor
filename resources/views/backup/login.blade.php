@@ -302,7 +302,7 @@
                 </div>
             @endif
 
-            <form id="loginForm" action="{{ route('login.post') }}" method="POST">
+            <form id="loginForm" action="{{ route('login') }}" method="POST">
                 @csrf
 
                 <div class="form-group">
