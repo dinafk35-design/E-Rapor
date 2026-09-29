@@ -76,83 +76,29 @@ Route::middleware('auth')->group(function () {
     //     return view('perkembangan-nilai.create');
     // })->name('perkembangan-nilai-create');
 
-    /*
-    |--------------------------------------------------------------------------
-    | DATA SEKOLAH
-    |--------------------------------------------------------------------------
-    */
+    Route::resource('data-sekolah', DataSekolahController::class)
+    ->except(['show'])
+    ->names('data-sekolah');
 
-    Route::get('/data-sekolah', [DataSekolahController::class, 'index'])->name('data-sekolah');
-    Route::get('/data-sekolah/create', [DataSekolahController::class, 'create'])->name('data-sekolah.create');
-    Route::post('/data-sekolah', [DataSekolahController::class, 'store'])->name('data-sekolah.store');
-    Route::get('/data-sekolah/{sekolah}/edit', [DataSekolahController::class, 'edit'])->name('data-sekolah.edit');
-    Route::put('/data-sekolah/{sekolah}', [DataSekolahController::class, 'update'])->name('data-sekolah.update');
-    Route::delete('/data-sekolah/{sekolah}', [DataSekolahController::class, 'destroy'])->name('data-sekolah.destroy');
+    Route::resource('data-guru', DataGuruController::class)
+    ->except(['show'])
+    ->names('data-guru');
 
-    /*
-    |--------------------------------------------------------------------------
-    | DATA GURU
-    |--------------------------------------------------------------------------
-    */
+     Route::resource('data-siswa', DataSiswaController::class)
+    ->except(['show'])
+    ->names('data-siswa');
 
-    Route::get('/data-guru', [DataGuruController::class, 'index'])->name('data-guru');
-    Route::get('/data-guru/create', [DataGuruController::class, 'create'])->name('data-guru.create');
-    Route::post('/data-guru', [DataGuruController::class, 'store'])->name('data-guru.store');
-    Route::get('/data-guru/{guru}/edit', [DataGuruController::class, 'edit'])->name('data-guru.edit');
-    Route::put('/data-guru/{guru}', [DataGuruController::class, 'update'])->name('data-guru.update');
-    Route::delete('/data-guru/{guru}', [DataGuruController::class, 'destroy'])->name('data-guru.destroy');
+      Route::resource('mata-pelajaran', MataPelajaranController::class)
+    ->except(['show'])
+    ->names('mata-pelajaran');
 
-    /*
-    |--------------------------------------------------------------------------
-    | DATA SISWA
-    |--------------------------------------------------------------------------
-    */
+     Route::resource('rombel', RombelController::class)
+    ->except(['show'])
+    ->names('rombel');
 
-    Route::get('/data-siswa', [DataSiswaController::class, 'index'])->name('data-siswa');
-    Route::get('/data-siswa/create', [DataSiswaController::class, 'create'])->name('data-siswa.create');
-    Route::post('/data-siswa', [DataSiswaController::class, 'store'])->name('data-siswa.store');
-    Route::get('/data-siswa/{siswa}/edit', [DataSiswaController::class, 'edit'])->name('data-siswa.edit');
-    Route::put('/data-siswa/{siswa}', [DataSiswaController::class, 'update'])->name('data-siswa.update');
-    Route::delete('/data-siswa/{siswa}', [DataSiswaController::class, 'destroy'])->name('data-siswa.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | MATA PELAJARAN + GURU MENGAJAR
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/mata-pelajaran', [MataPelajaranController::class, 'index'])->name('mata-pelajaran');
-    Route::get('/mata-pelajaran/create', [MataPelajaranController::class, 'create'])->name('mata-pelajaran.create');
-    Route::post('/mata-pelajaran', [MataPelajaranController::class, 'store'])->name('mata-pelajaran.store');
-    Route::get('/mata-pelajaran/{mata_pelajaran}/edit', [MataPelajaranController::class, 'edit'])->name('mata-pelajaran.edit');
-    Route::put('/mata-pelajaran/{mata_pelajaran}', [MataPelajaranController::class, 'update'])->name('mata-pelajaran.update');
-    Route::delete('/mata-pelajaran/{mata_pelajaran}', [MataPelajaranController::class, 'destroy'])->name('mata-pelajaran.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | ROMBEL + ANGGOTA ROMBEL
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/rombel', [RombelController::class, 'index'])->name('rombel');
-    Route::get('/rombel/create', [RombelController::class, 'create'])->name('rombel.create');
-    Route::post('/rombel', [RombelController::class, 'store'])->name('rombel.store');
-    Route::get('/rombel/{rombel}/edit', [RombelController::class, 'edit'])->name('rombel.edit');
-    Route::put('/rombel/{rombel}', [RombelController::class, 'update'])->name('rombel.update');
-    Route::delete('/rombel/{rombel}', [RombelController::class, 'destroy'])->name('rombel.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | WALI KELAS
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/wali-kelas', [WaliKelasController::class, 'index'])->name('wali-kelas');
-    Route::get('/wali-kelas/create', [WaliKelasController::class, 'create'])->name('wali-kelas.create');
-    Route::post('/wali-kelas', [WaliKelasController::class, 'store'])->name('wali-kelas.store');
-    Route::get('/wali-kelas/{wali_kelas}/edit', [WaliKelasController::class, 'edit'])->name('wali-kelas.edit');
-    Route::put('/wali-kelas/{wali_kelas}', [WaliKelasController::class, 'update'])->name('wali-kelas.update');
-    Route::delete('/wali-kelas/{wali_kelas}', [WaliKelasController::class, 'destroy'])->name('wali-kelas.destroy');
+     Route::resource('wali-kelas', WaliKelasController::class)
+    ->except(['show'])
+    ->names('wali-kelas');
 
     /*
     |--------------------------------------------------------------------------
@@ -191,17 +137,13 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix('backup')->name('backup.')->group(function () {
-        Route::get('/', [BackupController::class, 'index'])->name('index');
-
-        Route::get('download', [BackupController::class, 'download'])->name('download');
-
-        Route::get('table/{table}', [BackupController::class, 'table'])->name('table');
-
-        Route::post('restore', [BackupController::class, 'restore'])->name('restore');
-
-        Route::delete('{file}', [BackupController::class, 'destroy'])->name('destroy');
-    });
+    Route::controller(BackupController::class)->prefix('backup')->name('backup.')->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/download', 'download')->name('download');
+    Route::get('/table/{table}', 'table')->name('table');
+    Route::post('/restore', 'restore')->name('restore');
+    Route::delete('/{file}', 'destroy')->name('destroy');
+});
 
     Route::get('/admin-dashboard', function () {
         return view('dashboard');
