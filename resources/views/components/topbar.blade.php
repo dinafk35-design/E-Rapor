@@ -1,7 +1,12 @@
 <!-- TOPBAR -->
 <div class="topbar">
-    <div class="topbar-title">
-        Dashboard {{ ucfirst(auth()->user()?->role ?? 'E-Rapor') }}
+    <div class="topbar-left">
+        <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="topbar-title">
+            Dashboard {{ ucfirst(auth()->user()?->role ?? 'E-Rapor') }}
+        </div>
     </div>
 
     <div class="admin-info">

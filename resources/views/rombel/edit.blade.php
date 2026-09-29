@@ -55,7 +55,7 @@
 
         <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <!-- NAMA ROMBEL -->
 
@@ -204,7 +204,7 @@
 
                 @forelse ($anggotaTerisi as $anggota)
 
-                    <div class="grid grid-cols-3 gap-4 anggota-row">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 anggota-row">
 
                         <!-- SISWA -->
 
@@ -322,7 +322,7 @@
 
                     <!-- Belum ada anggota: sisakan satu baris kosong -->
 
-                    <div class="grid grid-cols-3 gap-4 anggota-row">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 anggota-row">
 
                         <div>
 
@@ -453,7 +453,7 @@
 
 const templateAnggota = `
 
-    <div class="grid grid-cols-3 gap-4 anggota-row">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 anggota-row">
 
         <div>
 

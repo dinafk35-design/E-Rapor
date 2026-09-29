@@ -34,126 +34,86 @@
 
     @endif
 
-    <!-- ============================= -->
+    <!-- FILTER -->
+    <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <!-- PENCARIAN -->
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Pencarian
+                </label>
+                <input type="text" id="searchSekolah"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    placeholder="Cari nama sekolah, NPSN...">
+            </div>
+        </div>
+        <!-- TOMBOL -->
+        <div class="mt-5 flex flex-wrap gap-3">
+            <button type="button" onclick="filterSekolah()"
+                class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
+                <i class="ph ph-magnifying-glass mr-1"></i>
+                Cari
+            </button>
+            <button type="button" onclick="resetFilterSekolah()"
+                class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
+                <i class="ph ph-arrow-counter-clockwise mr-1"></i>
+                Reset
+            </button>
+        </div>
+    </div>
+
     <!-- TABEL DATA SEKOLAH -->
-    <!-- ============================= -->
+    <x-table-card title="Data Sekolah" subtitle="Menampilkan daftar seluruh data sekolah yang terdaftar dalam sistem."
+        :createRoute="route('data-sekolah.create')" :items="$sekolah">
+        
+        <x-slot name="thead">
+            <th class="px-6 py-4 w-12">No</th>
+            <th class="px-6 py-4">Nama Sekolah</th>
+            <th class="px-6 py-4">NPSN</th>
+            <th class="px-6 py-4">Kepala Sekolah</th>
+            <th class="px-6 py-4">Telepon</th>
+            <th class="px-6 py-4 text-center w-32">Aksi</th>
+        </x-slot>
 
-    <div class="section-title flex justify-between">
+        @forelse ($sekolah as $item)
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-5 text-gray-500">{{ $loop->iteration }}</td>
+                <td class="px-6 py-5 font-medium">{{ $item->nama_sekolah }}</td>
+                <td class="px-6 py-5">{{ $item->npsn ?? '-' }}</td>
+                <td class="px-6 py-5">{{ $item->kepala_sekolah ?? '-' }}</td>
+                <td class="px-6 py-5">{{ $item->telepon ?? '-' }}</td>
+                <td class="px-6 py-5 text-center">
+                    <a href="{{ route('data-sekolah.edit', $item->id) }}"
+                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition">
+                        <i class="ph ph-pencil-simple text-base"></i>
+                        Edit
+                    </a>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                    Belum ada data sekolah.
+                </td>
+            </tr>
+        @endforelse
 
-        <div>
-            <i class="ph ph-table"></i>
-            Data Sekolah
-        </div>
-
-        <a href="{{route('data-sekolah.create')}}" class="bg-green-300 p-2 border border-gray-200 rounded-lg">
-
-            + Tambah Data
-        </a>
-
-    </div>
-
-
-    <div class="bg-white rounded-xl shadow p-6">
-
-        <div class="overflow-x-auto">
-
-            <table class="w-full border-collapse">
-
-                <thead>
-
-                    <tr class="bg-gray-100">
-
-                        <th class="border px-4 py-3 text-left">
-                            No
-                        </th>
-
-                        <th class="border px-4 py-3 text-left">
-                            Nama Sekolah
-                        </th>
-
-                        <th class="border px-4 py-3 text-left">
-                            NPSN
-                        </th>
-
-                        <th class="border px-4 py-3 text-left">
-                            Kepala Sekolah
-                        </th>
-
-                        <th class="border px-4 py-3 text-left">
-                            Telepon
-                        </th>
-
-                        <th class="border px-4 py-3 text-center">
-                            Aksi
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    @forelse ($sekolah as $item)
-
-                        <tr>
-
-                            <td class="border px-4 py-3">
-                                {{ $loop->iteration }}
-                            </td>
-
-                            <td class="border px-4 py-3">
-                                {{ $item->nama_sekolah }}
-                            </td>
-
-                            <td class="border px-4 py-3">
-                                {{ $item->npsn ?? '-' }}
-                            </td>
-
-                            <td class="border px-4 py-3">
-                                {{ $item->kepala_sekolah ?? '-' }}
-                            </td>
-
-                            <td class="border px-4 py-3">
-                                {{ $item->telepon ?? '-' }}
-                            </td>
-
-                            <td class="border px-4 py-3 text-center">
-
-                                <a
-                                    href="{{ route('data-sekolah.edit', $item->id) }}"
-                                    class="px-3 py-2 inline-block rounded-lg bg-yellow-500 text-white"
-                                >
-
-                                    <i class="ph ph-pencil-simple"></i>
-
-                                    Edit
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-                            <td colspan="6" class="border px-4 py-6 text-center text-gray-500">
-                                Belum ada data sekolah.
-                            </td>
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
+    </x-table-card>
 
 </div>
 
+<!-- JAVASCRIPT -->
+<script>
+    function filterSekolah() {
+        const search = document.getElementById('searchSekolah').value;
+        alert("Filter diterapkan!\n\nPencarian: " + (search || "Semua"));
+        // TODO: Implement actual filtering (AJAX or form submit)
+    }
+
+    function resetFilterSekolah() {
+        document.getElementById('searchSekolah').value = "";
+        alert("Filter berhasil direset.");
+    }
+</script>
 
 @endsection

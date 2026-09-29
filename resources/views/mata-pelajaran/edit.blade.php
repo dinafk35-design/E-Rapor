@@ -55,7 +55,7 @@
 
         <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <!-- KODE MATA PELAJARAN -->
 
@@ -190,7 +190,7 @@
 
                 @forelse ($guruTerisi as $tugas)
 
-                    <div class="grid grid-cols-4 gap-4 guru-row">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 guru-row">
 
                         <!-- GURU -->
 
@@ -337,7 +337,7 @@
 
                     <!-- Belum ada penugasan: sisakan satu baris kosong -->
 
-                    <div class="grid grid-cols-4 gap-4 guru-row">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 guru-row">
 
                         <div>
 
@@ -490,7 +490,7 @@
 
 const templateGuru = `
 
-    <div class="grid grid-cols-4 gap-4 guru-row">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 guru-row">
 
         <div>
 
