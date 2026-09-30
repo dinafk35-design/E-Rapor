@@ -37,37 +37,37 @@
         </div>
 
         <a
-            href="{{ route('data-sekolah.index') }}"class="menu-link {{ request()->routeIs('data-sekolah.index') ? 'bg-slate-800' : '' }}">
+            href="{{ route('data-sekolah') }}"class="menu-link {{ request()->routeIs('data-sekolah') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Data Sekolah</span>
         </a>
 
         <a
-            href="{{ route('data-guru.index') }}"class="menu-link {{ request()->routeIs('data-guru.index') ? 'bg-slate-800' : '' }}">
+            href="{{ route('data-guru') }}"class="menu-link {{ request()->routeIs('data-guru') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Data Guru</span>
         </a>
 
         <a
-            href="{{ route('data-siswa.index') }}"class="menu-link {{ request()->routeIs('data-siswa.index') ? 'bg-slate-800' : '' }}">
+            href="{{ route('data-siswa') }}"class="menu-link {{ request()->routeIs('data-siswa') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Data Siswa</span>
         </a>
 
         <a
-            href="{{ route('mata-pelajaran.index') }}"class="menu-link {{ request()->routeIs('mata-pelajaran.index') ? 'bg-slate-800' : '' }}">
+            href="{{ route('mata-pelajaran') }}"class="menu-link {{ request()->routeIs('mata-pelajaran') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Mata Pelajaran</span>
         </a>
 
         <a
-            href="{{ route('rombel.index') }}"class="menu-link {{ request()->routeIs('rombel.index') ? 'bg-slate-800' : '' }}">
+            href="{{ route('rombel') }}"class="menu-link {{ request()->routeIs('rombel') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Rombel</span>
         </a>
 
         <a
-            href="{{ route('wali-kelas.index') }}"class="menu-link {{ request()->routeIs('wali-kelas.index') ? 'bg-slate-800' : '' }}">
+            href="{{ route('wali-kelas') }}"class="menu-link {{ request()->routeIs('wali-kelas') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Wali Kelas</span>
         </a>

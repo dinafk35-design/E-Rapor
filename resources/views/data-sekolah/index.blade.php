@@ -72,7 +72,7 @@
             <th class="px-6 py-4">NPSN</th>
             <th class="px-6 py-4">Kepala Sekolah</th>
             <th class="px-6 py-4">Telepon</th>
-            <th class="px-6 py-4 text-center w-32">Aksi</th>
+            <th class="px-6 py-4 text-center w-44">Aksi</th>
         </x-slot>
 
         @forelse ($sekolah as $item)
@@ -82,12 +82,28 @@
                 <td class="px-6 py-5">{{ $item->npsn ?? '-' }}</td>
                 <td class="px-6 py-5">{{ $item->kepala_sekolah ?? '-' }}</td>
                 <td class="px-6 py-5">{{ $item->telepon ?? '-' }}</td>
-                <td class="px-6 py-5 text-center">
+                <td class="px-6 py-5 text-center whitespace-nowrap">
                     <a href="{{ route('data-sekolah.edit', $item->id) }}"
                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition">
                         <i class="ph ph-pencil-simple text-base"></i>
                         Edit
                     </a>
+
+                    <form action="{{ route('data-sekolah.destroy', $item->id) }}"
+                          method="POST"
+                          class="inline-block ml-1"
+                          data-hapus-form>
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit"
+                                data-nama="{{ $item->nama_sekolah }}"
+                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition"
+                                title="Hapus data sekolah">
+                            <i class="ph ph-trash text-base"></i>
+                            Hapus
+                        </button>
+                    </form>
                 </td>
             </tr>
         @empty
@@ -114,6 +130,25 @@
         document.getElementById('searchSekolah').value = "";
         alert("Filter berhasil direset.");
     }
+
+    /* ============================= */
+    /* KONFIRMASI HAPUS             */
+    /* ============================= */
+
+    document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            const nama = form.querySelector('button[data-nama]').dataset.nama;
+
+            const yakin = confirm(
+                'Yakin ingin menghapus data sekolah "' + nama + '"?\n' +
+                'Data yang sudah dihapus tidak dapat dikembalikan.'
+            );
+
+            if (!yakin) {
+                event.preventDefault();
+            }
+        });
+    });
 </script>
 
 @endsection

@@ -42,14 +42,14 @@ class DataGuruController extends Controller
             ->with('status', 'Data Guru berhasil disimpan.');
     }
 
-    public function edit(DataGuru $guru): View
+    public function edit(DataGuru $data_guru): View
     {
         return view('data-guru.edit', [
-            'guru' => $guru,
+            'guru' => $data_guru,
         ]);
     }
 
-    public function update(Request $request, DataGuru $guru): RedirectResponse
+    public function update(Request $request, DataGuru $data_guru): RedirectResponse
     {
         $data = $request->validate([
             'nip' => ['nullable', 'string', 'max:30'],
@@ -63,16 +63,16 @@ class DataGuruController extends Controller
             'alamat' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $guru->update($data);
+        $data_guru->update($data);
 
         return redirect()
             ->route('data-guru')
             ->with('status', 'Data Guru berhasil diperbarui.');
     }
 
-    public function destroy(DataGuru $guru): RedirectResponse
+    public function destroy(DataGuru $data_guru): RedirectResponse
     {
-        $guru->delete();
+        $data_guru->delete();
 
         return redirect()
             ->route('data-guru')

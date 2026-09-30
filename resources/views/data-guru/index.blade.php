@@ -101,12 +101,28 @@
                     </td>
                     <td class="px-6 py-5 text-gray-600">{{ $item->email ?? '-' }}</td>
                     <td class="px-6 py-5 text-gray-600">{{ $item->no_telepon ?? '-' }}</td>
-                    <td class="px-6 py-5 text-center">
+                    <td class="px-6 py-5 text-center whitespace-nowrap">
                         <a href="{{ route('data-guru.edit', $item->id) }}"
                             class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600">
                             <i class="ph ph-pencil-simple text-sm"></i>
                             Edit
                         </a>
+
+                        <form action="{{ route('data-guru.destroy', $item->id) }}"
+                            method="POST"
+                            class="inline-block ml-1"
+                            data-hapus-form>
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit"
+                                data-nama="{{ $item->nama_guru }}"
+                                class="inline-flex items-center gap-1 rounded-lg bg-red-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-red-600"
+                                title="Hapus data guru">
+                                <i class="ph ph-trash text-sm"></i>
+                                Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @empty
@@ -133,5 +149,24 @@
             document.getElementById('jenisKelaminGuru').value = "";
             alert("Filter berhasil direset.");
         }
+
+        /* ============================= */
+        /* KONFIRMASI HAPUS             */
+        /* ============================= */
+
+        document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const nama = form.querySelector('button[data-nama]').dataset.nama;
+
+                const yakin = confirm(
+                    'Yakin ingin menghapus data guru "' + nama + '"?\n' +
+                    'Data yang sudah dihapus tidak dapat dikembalikan.'
+                );
+
+                if (!yakin) {
+                    event.preventDefault();
+                }
+            });
+        });
     </script>
 @endsection

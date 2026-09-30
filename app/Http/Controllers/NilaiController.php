@@ -40,6 +40,55 @@ class NilaiController extends Controller
             ->mapWithKeys(fn ($n) => [$n->siswa_id . '-' . $n->mata_pelajaran_id => $n->nilai])
             ->all();
 
+        // Mata pelajaran yang belum dinilai, untuk setiap siswa.
+        // Mapel yang sudah dinilai tidak ikut offered lagi.
+        $semuaMapel = MataPelajaran::orderBy('nama_mata_pelajaran')
+            ->pluck('nama_mata_pelajaran', 'id');
+
+        $sudahDinilai = NilaiSiswa::where('tahun_ajaran', $tahunAjaran)
+            ->where('semester', $semester)
+            ->get(['siswa_id', 'mata_pelajaran_id'])
+            ->groupBy('siswa_id')
+            ->map(fn ($rows) => $rows->pluck('mata_pelajaran_id')->all());
+
+        $pilihanMapel = [];
+
+        foreach ($siswa as $s) {
+
+            // Key dari $semuaMapel adalah id mapel, jadi yang dibandingkan
+            // adalah key-nya, bukan nama mapelnya.
+            $sudahTerisi = array_map('strval', $sudahDinilai[$s->id] ?? []);
+
+            $pilihanMapel[$s->id] = $semuaMapel
+                ->reject(fn ($nama, $id) => in_array((string) $id, $sudahTerisi, true))
+                ->all();
+        }
+
+        // Rincian nilai per siswa untuk tombol Detail
+        $rincianNilai = [];
+
+        foreach ($siswa as $s) {
+
+            $rincianNilai[$s->id] = [
+                'nama' => $s->nama_siswa,
+                'nisn' => $s->nisn ?? '-',
+                'kelas' => $s->rombel?->nama_rombel ?? '-',
+                'nilai' => [],
+            ];
+
+            foreach ($mataPelajaran as $mapel) {
+
+                $nilai = $tersimpan[$s->id . '-' . $mapel->id] ?? null;
+
+                $rincianNilai[$s->id]['nilai'][$mapel->id] = [
+                    'mapel' => $mapel->nama_mata_pelajaran,
+                    'nilai' => $nilai === null
+                        ? null
+                        : rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.'),
+                ];
+            }
+        }
+
         // Guru pengampu per mata pelajaran (jika ada penugasan)
         $guruPerMapel = DB::table('guru_mengajar')
             ->select('mata_pelajaran_id', 'guru_id')
@@ -58,6 +107,8 @@ class NilaiController extends Controller
             'filterMapel' => $filterMapel,
             'nilaiTersimpan' => $tersimpan,
             'guruPerMapel' => $guruPerMapel,
+            'pilihanMapel' => $pilihanMapel,
+            'rincianNilai' => $rincianNilai,
         ]);
     }
 
@@ -128,5 +179,29 @@ class NilaiController extends Controller
         return redirect()
             ->route('input-nilai')
             ->with('status', $tersimpan . ' nilai berhasil disimpan.');
+    }
+
+    /**
+     * Hapus seluruh nilai seorang siswa pada periode yang sedang dibuka.
+     */
+    public function destroy(Request $request, DataSiswa $siswa): RedirectResponse
+    {
+        $tahun = $request->input('tahun_ajaran');
+        $semester = $request->input('semester');
+
+        $jumlah = NilaiSiswa::where('siswa_id', $siswa->id)
+            ->when($tahun, fn ($q) => $q->where('tahun_ajaran', $tahun))
+            ->when($semester, fn ($q) => $q->where('semester', $semester))
+            ->delete();
+
+        return redirect()
+            ->route('input-nilai', array_filter([
+                'tahun_ajaran' => $tahun,
+                'semester' => $semester,
+                'rombel_id' => $request->input('rombel_id'),
+            ]))
+            ->with('status', $jumlah > 0
+                ? $jumlah . ' nilai ' . $siswa->nama_siswa . ' berhasil dihapus.'
+                : 'Tidak ada nilai yang dapat dihapus untuk ' . $siswa->nama_siswa . '.');
     }
 }

@@ -83,12 +83,12 @@
             <x-slot:thead>
                 <th class="px-6 py-4">No</th>
                 <th class="px-6 py-4">NISN</th>
-                <th class="px-6 py-4">Nama Guru</th>
+                <th class="px-6 py-4">Nama Siswa</th>
                 <th class="px-6 py-4">Jenis Kelamin</th>
                 <th class="px-6 py-4">Tempat Lahir</th>
                 <th class="px-6 py-4">Tanggal Lahir</th>
                 <th class="px-6 py-4">Rombel</th>
-                <th class="px-6 py-4 text-center">Aksi</th>
+                <th class="px-6 py-4 text-center min-w-[220px]">Aksi</th>
             </x-slot:thead>
 
             <!-- Body / Isi Tabel -->
@@ -111,14 +111,40 @@
                         @endif
                     </td>
                     <td class="px-6 py-5 text-gray-600">{{ $item->tempat_lahir ?? '-' }}</td>
-                    <td class="px-6 py-5 text-gray-600">{{ $item->tanggal_lahir->format('d/m/Y') ?? '-' }}</td>
-                    <td class="px-6 py-5 text-gray-600">{{ $item->nama_rombel ?? '-' }}</td>
+                    <td class="px-6 py-5 text-gray-600">{{ $item->tanggal_lahir?->format('d/m/Y') ?? '-' }}</td>
+                    <td class="px-6 py-5 text-gray-600">{{ $item->rombel?->nama_rombel ?? '-' }}</td>
                     <td class="px-6 py-5 text-center">
-                        <a href="{{ route('data-siswa.edit', $item->id) }}"
-                            class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600">
-                            <i class="ph ph-pencil-simple text-sm"></i>
-                            Edit
-                        </a>
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                            <a href="{{ route('data-siswa.show', $item->id) }}"
+                                class="inline-flex items-center gap-1 rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-600"
+                                title="Lihat detail siswa">
+                                <i class="ph ph-eye text-sm"></i>
+                                Detail
+                            </a>
+
+                            <a href="{{ route('data-siswa.edit', $item->id) }}"
+                                class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600"
+                                title="Ubah data siswa">
+                                <i class="ph ph-pencil-simple text-sm"></i>
+                                Edit
+                            </a>
+
+                            <form action="{{ route('data-siswa.destroy', $item->id) }}"
+                                method="POST"
+                                class="inline-block"
+                                data-hapus-form>
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                    data-nama="{{ $item->nama_siswa }}"
+                                    class="inline-flex items-center gap-1 rounded-lg bg-red-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-red-600"
+                                    title="Hapus data siswa">
+                                    <i class="ph ph-trash text-sm"></i>
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             @empty
@@ -147,5 +173,24 @@
             document.getElementById('rombelSiswa').value = "";
             alert("Filter berhasil direset.");
         }
+
+        /* ============================= */
+        /* KONFIRMASI HAPUS             */
+        /* ============================= */
+
+        document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const nama = form.querySelector('button[data-nama]').dataset.nama;
+
+                const yakin = confirm(
+                    'Yakin ingin menghapus data siswa "' + nama + '"?\n' +
+                    'Data yang sudah dihapus tidak dapat dikembalikan.'
+                );
+
+                if (!yakin) {
+                    event.preventDefault();
+                }
+            });
+        });
     </script>
 @endsection

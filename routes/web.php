@@ -76,29 +76,74 @@ Route::middleware('auth')->group(function () {
     //     return view('perkembangan-nilai.create');
     // })->name('perkembangan-nilai-create');
 
+    // Nama route index memakai 'data-sekolah' (bukan 'data-sekolah.index')
+    // supaya route('data-sekolah') bisa dipakai untuk redirect setelah
+    // simpan, ubah, dan hapus.
     Route::resource('data-sekolah', DataSekolahController::class)
     ->except(['show'])
-    ->names('data-sekolah');
+    ->names([
+        'index' => 'data-sekolah',
+        'create' => 'data-sekolah.create',
+        'store' => 'data-sekolah.store',
+        'edit' => 'data-sekolah.edit',
+        'update' => 'data-sekolah.update',
+        'destroy' => 'data-sekolah.destroy',
+    ]);
 
     Route::resource('data-guru', DataGuruController::class)
     ->except(['show'])
-    ->names('data-guru');
+    ->names([
+        'index' => 'data-guru',
+        'create' => 'data-guru.create',
+        'store' => 'data-guru.store',
+        'edit' => 'data-guru.edit',
+        'update' => 'data-guru.update',
+        'destroy' => 'data-guru.destroy',
+    ]);
 
      Route::resource('data-siswa', DataSiswaController::class)
-    ->except(['show'])
-    ->names('data-siswa');
+    ->names([
+        'index' => 'data-siswa',
+        'create' => 'data-siswa.create',
+        'store' => 'data-siswa.store',
+        'show' => 'data-siswa.show',
+        'edit' => 'data-siswa.edit',
+        'update' => 'data-siswa.update',
+        'destroy' => 'data-siswa.destroy',
+    ]);
 
       Route::resource('mata-pelajaran', MataPelajaranController::class)
     ->except(['show'])
-    ->names('mata-pelajaran');
+    ->names([
+        'index' => 'mata-pelajaran',
+        'create' => 'mata-pelajaran.create',
+        'store' => 'mata-pelajaran.store',
+        'edit' => 'mata-pelajaran.edit',
+        'update' => 'mata-pelajaran.update',
+        'destroy' => 'mata-pelajaran.destroy',
+    ]);
 
      Route::resource('rombel', RombelController::class)
-    ->except(['show'])
-    ->names('rombel');
+    ->names([
+        'index' => 'rombel',
+        'create' => 'rombel.create',
+        'store' => 'rombel.store',
+        'show' => 'rombel.show',
+        'edit' => 'rombel.edit',
+        'update' => 'rombel.update',
+        'destroy' => 'rombel.destroy',
+    ]);
 
      Route::resource('wali-kelas', WaliKelasController::class)
     ->except(['show'])
-    ->names('wali-kelas');
+    ->names([
+        'index' => 'wali-kelas',
+        'create' => 'wali-kelas.create',
+        'store' => 'wali-kelas.store',
+        'edit' => 'wali-kelas.edit',
+        'update' => 'wali-kelas.update',
+        'destroy' => 'wali-kelas.destroy',
+    ]);
 
     /*
     |--------------------------------------------------------------------------
@@ -108,6 +153,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/input-nilai', [NilaiController::class, 'index'])->name('input-nilai');
     Route::post('/input-nilai', [NilaiController::class, 'store'])->name('input-nilai.store');
+    Route::delete('/input-nilai/{siswa}', [NilaiController::class, 'destroy'])
+        ->name('input-nilai.destroy');
 
     Route::get('/penilaian', function () {
         return view('penilaian');

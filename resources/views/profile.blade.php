@@ -2,12 +2,85 @@
 
 @section('content')
 
+@php
+    // =====================================================
+    // DATA PENGGUNA YANG SEDANG MASUK
+    // =====================================================
+
+    $user = auth()->user();
+
+    $nama = $user->name ?: ($user->username ?? 'Pengguna');
+
+    $inisial = strtoupper(
+        collect(preg_split('/\s+/', trim($nama)))
+            ->filter()
+            ->take(2)
+            ->map(fn ($kata) => mb_substr($kata, 0, 1))
+            ->implode('')
+    ) ?: 'P';
+
+    $roleLabel = match ($user->role ?? null) {
+        'admin' => 'Administrator',
+        'guru' => 'Guru',
+        'siswa' => 'Siswa',
+        default => 'Pengguna',
+    };
+
+    $roleClass = match ($user->role ?? null) {
+        'admin' => 'bg-indigo-100 text-indigo-700',
+        'guru' => 'bg-green-100 text-green-700',
+        'siswa' => 'bg-amber-100 text-amber-700',
+        default => 'bg-gray-100 text-gray-700',
+    };
+
+    // Daftar informasi akun (label, nilai, ikon)
+    $detail = [
+        [
+            'label' => 'Nama',
+            'value' => $nama,
+            'icon' => 'ph ph-user',
+        ],
+        [
+            'label' => 'Username',
+            'value' => $user->username ?? '-',
+            'icon' => 'ph ph-at',
+        ],
+        [
+            'label' => 'Level Akses',
+            'value' => $roleLabel,
+            'icon' => 'ph ph-shield-star',
+        ],
+        [
+            'label' => 'E-mail',
+            'value' => $user->email ?: 'Belum diisi',
+            'icon' => 'ph ph-envelope-simple',
+        ],
+        [
+            'label' => 'Bergabung',
+            'value' => $user->created_at?->format('d M Y H:i') ?? '-',
+            'icon' => 'ph ph-calendar-blank',
+        ],
+        [
+            'label' => 'Diperbarui',
+            'value' => $user->updated_at?->format('d M Y H:i') ?? '-',
+            'icon' => 'ph ph-clock-countdown',
+        ],
+    ];
+
+    // Form password terbuka otomatis bila validasi gagal
+    $passwordTerbuka = $errors->has('current_password') || $errors->has('password');
+@endphp
+
+
 <div class="content">
 
-    <!-- JUDUL -->
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
     <div class="welcome">
         <h2 class="italic font-bold">
-            PROFIL PENGGUNA
+            Profil Pengguna
         </h2>
 
         <p>
@@ -15,193 +88,138 @@
         </p>
     </div>
 
-    
-    <!-- PROFIL PENGGUNA -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    <!-- ============================= -->
+    <!-- PEMBERITAHUAN -->
+    <!-- ============================= -->
+
+    @if (session('status'))
+        <div class="mb-4 rounded-lg border border-green-300 bg-green-50 p-3 text-sm text-green-800">
+            <i class="ph ph-check-circle mr-1"></i>
+            {{ session('status') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+            <i class="ph ph-warning-circle mr-1"></i>
+            {{ $errors->first() }}
+        </div>
+    @endif
 
 
-        <!-- ============================= -->
-        <!-- BAGIAN KIRI - PROFIL -->
-        <!-- ============================= -->
+    <!-- ============================= -->
+    <!-- KARTU PROFIL + DETAIL AKUN -->
+    <!-- ============================= -->
 
-        <div
-            class="rounded-3xl p-8 text-center"
-            style="
-                background:#704747;
-                min-height:250px;
-            "
-        >
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
 
-            <!-- ICON USER -->
-            <div class="flex justify-center mb-3">
+        <!-- ---------- KARTU PROFIL (KIRI) ---------- -->
 
-                <div
-                    class="flex items-center justify-center rounded-full"
-                    style="
-                        width:95px;
-                        height:95px;
-                        border:9px solid white;
-                    "
-                >
-                    <i
-                        class="fa-solid fa-user"
-                        style="
-                            color:white;
-                            font-size:42px;
-                        "
-                    ></i>
+        <div class="lg:col-span-1">
+
+            <div class="flex h-full flex-col items-center gap-4 rounded-xl bg-white p-6 text-center shadow-sm">
+
+                <!-- Avatar -->
+                <div class="flex h-24 w-24 items-center justify-center rounded-full border-4 border-blue-600 bg-blue-600 text-white shadow">
+                    <span class="text-3xl font-bold tracking-wide">
+                        {{ $inisial }}
+                    </span>
                 </div>
 
-            </div>
+
+                <!-- Nama & Level -->
+                <div class="min-w-0">
+                    <h3 class="truncate text-lg font-bold text-gray-800">
+                        {{ $nama }}
+                    </h3>
+
+                    <p class="mt-0.5 truncate text-sm text-gray-500">
+                        {{ $user->username ?? '-' }}
+                    </p>
+
+                    <span class="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $roleClass }}">
+                        {{ $roleLabel }}
+                    </span>
+                </div>
 
 
-            <!-- NAMA -->
-            <h3
-                class="font-bold"
-                style="color:white;"
-            >
-                Administrator
-            </h3>
+                <!-- Pemisah -->
+                <hr class="w-full border-gray-200">
 
 
-            <!-- USERNAME -->
-            <p
-                class="text-sm"
-                style="color:white;"
-            >
-                Username : Administrator
-            </p>
+                <!-- Tombol -->
+                <div class="mt-auto flex w-full flex-col gap-2">
+
+                    <button
+                        type="button"
+                        id="tombolUbahPassword"
+                        onclick="toggleFormPassword()"
+                        aria-expanded="{{ $passwordTerbuka ? 'true' : 'false' }}"
+                        aria-controls="passwordBox"
+                        class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+
+                        <i class="ph ph-lock-key"></i>
+                        Ubah Password
+
+                    </button>
 
 
-            <!-- LEVEL -->
-            <p
-                class="text-sm"
-                style="color:white;"
-            >
-                Level : Pengguna
-            </p>
+                    <a
+                        href="{{ route('dashboard') }}"
+                        class="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
 
+                        <i class="ph ph-arrow-left"></i>
+                        Kembali ke Dashboard
 
-            <!-- TOMBOL PASSWORD -->
-            <div class="mt-6">
+                    </a>
 
-                <button
-                    type="button"
-                    onclick="ubahPassword()"
-                    class="px-6 py-2 rounded-full font-semibold"
-                    style="
-                        background:#39308f;
-                        color:white;
-                    "
-                >
-                    🔒 Ubah Password
-                </button>
+                </div>
 
             </div>
 
         </div>
 
 
+        <!-- ---------- DETAIL AKUN (KANAN) ---------- -->
 
-        <!-- ============================= -->
-        <!-- BAGIAN KANAN - DETAIL -->
-        <!-- ============================= -->
+        <div class="lg:col-span-2">
 
-        <div>
+            <div class="h-full overflow-hidden rounded-xl bg-white shadow-sm">
 
-            <!-- HEADER DETAIL -->
+                <!-- Judul -->
+                <div class="flex items-center gap-2 border-b border-gray-200 bg-gray-50 px-6 py-4">
+                    <i class="ph ph-id-card text-gray-500"></i>
 
-            <div
-                class="px-4 py-2"
-                style="
-                    background:#4770a5;
-                    color:white;
-                    font-weight:500;
-                "
-            >
-                DETAIL
-            </div>
+                    <h2 class="text-base font-bold text-gray-800">
+                        Detail Akun
+                    </h2>
+                </div>
 
 
-            <!-- NAMA -->
+                <!-- Baris informasi -->
+                <ul class="divide-y divide-gray-100">
 
-            <div
-                class="px-3 py-3 mt-1 rounded-full"
-                style="
-                    background:#69aeb2;
-                    color:#000;
-                "
-            >
-                Nama :
-                <span class="ml-1">
-                    Administrator
-                </span>
-            </div>
+                    @foreach ($detail as $baris)
+                        <li class="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-center sm:gap-4">
+
+                            <!-- Label -->
+                            <div class="flex shrink-0 items-center gap-2 text-sm font-semibold text-gray-600 sm:w-44">
+                                <i class="{{ $baris['icon'] }} text-gray-400"></i>
+                                {{ $baris['label'] }}
+                            </div>
 
 
-            <!-- USERNAME -->
+                            <!-- Nilai -->
+                            <div class="min-w-0 break-words pl-6 text-sm text-gray-800 sm:pl-0">
+                                {{ $baris['value'] }}
+                            </div>
 
-            <div
-                class="px-3 py-3 mt-2 rounded-full"
-                style="
-                    background:#69aeb2;
-                    color:#000;
-                "
-            >
-                Username :
-                <span class="ml-1">
-                    Administrator
-                </span>
-            </div>
+                        </li>
+                    @endforeach
 
+                </ul>
 
-            <!-- LEVEL -->
-
-            <div
-                class="px-3 py-3 mt-2 rounded-full"
-                style="
-                    background:#69aeb2;
-                    color:#000;
-                "
-            >
-                Level :
-                <span class="ml-1">
-                    Admin
-                </span>
-            </div>
-
-
-            <!-- EMAIL -->
-
-            <div
-                class="px-3 py-3 mt-2 rounded-full"
-                style="
-                    background:#69aeb2;
-                    color:#000;
-                "
-            >
-                E-mail :
-                <span class="ml-1">
-                    Adm.rapotsmk@gmail.com
-                </span>
-            </div>
-
-
-            <!-- LOGIN TERAKHIR -->
-
-            <div
-                class="px-3 py-3 mt-2 rounded-full"
-                style="
-                    background:#69aeb2;
-                    color:#000;
-                    white-space:nowrap;
-                    overflow:hidden;
-                "
-            >
-                Login terakhir :
-                <span class="ml-1">
-                    2026-07-29 17:22:21
-                </span>
             </div>
 
         </div>
@@ -215,91 +233,175 @@
 
     <div
         id="passwordBox"
-        class="bg-white rounded-2xl shadow p-6 mt-6"
-        style="display:none;"
-    >
+        @if (! $passwordTerbuka) style="display:none;" @endif
+        class="mt-5 rounded-xl bg-white shadow-sm">
 
-        <div class="section-title">
-            <i class="fa-solid fa-lock"></i>
-            Ubah Password
+        <div class="flex items-center gap-2 border-b border-gray-200 bg-gray-50 px-6 py-4">
+            <i class="ph ph-lock-key text-gray-500"></i>
+
+            <h2 class="text-base font-bold text-gray-800">
+                Ubah Password
+            </h2>
         </div>
 
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form
+            method="POST"
+            action="{{ route('profile.password.update') }}"
+            id="formPassword"
+            class="p-6"
+            novalidate>
 
-            <!-- PASSWORD LAMA -->
+            @csrf
+            @method('PUT')
 
-            <div>
-                <label class="block font-semibold mb-2">
-                    Password Lama
-                </label>
 
-                <input
-                    type="password"
-                    id="password_lama"
-                    class="w-full border rounded-lg px-4 py-2"
-                    placeholder="Masukkan password lama"
-                >
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+
+                <!-- PASSWORD LAMA -->
+
+                <div>
+                    <label for="current_password" class="mb-2 block text-sm font-semibold text-gray-700">
+                        Password Lama
+                    </label>
+
+                    <div class="relative">
+                        <input
+                            type="password"
+                            name="current_password"
+                            id="current_password"
+                            autocomplete="current-password"
+                            placeholder="Masukkan password lama"
+                            class="w-full rounded-lg border px-4 py-2.5 pr-11 text-sm outline-none transition focus:ring-2
+                                {{ $errors->has('current_password')
+                                    ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-red-200'
+                                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}">
+
+                        <button
+                            type="button"
+                            onclick="toggleLihatPassword(this, 'current_password')"
+                            aria-label="Lihat password lama"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 transition hover:text-gray-600">
+
+                            <i class="ph ph-eye"></i>
+
+                        </button>
+                    </div>
+
+                    @error('current_password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+
+                <!-- PASSWORD BARU -->
+
+                <div>
+                    <label for="password" class="mb-2 block text-sm font-semibold text-gray-700">
+                        Password Baru
+                    </label>
+
+                    <div class="relative">
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            autocomplete="new-password"
+                            oninput="cekKekuatanPassword(this.value)"
+                            placeholder="Minimal 8 karakter"
+                            class="w-full rounded-lg border px-4 py-2.5 pr-11 text-sm outline-none transition focus:ring-2
+                                {{ $errors->has('password')
+                                    ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-red-200'
+                                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}">
+
+                        <button
+                            type="button"
+                            onclick="toggleLihatPassword(this, 'password')"
+                            aria-label="Lihat password baru"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 transition hover:text-gray-600">
+
+                            <i class="ph ph-eye"></i>
+
+                        </button>
+                    </div>
+
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Indikator kekuatan -->
+                    <div class="mt-2 hidden" id="passwordStrength">
+                        <div class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                            <div id="passwordStrengthBar" class="h-full w-0 rounded-full transition-all duration-300"></div>
+                        </div>
+
+                        <p id="passwordStrengthText" class="mt-1 text-xs text-gray-500"></p>
+                    </div>
+                </div>
+
+
+                <!-- KONFIRMASI PASSWORD -->
+
+                <div>
+                    <label for="password_confirmation" class="mb-2 block text-sm font-semibold text-gray-700">
+                        Konfirmasi Password
+                    </label>
+
+                    <div class="relative">
+                        <input
+                            type="password"
+                            name="password_confirmation"
+                            id="password_confirmation"
+                            autocomplete="new-password"
+                            placeholder="Ulangi password baru"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2.5 pr-11 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+
+                        <button
+                            type="button"
+                            onclick="toggleLihatPassword(this, 'password_confirmation')"
+                            aria-label="Lihat konfirmasi password"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 transition hover:text-gray-600">
+
+                            <i class="ph ph-eye"></i>
+
+                        </button>
+                    </div>
+
+                    @error('password_confirmation')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
             </div>
 
 
-            <!-- PASSWORD BARU -->
+            <!-- TOMBOL -->
 
-            <div>
-                <label class="block font-semibold mb-2">
-                    Password Baru
-                </label>
+            <div class="mt-6 flex flex-col gap-3 sm:flex-row">
 
-                <input
-                    type="password"
-                    id="password_baru"
-                    class="w-full border rounded-lg px-4 py-2"
-                    placeholder="Masukkan password baru"
-                >
+                <button
+                    type="submit"
+                    class="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+
+                    <i class="ph ph-floppy-disk"></i>
+                    Simpan Password
+
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="tutupFormPassword()"
+                    class="flex items-center justify-center gap-2 rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
+
+                    <i class="ph ph-x"></i>
+                    Batal
+
+                </button>
+
             </div>
 
-
-            <!-- KONFIRMASI -->
-
-            <div>
-                <label class="block font-semibold mb-2">
-                    Konfirmasi Password
-                </label>
-
-                <input
-                    type="password"
-                    id="password_konfirmasi"
-                    class="w-full border rounded-lg px-4 py-2"
-                    placeholder="Ulangi password baru"
-                >
-            </div>
-
-        </div>
-
-
-        <!-- BUTTON -->
-
-        <div class="flex gap-3 mt-5">
-
-            <button
-                type="button"
-                onclick="simpanPassword()"
-                class="px-5 py-2 rounded-lg bg-blue-600 text-white"
-            >
-                <i class="fa-solid fa-save mr-1"></i>
-                Simpan Password
-            </button>
-
-
-            <button
-                type="button"
-                onclick="tutupPassword()"
-                class="px-5 py-2 rounded-lg bg-gray-500 text-white"
-            >
-                Batal
-            </button>
-
-        </div>
+        </form>
 
     </div>
 
@@ -312,77 +414,126 @@
 
 <script>
 
-function ubahPassword() {
+    /**
+     * Buka / tutup panel ubah password.
+     */
+    function toggleFormPassword() {
+        const box = document.getElementById('passwordBox');
+        const tombol = document.getElementById('tombolUbahPassword');
 
-    document.getElementById('passwordBox').style.display = 'block';
+        const akanBuka = box.style.display === 'none' || box.style.display === '';
 
-    document.getElementById('passwordBox').scrollIntoView({
-        behavior: 'smooth'
-    });
+        if (akanBuka) {
+            bukaFormPassword();
+        } else {
+            tutupFormPassword();
+        }
 
-}
-
-
-function tutupPassword() {
-
-    document.getElementById('passwordBox').style.display = 'none';
-
-}
-
-
-function simpanPassword() {
-
-    let passwordLama =
-        document.getElementById('password_lama').value;
-
-    let passwordBaru =
-        document.getElementById('password_baru').value;
-
-    let passwordKonfirmasi =
-        document.getElementById('password_konfirmasi').value;
-
-
-    if (passwordLama === '') {
-
-        alert('⚠️ Password lama harus diisi!');
-        return;
-
+        tombol.setAttribute('aria-expanded', akanBuka ? 'true' : 'false');
     }
 
 
-    if (passwordBaru === '') {
+    /**
+     * Tampilkan panel ubah password lalu fokuskan kolom pertama.
+     */
+    function bukaFormPassword() {
+        const box = document.getElementById('passwordBox');
 
-        alert('⚠️ Password baru harus diisi!');
-        return;
+        box.style.display = 'block';
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
+        document.getElementById('current_password')?.focus();
     }
 
 
-    if (passwordKonfirmasi === '') {
+    /**
+     * Sembunyikan panel ubah password dan kosongkan isiannya.
+     */
+    function tutupFormPassword() {
+        const box = document.getElementById('passwordBox');
 
-        alert('⚠️ Konfirmasi password harus diisi!');
-        return;
+        box.style.display = 'none';
+        box.querySelectorAll('input[type="password"]').forEach((input) => {
+            input.value = '';
+        });
 
+        resetKekuatanPassword();
+
+        document.getElementById('tombolUbahPassword')?.setAttribute('aria-expanded', 'false');
     }
 
 
-    if (passwordBaru !== passwordKonfirmasi) {
+    /**
+     * Tampilkan / sembunyikan isi kolom password.
+     */
+    function toggleLihatPassword(tombol, idInput) {
+        const input = document.getElementById(idInput);
+        const ikon = tombol.querySelector('i');
 
-        alert('❌ Konfirmasi password tidak sama!');
-        return;
+        const tampilkan = input.type === 'password';
 
+        input.type = tampilkan ? 'text' : 'password';
+        ikon.classList.toggle('ph-eye', !tampilkan);
+        ikon.classList.toggle('ph-eye-slash', tampilkan);
+
+        input.focus();
     }
 
 
-    alert('✅ Password berhasil diubah!');
+    /**
+     * Indikator sederhana kekuatan password baru.
+     */
+    function cekKekuatanPassword(nilai) {
+        if (!nilai) {
+            resetKekuatanPassword();
+            return;
+        }
 
-    document.getElementById('password_lama').value = '';
-    document.getElementById('password_baru').value = '';
-    document.getElementById('password_konfirmasi').value = '';
+        let skor = 0;
 
-    document.getElementById('passwordBox').style.display = 'none';
+        if (nilai.length >= 8) skor++;
+        if (nilai.length >= 12) skor++;
+        if (/[A-Z]/.test(nilai) && /[a-z]/.test(nilai)) skor++;
+        if (/\d/.test(nilai)) skor++;
+        if (/[^A-Za-z0-9]/.test(nilai)) skor++;
 
-}
+        const level = [
+            { lebar: '20%', warna: 'bg-red-500', teks: 'Lemah' },
+            { lebar: '40%', warna: 'bg-orange-500', teks: 'Cukup' },
+            { lebar: '60%', warna: 'bg-yellow-500', teks: 'Sedang' },
+            { lebar: '80%', warna: 'bg-blue-500', teks: 'Kuat' },
+            { lebar: '100%', warna: 'bg-green-500', teks: 'Sangat Kuat' },
+        ][Math.min(skor, 4)];
+
+        const wrapper = document.getElementById('passwordStrength');
+        const bar = document.getElementById('passwordStrengthBar');
+        const teks = document.getElementById('passwordStrengthText');
+
+        wrapper.classList.remove('hidden');
+        bar.className = 'h-full rounded-full transition-all duration-300 ' + level.warna;
+        bar.style.width = level.lebar;
+        teks.textContent = 'Kekuatan password: ' + level.teks;
+    }
+
+
+    /**
+     * Kembalikan indikator kekuatan ke kondisi awal.
+     */
+    function resetKekuatanPassword() {
+        document.getElementById('passwordStrength')?.classList.add('hidden');
+
+        const bar = document.getElementById('passwordStrengthBar');
+
+        if (bar) {
+            bar.style.width = '0%';
+        }
+
+        const teks = document.getElementById('passwordStrengthText');
+
+        if (teks) {
+            teks.textContent = '';
+        }
+    }
 
 </script>
 

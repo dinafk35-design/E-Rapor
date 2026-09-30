@@ -211,10 +211,10 @@
            STATISTICS
         ========================= */
         .stat-card {
-            background: white;
+            background: var(--stat-bg, white);
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid #e6e9ed;
+            border: 1px solid var(--stat-border, #e6e9ed);
             display: flex;
             align-items: center;
             gap: 15px;
@@ -225,8 +225,8 @@
             width: 55px;
             height: 55px;
             border-radius: 10px;
-            background: #f4f4f7;
-            color: #080841;
+            background: var(--stat-chip, #f4f4f7);
+            color: var(--stat-accent, #080841);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -236,11 +236,41 @@
         .stat-number {
             font-size: 25px;
             font-weight: bold;
+            color: var(--stat-accent, inherit);
         }
 
         .stat-title {
             font-size: 13px;
-            color: #22123d;
+            color: var(--stat-accent, #22123d);
+        }
+
+        /* Warna kotak statistik */
+        .stat-card.stat-red {
+            --stat-bg: #fee2e2;
+            --stat-border: #fecaca;
+            --stat-chip: #fecaca;
+            --stat-accent: #b91c1c;
+        }
+
+        .stat-card.stat-green {
+            --stat-bg: #dcfce7;
+            --stat-border: #bbf7d0;
+            --stat-chip: #bbf7d0;
+            --stat-accent: #15803d;
+        }
+
+        .stat-card.stat-yellow {
+            --stat-bg: #fef9c3;
+            --stat-border: #fef08a;
+            --stat-chip: #fef08a;
+            --stat-accent: #a16207;
+        }
+
+        .stat-card.stat-blue {
+            --stat-bg: #dbeafe;
+            --stat-border: #bfdbfe;
+            --stat-chip: #bfdbfe;
+            --stat-accent: #1d4ed8;
         }
 
         /* =========================
@@ -257,8 +287,8 @@
            TASK CARD
         ========================= */
         .task-card {
-            background: white;
-            border: 1px solid #e6e9ed;
+            background: #eef0f3;
+            border: 1px solid #dfe2e7;
             border-radius: 12px;
             padding: 22px;
             height: 100%;
@@ -274,8 +304,8 @@
             width: 48px;
             height: 48px;
             border-radius: 10px;
-            background: #eaf2f8;
-            color: #193b5d;
+            background: #dfe2e7;
+            color: #3f4a54;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -289,7 +319,7 @@
         }
 
         .task-card p {
-            color: #777;
+            color: #5f6670;
             font-size: 13px;
             margin-bottom: 15px;
         }

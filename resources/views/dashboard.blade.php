@@ -31,7 +31,7 @@
         {{-- TOTAL SISWA --}}
         <div class="col-md-6 col-xl-3">
 
-            <div class="stat-card bg-primary">
+            <div class="stat-card stat-red">
 
                 <div class="stat-icon">
                     <i class="ph ph-student"></i>
@@ -57,7 +57,7 @@
         {{-- TOTAL GURU --}}
         <div class="col-md-6 col-xl-3">
 
-            <div class="stat-card">
+            <div class="stat-card stat-green">
 
                 <div class="stat-icon">
                     <i class="ph ph-chalkboard-teacher"></i>
@@ -83,7 +83,7 @@
         {{-- MATA PELAJARAN --}}
         <div class="col-md-6 col-xl-3">
 
-            <div class="stat-card">
+            <div class="stat-card stat-yellow">
 
                 <div class="stat-icon">
                     <i class="ph ph-book"></i>
@@ -109,7 +109,7 @@
         {{-- TOTAL ROMBEL --}}
         <div class="col-md-6 col-xl-3">
 
-            <div class="stat-card">
+            <div class="stat-card stat-blue">
 
                 <div class="stat-icon">
                     <i class="ph ph-users-three"></i>

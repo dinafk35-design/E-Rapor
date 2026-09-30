@@ -42,14 +42,14 @@ class DataSekolahController extends Controller
             ->with('status', 'Data Sekolah berhasil disimpan.');
     }
 
-    public function edit(DataSekolah $sekolah): View
+    public function edit(DataSekolah $data_sekolah): View
     {
         return view('data-sekolah.edit', [
-            'sekolah' => $sekolah,
+            'sekolah' => $data_sekolah,
         ]);
     }
 
-    public function update(Request $request, DataSekolah $sekolah): RedirectResponse
+    public function update(Request $request, DataSekolah $data_sekolah): RedirectResponse
     {
         $data = $request->validate([
             'nama_sekolah' => ['required', 'string', 'max:255'],
@@ -63,16 +63,16 @@ class DataSekolahController extends Controller
             'alamat' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $sekolah->update($data);
+        $data_sekolah->update($data);
 
         return redirect()
             ->route('data-sekolah')
             ->with('status', 'Data Sekolah berhasil diperbarui.');
     }
 
-    public function destroy(DataSekolah $sekolah): RedirectResponse
+    public function destroy(DataSekolah $data_sekolah): RedirectResponse
     {
-        $sekolah->delete();
+        $data_sekolah->delete();
 
         return redirect()
             ->route('data-sekolah')

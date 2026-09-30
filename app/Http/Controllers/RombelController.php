@@ -17,12 +17,19 @@ class RombelController extends Controller
     {
         return view('rombel.index', [
             'rombel' => Rombel::with('sekolah')
+                ->with('wali')
                 ->withCount('anggota')
                 ->orderBy('id')
                 ->get(),
-            'sekolah' => DataSekolah::orderBy('nama_sekolah')->get(),
-            'guru' => DataGuru::orderBy('nama_guru')->get(),
-            'siswa' => DataSiswa::orderBy('nama_siswa')->get(),
+            'sekolahList' => DataSekolah::orderBy('nama_sekolah')->get(),
+            'guruList' => DataGuru::orderBy('nama_guru')->get(),
+        ]);
+    }
+
+    public function show(Rombel $rombel): View
+    {
+        return view('rombel.show', [
+            'rombel' => $rombel->load(['sekolah', 'wali', 'anggota.siswa']),
         ]);
     }
 

@@ -116,7 +116,7 @@
             <th class="px-4 py-3">Rombel</th>
             <th class="px-4 py-3">Tahun Ajaran</th>
             <th class="px-4 py-3">Semester</th>
-            <th class="px-4 py-3 text-center w-32">Aksi</th>
+            <th class="px-4 py-3 text-center min-w-[180px]">Aksi</th>
         </x-slot>
 
         @forelse ($waliKelas as $item)
@@ -127,11 +127,30 @@
                 <td class="px-4 py-3">{{ $item->tahun_ajaran ?? '-' }}</td>
                 <td class="px-4 py-3">{{ $item->semester ?? '-' }}</td>
                 <td class="px-4 py-3 text-center">
-                    <a href="{{ route('wali-kelas.edit', $item->id) }}"
-                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition">
-                        <i class="ph ph-pencil-simple text-base"></i>
-                        Edit
-                    </a>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5">
+                        <a href="{{ route('wali-kelas.edit', $item->id) }}"
+                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition"
+                           title="Ubah data wali kelas">
+                            <i class="ph ph-pencil-simple text-base"></i>
+                            Edit
+                        </a>
+
+                        <form action="{{ route('wali-kelas.destroy', $item->id) }}"
+                              method="POST"
+                              class="inline-block"
+                              data-hapus-form>
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit"
+                                    data-nama="{{ $item->guru?->nama_guru ?? 'Wali Kelas' }}"
+                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition"
+                                    title="Hapus data wali kelas">
+                                <i class="ph ph-trash text-base"></i>
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         @empty
@@ -164,6 +183,25 @@
         document.getElementById('semesterWaliKelas').value = "";
         alert("Filter berhasil direset.");
     }
+
+    /* ============================= */
+    /* KONFIRMASI HAPUS             */
+    /* ============================= */
+
+    document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            const nama = form.querySelector('button[data-nama]').dataset.nama;
+
+            const yakin = confirm(
+                'Yakin ingin menghapus penugasan wali kelas untuk "' + nama + '"?\n' +
+                'Data yang sudah dihapus tidak dapat dikembalikan.'
+            );
+
+            if (!yakin) {
+                event.preventDefault();
+            }
+        });
+    });
 </script>
 
 @endsection

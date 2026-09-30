@@ -6,6 +6,7 @@ use App\Models\DataGuru;
 use App\Models\DataSekolah;
 use App\Models\DataSiswa;
 use App\Models\MataPelajaran;
+use App\Models\NilaiSiswa;
 use App\Models\Rombel;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -476,13 +477,75 @@ class EraporCrudTest extends TestCase
 
     public function test_daftar_mapel_tersedia_dikirim_ke_javascript(): void
     {
+        DataSiswa::create(['nama_siswa' => 'Siswa Punya Mapel']);
         $mapel = MataPelajaran::create(['nama_mata_pelajaran' => 'Basis Data']);
 
         $this->actingAsAdmin()
             ->get(route('input-nilai'))
             ->assertOk()
-            ->assertSee('daftarMataPelajaran', false)
+            ->assertSee('pilihanMapel', false)
             ->assertSee('"' . $mapel->id . '":"Basis Data"', false);
+    }
+
+    public function test_mapel_yang_sudah_dinilai_tidak_ditawarkan(): void
+    {
+        $siswa = DataSiswa::create(['nama_siswa' => 'Siswa Uji']);
+        $sudahDinilai = MataPelajaran::create(['nama_mata_pelajaran' => 'Sudah Dinilai']);
+        $belumDinilai = MataPelajaran::create(['nama_mata_pelajaran' => 'Belum Dinilai']);
+
+        NilaiSiswa::create([
+            'siswa_id' => $siswa->id,
+            'mata_pelajaran_id' => $sudahDinilai->id,
+            'tahun_ajaran' => '2026/2027',
+            'semester' => 'Ganjil',
+            'nilai' => 90,
+        ]);
+
+        $html = $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertSame(1, preg_match('/const pilihanMapel = (.*?);\n/s', $html, $cocok));
+
+        $pilihan = json_decode($cocok[1], true);
+
+        $namaDitawarkan = array_values($pilihan[$siswa->id] ?? []);
+
+        $this->assertContains('Belum Dinilai', $namaDitawarkan);
+        $this->assertNotContains('Sudah Dinilai', $namaDitawarkan);
+    }
+
+    public function test_hapus_nilai_siswa_hanya_pada_periode_terpilih(): void
+    {
+        $siswa = DataSiswa::create(['nama_siswa' => 'Siswa Hapus']);
+        $mapel = MataPelajaran::create(['nama_mata_pelajaran' => 'Mapel Hapus']);
+
+        $dihapus = NilaiSiswa::create([
+            'siswa_id' => $siswa->id,
+            'mata_pelajaran_id' => $mapel->id,
+            'tahun_ajaran' => '2026/2027',
+            'semester' => 'Ganjil',
+            'nilai' => 80,
+        ]);
+
+        $dipertahankan = NilaiSiswa::create([
+            'siswa_id' => $siswa->id,
+            'mata_pelajaran_id' => $mapel->id,
+            'tahun_ajaran' => '2025/2026',
+            'semester' => 'Genap',
+            'nilai' => 75,
+        ]);
+
+        $this->actingAsAdmin()
+            ->delete(route('input-nilai.destroy', $siswa->id), [
+                'tahun_ajaran' => '2026/2027',
+                'semester' => 'Ganjil',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('nilai_siswa', ['id' => $dihapus->id]);
+        $this->assertDatabaseHas('nilai_siswa', ['id' => $dipertahankan->id]);
     }
 
     /*

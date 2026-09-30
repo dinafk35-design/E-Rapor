@@ -14,6 +14,7 @@ class DataSiswaController extends Controller
     {
         return view('data-siswa.index', [
             'siswa' => DataSiswa::with('rombel')->orderBy('id')->get(),
+            'rombelList' => Rombel::orderBy('nama_rombel')->get(),
         ]);
     }
 
@@ -43,15 +44,22 @@ class DataSiswaController extends Controller
             ->with('status', 'Data Siswa berhasil disimpan.');
     }
 
-    public function edit(DataSiswa $siswa): View
+    public function show(DataSiswa $data_siswa): View
+    {
+        return view('data-siswa.show', [
+            'siswa' => $data_siswa->load('rombel'),
+        ]);
+    }
+
+    public function edit(DataSiswa $data_siswa): View
     {
         return view('data-siswa.edit', [
-            'siswa' => $siswa,
+            'siswa' => $data_siswa,
             'rombel' => Rombel::orderBy('nama_rombel')->get(),
         ]);
     }
 
-    public function update(Request $request, DataSiswa $siswa): RedirectResponse
+    public function update(Request $request, DataSiswa $data_siswa): RedirectResponse
     {
         $data = $request->validate([
             'nisn' => ['nullable', 'string', 'max:30'],
@@ -63,16 +71,16 @@ class DataSiswaController extends Controller
             'alamat' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $siswa->update($data);
+        $data_siswa->update($data);
 
         return redirect()
             ->route('data-siswa')
             ->with('status', 'Data Siswa berhasil diperbarui.');
     }
 
-    public function destroy(DataSiswa $siswa): RedirectResponse
+    public function destroy(DataSiswa $data_siswa): RedirectResponse
     {
-        $siswa->delete();
+        $data_siswa->delete();
 
         return redirect()
             ->route('data-siswa')

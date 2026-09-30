@@ -18,10 +18,12 @@ class MataPelajaranController extends Controller
     {
         return view('mata-pelajaran.index', [
             'mataPelajaran' => MataPelajaran::with('sekolah')
+                ->with('guruMengajar.guru')
                 ->withCount('guruMengajar')
                 ->orderBy('nama_mata_pelajaran')
                 ->get(),
-            'sekolah' => DataSekolah::orderBy('nama_sekolah')->get(),
+            'sekolahList' => DataSekolah::orderBy('nama_sekolah')->get(),
+            'guruList' => DataGuru::orderBy('nama_guru')->get(),
         ]);
     }
 

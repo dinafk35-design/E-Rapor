@@ -104,7 +104,7 @@
                 <th class="px-6 py-4">Kelompok</th>
                 <th class="px-6 py-4">Sekolah</th>
                 <th class="px-6 py-4">Guru Mengajar</th>
-                <th class="px-6 py-4 text-center">Aksi</th>
+                <th class="px-6 py-4 text-center min-w-[180px]">Aksi</th>
             </x-slot:thead>
 
             <!-- Body / Isi Tabel -->
@@ -115,13 +115,39 @@
                     <td class="px-6 py-5">{{ $item->nama_mata_pelajaran ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $item->kelompok ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $item->sekolah->nama_sekolah ?? '-' }}</td>
-                    <td class="px-6 py-5">{{ $item->guru_mengajar ?? '-' }}</td>
+                    <td class="px-6 py-5">
+                        @forelse ($item->guruMengajar->pluck('guru')->filter()->pluck('nama_guru') as $namaGuru)
+                            <span
+                                class="mb-1 mr-1 inline-block rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-indigo-700">{{ $namaGuru }}</span>
+                        @empty
+                            <span class="text-gray-500">-</span>
+                        @endforelse
+                    </td>
                     <td class="px-6 py-5 text-center">
-                        <a href="{{ route('mata-pelajaran.edit', $item->id) }}"
-                            class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600">
-                            <i class="ph ph-pencil-simple text-sm"></i>
-                            Edit
-                        </a>
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                            <a href="{{ route('mata-pelajaran.edit', $item->id) }}"
+                                class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600"
+                                title="Ubah data mata pelajaran">
+                                <i class="ph ph-pencil-simple text-sm"></i>
+                                Edit
+                            </a>
+
+                            <form action="{{ route('mata-pelajaran.destroy', $item->id) }}"
+                                method="POST"
+                                class="inline-block"
+                                data-hapus-form>
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                    data-nama="{{ $item->nama_mata_pelajaran }}"
+                                    class="inline-flex items-center gap-1 rounded-lg bg-red-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-red-600"
+                                    title="Hapus data mata pelajaran">
+                                    <i class="ph ph-trash text-sm"></i>
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             @empty
@@ -152,5 +178,24 @@
             document.getElementById('guruMapel').value = "";
             alert("Filter berhasil direset.");
         }
+
+        /* ============================= */
+        /* KONFIRMASI HAPUS             */
+        /* ============================= */
+
+        document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const nama = form.querySelector('button[data-nama]').dataset.nama;
+
+                const yakin = confirm(
+                    'Yakin ingin menghapus mata pelajaran "' + nama + '"?\n' +
+                    'Data yang sudah dihapus tidak dapat dikembalikan.'
+                );
+
+                if (!yakin) {
+                    event.preventDefault();
+                }
+            });
+        });
     </script>
 @endsection

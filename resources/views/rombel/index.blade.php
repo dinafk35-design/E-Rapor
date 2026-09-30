@@ -118,7 +118,7 @@
             <th class="px-4 py-3">Sekolah</th>
             <th class="px-4 py-3">Wali Kelas</th>
             <th class="px-4 py-3 text-center">Anggota</th>
-            <th class="px-4 py-3 text-center w-32">Aksi</th>
+            <th class="px-4 py-3 text-center min-w-[220px]">Aksi</th>
         </x-slot>
 
         @forelse ($rombel as $item)
@@ -130,11 +130,37 @@
                 <td class="px-4 py-3">{{ $item->wali?->nama_guru ?? '-' }}</td>
                 <td class="px-4 py-3 text-center text-gray-600">{{ $item->anggota_count }} Siswa</td>
                 <td class="px-4 py-3 text-center">
-                    <a href="{{ route('rombel.edit', $item->id) }}"
-                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition">
-                        <i class="ph ph-pencil-simple text-base"></i>
-                        Edit
-                    </a>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5">
+                        <a href="{{ route('rombel.show', $item->id) }}"
+                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 text-white text-xs font-medium hover:bg-blue-600 transition"
+                           title="Lihat detail rombel">
+                            <i class="ph ph-eye text-base"></i>
+                            Detail
+                        </a>
+
+                        <a href="{{ route('rombel.edit', $item->id) }}"
+                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition"
+                           title="Ubah data rombel">
+                            <i class="ph ph-pencil-simple text-base"></i>
+                            Edit
+                        </a>
+
+                        <form action="{{ route('rombel.destroy', $item->id) }}"
+                              method="POST"
+                              class="inline-block"
+                              data-hapus-form>
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit"
+                                    data-nama="{{ $item->nama_rombel }}"
+                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition"
+                                    title="Hapus data rombel">
+                                <i class="ph ph-trash text-base"></i>
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         @empty
@@ -167,6 +193,25 @@
         document.getElementById('waliRombel').value = "";
         alert("Filter berhasil direset.");
     }
+
+    /* ============================= */
+    /* KONFIRMASI HAPUS             */
+    /* ============================= */
+
+    document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            const nama = form.querySelector('button[data-nama]').dataset.nama;
+
+            const yakin = confirm(
+                'Yakin ingin menghapus rombel "' + nama + '"?\n' +
+                'Data yang sudah dihapus tidak dapat dikembalikan.'
+            );
+
+            if (!yakin) {
+                event.preventDefault();
+            }
+        });
+    });
 </script>
 
 @endsection

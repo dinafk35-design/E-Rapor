@@ -18,8 +18,7 @@ class WaliKelasController extends Controller
             'waliKelas' => WaliKelas::with(['guru', 'rombel'])
                 ->orderBy('id')
                 ->get(),
-            'guru' => DataGuru::orderBy('nama_guru')->get(),
-            'rombel' => Rombel::orderBy('nama_rombel')->get(),
+            'rombelList' => Rombel::orderBy('nama_rombel')->get(),
         ]);
     }
 
@@ -55,16 +54,16 @@ class WaliKelasController extends Controller
             ->with('status', 'Data Wali Kelas berhasil disimpan.');
     }
 
-    public function edit(WaliKelas $waliKelas): View
+    public function edit(WaliKelas $wali_kela): View
     {
         return view('wali-kelas.edit', [
-            'waliKelas' => $waliKelas,
+            'waliKelas' => $wali_kela,
             'guru' => DataGuru::orderBy('nama_guru')->get(),
             'rombel' => Rombel::orderBy('nama_rombel')->get(),
         ]);
     }
 
-    public function update(Request $request, WaliKelas $waliKelas): RedirectResponse
+    public function update(Request $request, WaliKelas $wali_kela): RedirectResponse
     {
         $data = $request->validate([
             'guru_id' => ['required', 'integer', 'exists:data_guru,id'],
@@ -73,16 +72,16 @@ class WaliKelasController extends Controller
             'semester' => ['required', 'string', 'max:20'],
         ]);
 
-        $waliKelas->update($data);
+        $wali_kela->update($data);
 
         return redirect()
             ->route('wali-kelas')
             ->with('status', 'Data Wali Kelas berhasil diperbarui.');
     }
 
-    public function destroy(WaliKelas $waliKelas): RedirectResponse
+    public function destroy(WaliKelas $wali_kela): RedirectResponse
     {
-        $waliKelas->delete();
+        $wali_kela->delete();
 
         return redirect()
             ->route('wali-kelas')
