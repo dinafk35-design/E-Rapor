@@ -4,7 +4,7 @@ name: Deploy Aplikasi TODO LIST ke Infinityfree via FTP
 on:
   push:
     branches:
-      - master
+      - main
 
 concurrency:
   group: deploy-${{ github.ref }}
