@@ -16,25 +16,27 @@ class GuruMengajar extends Model
         'semester',
     ];
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | RELASI
-    |--------------------------------------------------------------------------
-    */
-
     public function guru()
     {
-        return $this->belongsTo(DataGuru::class, 'guru_id');
+        return $this->belongsTo(
+            DataGuru::class,
+            'guru_id'
+        );
     }
 
     public function mataPelajaran()
     {
-        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
+        return $this->belongsTo(
+            MataPelajaran::class,
+            'mata_pelajaran_id'
+        );
     }
 
     public function rombel()
     {
-        return $this->belongsTo(Rombel::class, 'rombel_id');
+        return $this->belongsTo(
+            Rombel::class,
+            'rombel_id'
+        );
     }
 }

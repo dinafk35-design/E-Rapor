@@ -122,7 +122,7 @@ class RombelController extends Controller
         $rombel->delete();
 
         return redirect()
-            ->route('rombel')
+            ->route('rombel.index')
             ->with('status', 'Data Rombel berhasil dihapus.');
     }
 

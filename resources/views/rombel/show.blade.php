@@ -27,7 +27,7 @@
     <div class="mb-6 flex flex-wrap gap-3">
 
         <a
-            href="{{ route('rombel') }}"
+            href="{{ route('rombel.index') }}"
             class="inline-flex items-center gap-1 rounded-lg bg-gray-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-600"
         >
             <i class="ph ph-arrow-left"></i>

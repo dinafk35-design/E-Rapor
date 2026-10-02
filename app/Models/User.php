@@ -31,4 +31,27 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE DATA SISWA / DATA GURU
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Data siswa yang memakai akun ini.
+     */
+    public function siswa()
+    {
+        return $this->hasOne(DataSiswa::class);
+    }
+
+    /**
+     * Data guru yang memakai akun ini.
+     */
+    public function guru()
+    {
+        return $this->hasOne(DataGuru::class);
+    }
 }

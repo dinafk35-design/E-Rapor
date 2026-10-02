@@ -7,13 +7,9 @@
     <!-- LOGO -->
 
     <div class="sidebar-header">
-
         <i class="ph ph-graduation-cap"></i>
-
         E-RAPOR SMK
-
     </div>
-
 
     <!-- MENU UTAMA -->
 
@@ -28,7 +24,6 @@
         Profile
     </a>
 
-
     @if (auth()->user()?->role == 'admin')
         <!-- DATA MASTER -->
 
@@ -37,37 +32,43 @@
         </div>
 
         <a
-            href="{{ route('data-sekolah') }}"class="menu-link {{ request()->routeIs('data-sekolah') ? 'bg-slate-800' : '' }}">
+            href="{{ route('data-sekolah.index') }}"class="menu-link {{ request()->routeIs('data-sekolah.index') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Data Sekolah</span>
         </a>
 
         <a
-            href="{{ route('data-guru') }}"class="menu-link {{ request()->routeIs('data-guru') ? 'bg-slate-800' : '' }}">
+            href="{{ route('data-guru.index') }}"class="menu-link {{ request()->routeIs('data-guru.index') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Data Guru</span>
         </a>
 
         <a
-            href="{{ route('data-siswa') }}"class="menu-link {{ request()->routeIs('data-siswa') ? 'bg-slate-800' : '' }}">
+            href="{{ route('data-siswa.index') }}"class="menu-link {{ request()->routeIs('data-siswa.index') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Data Siswa</span>
         </a>
 
         <a
-            href="{{ route('mata-pelajaran') }}"class="menu-link {{ request()->routeIs('mata-pelajaran') ? 'bg-slate-800' : '' }}">
+            href="{{ route('mata-pelajaran.index') }}"class="menu-link {{ request()->routeIs('mata-pelajaran.index') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Mata Pelajaran</span>
         </a>
 
         <a
-            href="{{ route('rombel') }}"class="menu-link {{ request()->routeIs('rombel') ? 'bg-slate-800' : '' }}">
+            href="{{ route('guru-mengajar.index') }}"class="menu-link {{ request()->routeIs('guru-mengajar.*') ? 'bg-slate-800' : '' }}">
+            <i class="ph ph-chalkboard-teacher"></i>
+            <span>Guru Mengajar</span>
+        </a>
+
+        <a
+            href="{{ route('rombel.index') }}"class="menu-link {{ request()->routeIs('rombel.index') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Rombel</span>
         </a>
 
         <a
-            href="{{ route('wali-kelas') }}"class="menu-link {{ request()->routeIs('wali-kelas') ? 'bg-slate-800' : '' }}">
+            href="{{ route('wali-kelas.index') }}"class="menu-link {{ request()->routeIs('wali-kelas.index') ? 'bg-slate-800' : '' }}">
             <i class="ph ph-chalkboard-teacher"></i>
             <span>Wali Kelas</span>
         </a>
@@ -149,14 +150,14 @@
         </a>
     @endif
 
-    <a href="#" class="logout-link"
-        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-        <i class="ph ph-sign-out"></i>
-        <span>Logout</span>
-    </a>
-
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    <form action="{{ route('logout') }}" method="POST">
         @csrf
+
+        <button type="submit"
+            class="flex pointer items-center gap-3 px-5 py-3 mx-[10px] my-[3px] text-[#f9f6f6] no-underline rounded-[7px] text-sm transition duration-200 hover:bg-red-600">
+            <i class="ph ph-sign-out"></i>
+            <span>Logout</span>
+        </button>
     </form>
 
 

@@ -84,7 +84,7 @@ class WaliKelasController extends Controller
         $wali_kela->delete();
 
         return redirect()
-            ->route('wali-kelas')
+            ->route('wali-kelas.index')
             ->with('status', 'Data Wali Kelas berhasil dihapus.');
     }
 }

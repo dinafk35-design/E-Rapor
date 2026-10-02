@@ -216,12 +216,81 @@
             </div>
 
 
+            <!-- ===================================================== -->
+            <!-- DATA AKUN LOGIN -->
+            <!-- ===================================================== -->
+
+            <div class="mt-6 border-t border-gray-200 pt-5">
+
+                <div class="mb-4 flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+                    <i class="ph ph-info mt-0.5 shrink-0"></i>
+                    <p>
+                        Akun login guru dibuat otomatis dari data di atas.
+                        Username default memakai NIP, dan email guru ikut
+                        dipakai sebagai email akun. Kosongkan password bila
+                        ingin sistem yang menetapkannya.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                    <!-- USERNAME -->
+                    <div>
+
+                        <label class="mb-2 block font-semibold">
+                            Username Login
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            value="{{ old('username') }}"
+                            placeholder="Kosongkan untuk memakai NIP"
+                            class="w-full rounded-lg border px-4 py-2"
+                        >
+
+                        @error('username')
+                            <p class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div>
+
+                        <label class="mb-2 block font-semibold">
+                            Password Awal
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Kosongkan untuk dibuatkan sistem"
+                            class="w-full rounded-lg border px-4 py-2"
+                        >
+
+                        @error('password')
+                            <p class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
             <!-- BUTTON -->
 
             <div class="flex gap-3 mt-6">
 
                 <a
-                    href="{{ route('data-guru') }}"
+                    href="{{ route('data-guru.index') }}"
                     class="px-5 py-2 rounded-lg bg-gray-500 text-white"
                 >
                     <i class="ph ph-arrow-left mr-1"></i>

@@ -71,7 +71,6 @@
     $passwordTerbuka = $errors->has('current_password') || $errors->has('password');
 @endphp
 
-
 <div class="content">
 
     <!-- ============================= -->

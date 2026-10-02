@@ -14,7 +14,7 @@
 
         <!-- TOMBOL AKSI -->
         <div class="mb-6 flex flex-wrap gap-3">
-            <a href="{{ route('data-siswa') }}"
+            <a href="{{ route('data-siswa.index') }}"
                 class="inline-flex items-center gap-1 rounded-lg bg-gray-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-600">
                 <i class="ph ph-arrow-left"></i>
                 Kembali
@@ -151,6 +151,55 @@
             @else
                 <p class="text-sm text-gray-500">
                     Siswa ini belum terdaftar pada rombongan belajar mana pun.
+                </p>
+            @endif
+        </div>
+
+        <!-- AKUN LOGIN -->
+        <div class="section-title">
+            <i class="ph ph-key"></i>
+            Akun Login
+        </div>
+
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+            @if ($siswa->user)
+                <dl class="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-3">
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            Username
+                        </dt>
+                        <dd class="mt-1 text-base font-semibold text-gray-800">
+                            {{ $siswa->user->username }}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            Peran
+                        </dt>
+                        <dd class="mt-1">
+                            <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                                Siswa
+                            </span>
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            dibuat
+                        </dt>
+                        <dd class="mt-1 text-base text-gray-700">
+                            {{ $siswa->user->created_at?->format('d/m/Y') ?? '-' }}
+                        </dd>
+                    </div>
+                </dl>
+
+                <p class="mt-4 text-sm text-gray-500">
+                    Password dapat diubah siswa sendiri lewat halaman Profil.
+                </p>
+            @else
+                <p class="text-sm text-gray-500">
+                    Siswa ini belum memiliki akun login.
                 </p>
             @endif
         </div>

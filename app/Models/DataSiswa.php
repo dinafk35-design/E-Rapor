@@ -16,11 +16,27 @@ class DataSiswa extends Model
         'tanggal_lahir',
         'alamat',
         'rombel_id',
+        'user_id',
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE USER
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Akun login milik siswa ini.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 
     /*

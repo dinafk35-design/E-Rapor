@@ -9,7 +9,10 @@ use App\Models\MataPelajaran;
 use App\Models\NilaiSiswa;
 use App\Models\Rombel;
 use App\Models\User;
+use App\Services\PembuatanAkun;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 use Tests\TestCase;
 
 class EraporCrudTest extends TestCase
@@ -28,6 +31,33 @@ class EraporCrudTest extends TestCase
     private function actingAsAdmin()
     {
         return $this->actingAs($this->user);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | BANTUAN PENGUJIAN INPUT NILAI
+    |--------------------------------------------------------------------------
+    |
+    | Isi daftar nilai satu siswa diambil dari blok <div id="daftar-nilai-...">
+    | supaya nama mata pelajaran dari filter atau pilihan tambah nilai tidak
+    | ikut terhitung.
+    |
+    */
+
+    private function ambilDaftarNilai(string $html, int $siswaId): string
+    {
+        $pola = '/id="daftar-nilai-' . $siswaId . '"(.*?)<button[^>]*tambahNilaiBaris/s';
+
+        return preg_match($pola, $html, $cocok) ? $cocok[1] : '';
+    }
+
+    private function pilihanMapelSiswa(string $html, int $siswaId): array
+    {
+        preg_match('/const pilihanMapel = (.*?);\n/s', $html, $cocok);
+
+        $pilihan = json_decode($cocok[1] ?? '', true) ?: [];
+
+        return array_values($pilihan[$siswaId] ?? []);
     }
 
     /*
@@ -123,6 +153,277 @@ class EraporCrudTest extends TestCase
             ->assertSessionHasErrors('email');
 
         $this->assertDatabaseCount('data_guru', 0);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI DATA SISWA / DATA GURU KE TABEL USERS
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_tambah_siswa_otomatis_membuat_akun_user(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0098765432',
+                'nama_siswa' => 'Ahmad Fauzan',
+            ])
+            ->assertRedirect(route('data-siswa'));
+
+        $siswa = DataSiswa::firstWhere('nama_siswa', 'Ahmad Fauzan');
+
+        $this->assertNotNull($siswa->user_id);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $siswa->user_id,
+            'name' => 'Ahmad Fauzan',
+            'username' => '0098765432',
+            'role' => 'siswa',
+        ]);
+
+        // Relasi dari sisi siswa maupun sisi user harus menunjuk baris sama.
+        $this->assertTrue($siswa->user->is($siswa->user));
+        $this->assertTrue(User::find($siswa->user_id)->siswa->is($siswa));
+    }
+
+    public function test_tambah_guru_otomatis_membuat_akun_user(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-guru.store'), [
+                'nip' => '198501012010011001',
+                'nama_guru' => 'Budi Santoso, S.Pd.',
+                'email' => 'budi@contoh.sch.id',
+            ])
+            ->assertRedirect(route('data-guru'));
+
+        $guru = DataGuru::firstWhere('nip', '198501012010011001');
+
+        $this->assertNotNull($guru->user_id);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $guru->user_id,
+            'name' => 'Budi Santoso, S.Pd.',
+            'username' => '198501012010011001',
+            'email' => 'budi@contoh.sch.id',
+            'role' => 'guru',
+        ]);
+
+        $this->assertTrue(User::find($guru->user_id)->guru->is($guru));
+    }
+
+    public function test_password_awal_sistem_langsung_bisa_dipakai_login(): void
+    {
+        $response = $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0055550001',
+                'nama_siswa' => 'Siswa Login',
+            ]);
+
+        // Password awal hanya muncul sekali, pada pesan sukses.
+        $response->assertSessionHas('status');
+
+        $status = session('status');
+
+        $this->assertMatchesRegularExpression('/Password awal: (\S+)/', $status);
+
+        preg_match('/Password awal: (\S+)/', $status, $cocok);
+
+        $passwordAwal = $cocok[1];
+
+        $this->assertTrue(
+            Hash::check($passwordAwal, User::firstWhere('username', '0055550001')->password)
+        );
+
+        // Akun hasil pembuatan otomatis harus benar-benar bisa login.
+        $this->post('/logout');
+
+        $this->post('/login', [
+            'username' => '0055550001',
+            'password' => $passwordAwal,
+        ])->assertRedirect(route('siswa.dashboard'));
+
+        $this->assertAuthenticated();
+    }
+
+    public function test_admin_bisa_menentukan_username_dan_password_saat_menambah_siswa(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0011223344',
+                'nama_siswa' => 'Siswa Custom',
+                'username' => 'siswa.custom',
+                'password' => 'rahasia-siswa',
+            ]);
+
+        $user = User::firstWhere('username', 'siswa.custom');
+
+        $this->assertNotNull($user);
+        $this->assertTrue(Hash::check('rahasia-siswa', $user->password));
+
+        // Password yang dipilih admin tidak perlu ditampilkan lagi.
+        $this->assertStringNotContainsString('Password awal', session('status'));
+    }
+
+    public function test_username_ganda_ditambahkan_akhiran_otomatis(): void
+    {
+        User::factory()->create(['username' => '0098765432']);
+
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0098765432',
+                'nama_siswa' => 'Siswa NISN Sama',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'username' => '0098765432-2',
+            'role' => 'siswa',
+        ]);
+    }
+
+    public function test_siswa_tanpa_nisn_tetap_mendapat_username_dari_nama(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nama_siswa' => 'Budi Santoso',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'budi-santoso',
+            'role' => 'siswa',
+        ]);
+    }
+
+    public function test_email_guru_yang_bentrok_tidak_menggagalkan_pembuatan_akun(): void
+    {
+        User::factory()->create(['email' => 'budi@contoh.sch.id']);
+
+        $this->actingAsAdmin()
+            ->post(route('data-guru.store'), [
+                'nama_guru' => 'Guru Email Kembar',
+                'email' => 'budi@contoh.sch.id',
+            ])
+            ->assertRedirect(route('data-guru'));
+
+        $guru = DataGuru::firstWhere('nama_guru', 'Guru Email Kembar');
+
+        $this->assertNotNull($guru->user_id);
+
+        // Email users unik, jadi email kembar disimpan kosong.
+        $this->assertNull($guru->user->email);
+    }
+
+    public function test_gagal_membuat_akun_membatalkan_data_siswa(): void
+    {
+        // Paksa pembuatan akun meledak untuk memeriksa rollback.
+        $this->instance(PembuatanAkun::class, new class extends PembuatanAkun
+        {
+            public function untukSiswa(DataSiswa $siswa, array $opsi = []): array
+            {
+                throw new RuntimeException('Gagal membuat akun');
+            }
+        });
+
+        // Biarkan exception naik ke test supaya bisa diperiksa.
+        $this->withoutExceptionHandling();
+
+        try {
+            $this->actingAsAdmin()
+                ->post(route('data-siswa.store'), ['nama_siswa' => 'Siswa Gagal']);
+
+            $this->fail('Harus melempar exception.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('Gagal membuat akun', $e->getMessage());
+        }
+
+        // Data siswa tidak boleh tertinggal tanpa akun.
+        $this->assertDatabaseCount('data_siswa', 0);
+    }
+
+    public function test_ubah_nama_siswa_memperbarui_nama_akun(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0077770001',
+                'nama_siswa' => 'Nama Lama',
+            ]);
+
+        $siswa = DataSiswa::firstWhere('nisn', '0077770001');
+
+        $this->actingAsAdmin()
+            ->put(route('data-siswa.update', $siswa), [
+                'nisn' => '0077770001',
+                'nama_siswa' => 'Nama Baru',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $siswa->user_id,
+            'name' => 'Nama Baru',
+        ]);
+    }
+
+    public function test_hapus_siswa_ikut_menghapus_akunnya(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0088880001',
+                'nama_siswa' => 'Siswa Dihapus',
+            ]);
+
+        $siswa = DataSiswa::firstWhere('nisn', '0088880001');
+        $userId = $siswa->user_id;
+
+        $this->actingAsAdmin()
+            ->delete(route('data-siswa.destroy', $siswa));
+
+        $this->assertDatabaseMissing('data_siswa', ['id' => $siswa->id]);
+        $this->assertDatabaseMissing('users', ['id' => $userId]);
+    }
+
+    public function test_hapus_guru_ikut_menghapus_akunnya(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-guru.store'), [
+                'nip' => '197001012005011001',
+                'nama_guru' => 'Guru Dihapus',
+            ]);
+
+        $guru = DataGuru::firstWhere('nip', '197001012005011001');
+        $userId = $guru->user_id;
+
+        $this->actingAsAdmin()
+            ->delete(route('data-guru.destroy', $guru));
+
+        $this->assertDatabaseMissing('data_guru', ['id' => $guru->id]);
+        $this->assertDatabaseMissing('users', ['id' => $userId]);
+    }
+
+    public function test_hapus_siswa_tanpa_akun_tidak_meneworthy(): void
+    {
+        // Baris lama yang dibuat sebelum relasi ini ada tidak punya akun.
+        $siswa = DataSiswa::create(['nama_siswa' => 'Siswa Legacy']);
+
+        $this->actingAsAdmin()
+            ->delete(route('data-siswa.destroy', $siswa))
+            ->assertRedirect(route('data-siswa'));
+
+        $this->assertDatabaseMissing('data_siswa', ['id' => $siswa->id]);
+    }
+
+    public function test_halaman_detail_siswa_menampilkan_username_akun(): void
+    {
+        $this->actingAsAdmin()
+            ->post(route('data-siswa.store'), [
+                'nisn' => '0044440001',
+                'nama_siswa' => 'Siswa Detail',
+            ]);
+
+        $siswa = DataSiswa::firstWhere('nisn', '0044440001');
+
+        $this->actingAsAdmin()
+            ->get(route('data-siswa.show', $siswa))
+            ->assertOk()
+            ->assertSee('Akun Login')
+            ->assertSee('0044440001');
     }
 
     /*
@@ -514,6 +815,150 @@ class EraporCrudTest extends TestCase
 
         $this->assertContains('Belum Dinilai', $namaDitawarkan);
         $this->assertNotContains('Sudah Dinilai', $namaDitawarkan);
+    }
+
+    public function test_mapel_belum_bernilai_tidak_ditampilkan_di_tabel(): void
+    {
+        $siswa = DataSiswa::create(['nama_siswa' => 'Siswa Uji Tabel']);
+        $sudahDinilai = MataPelajaran::create(['nama_mata_pelajaran' => 'Sudah Dinilai']);
+        $belumDinilai = MataPelajaran::create(['nama_mata_pelajaran' => 'Belum Dinilai']);
+
+        NilaiSiswa::create([
+            'siswa_id' => $siswa->id,
+            'mata_pelajaran_id' => $sudahDinilai->id,
+            'tahun_ajaran' => '2026/2027',
+            'semester' => 'Ganjil',
+            'nilai' => 90,
+        ]);
+
+        $html = $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->getContent();
+
+        $daftar = $this->ambilDaftarNilai($html, $siswa->id);
+
+        // Hanya mapel yang sudah ada nilainya yang tampil di kolom Nilai
+        $this->assertStringContainsString('Sudah Dinilai', $daftar);
+        $this->assertStringNotContainsString('Belum Dinilai', $daftar);
+
+        // Mapel kosong tidak punya input nilai
+        $this->assertStringContainsString(
+            'nilai[' . $siswa->id . '][' . $sudahDinilai->id . ']',
+            $daftar
+        );
+
+        $this->assertStringNotContainsString(
+            'nilai[' . $siswa->id . '][' . $belumDinilai->id . ']',
+            $daftar
+        );
+    }
+
+    public function test_mapel_belum_bernilai_tidak_muncul_di_rincian_detail(): void
+    {
+        $siswa = DataSiswa::create(['nama_siswa' => 'Siswa Uji Detail']);
+        MataPelajaran::create(['nama_mata_pelajaran' => 'Sudah Dinilai']);
+        MataPelajaran::create(['nama_mata_pelajaran' => 'Belum Dinilai']);
+
+        NilaiSiswa::create([
+            'siswa_id' => $siswa->id,
+            'mata_pelajaran_id' => 1,
+            'tahun_ajaran' => '2026/2027',
+            'semester' => 'Ganjil',
+            'nilai' => 90,
+        ]);
+
+        $html = $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->getContent();
+
+        preg_match('/const rincianNilai = (.*?);\n/s', $html, $cocok);
+
+        $rincian = json_decode($cocok[1] ?? '', true) ?: [];
+
+        $namaMapel = array_column($rincian[$siswa->id]['nilai'] ?? [], 'mapel');
+
+        $this->assertContains('Sudah Dinilai', $namaMapel);
+        $this->assertNotContains('Belum Dinilai', $namaMapel);
+    }
+
+    public function test_siswa_tanpa_nilai_menampilkan_kosong(): void
+    {
+        DataSiswa::create(['nama_siswa' => 'Siswa Kosong']);
+        MataPelajaran::create(['nama_mata_pelajaran' => 'Matematika']);
+
+        $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->assertSee('Belum ada nilai.');
+    }
+
+    public function test_mapel_ditambahkan_lalu_hilang_dari_pilihan_tambah_nilai(): void
+    {
+        $siswa = DataSiswa::create(['nama_siswa' => 'Siswa Pilihan']);
+        $mapel = MataPelajaran::create(['nama_mata_pelajaran' => 'Basis Data']);
+
+        // Sebelum ada nilai, mapel masih ditawarkan
+        $html = $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertContains('Basis Data', $this->pilihanMapelSiswa($html, $siswa->id));
+
+        // Baris tambahan memakai format nilai yang sama dengan tabel
+        $this->actingAsAdmin()
+            ->post(route('input-nilai.store'), [
+                'tahun_ajaran' => '2026/2027',
+                'semester' => 'Ganjil',
+                'nilai' => [$siswa->id => [$mapel->id => 77]],
+            ])
+            ->assertRedirect(route('input-nilai'));
+
+        $html = $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->getContent();
+
+        // Mapel yang sudah dinilai tampil di kolom Nilai
+        $this->assertStringContainsString(
+            'Basis Data',
+            $this->ambilDaftarNilai($html, $siswa->id)
+        );
+
+        // Mapel yang sudah dinilai hilang dari pilihan tambah nilai
+        $this->assertNotContains('Basis Data', $this->pilihanMapelSiswa($html, $siswa->id));
+    }
+
+    public function test_simpan_nilai_tanpa_input_tidak_gagal(): void
+    {
+        DataSiswa::create(['nama_siswa' => 'Siswa Kosong']);
+        MataPelajaran::create(['nama_mata_pelajaran' => 'Matematika']);
+
+        // Kolom Nilai kosong-kosong, tidak ada input yang ikut terkirim
+        $this->actingAsAdmin()
+            ->post(route('input-nilai.store'), [
+                'tahun_ajaran' => '2026/2027',
+                'semester' => 'Ganjil',
+            ])
+            ->assertRedirect(route('input-nilai'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseCount('nilai_siswa', 0);
+    }
+
+    public function test_mapel_yang_sudah_dipakai_baris_tambahan_disingkirkan(): void
+    {
+        DataSiswa::create(['nama_siswa' => 'Siswa Baris']);
+        MataPelajaran::create(['nama_mata_pelajaran' => 'Matematika']);
+
+        $this->actingAsAdmin()
+            ->get(route('input-nilai'))
+            ->assertOk()
+            ->assertSee('mapelTerpakai', false)
+            ->assertSee('segarkanPilihanMapel(idSiswa)', false)
+            ->assertSee('segarkanPilihanDariInput(this)', false);
     }
 
     public function test_hapus_nilai_siswa_hanya_pada_periode_terpilih(): void

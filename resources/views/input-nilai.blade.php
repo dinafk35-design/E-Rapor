@@ -242,17 +242,18 @@
 
                                     <div class="space-y-2" id="daftar-nilai-{{ $item->id }}">
 
-                                        @forelse ($mataPelajaran as $mapel)
+                                        {{-- Hanya mata pelajaran yang sudah ada nilainya --}}
+
+                                        @forelse ($mapelTerisi[$item->id] ?? [] as $idMapel => $namaMapel)
 
                                             @php
-                                                $kunci = $item->id . '-' . $mapel->id;
-                                                $nilai = $nilaiTersimpan[$kunci] ?? null;
+                                                $nilai = $nilaiTersimpan[$item->id . '-' . $idMapel] ?? null;
                                             @endphp
 
                                             <div class="flex items-center justify-between gap-6">
 
                                                 <span>
-                                                    {{ $mapel->nama_mata_pelajaran }}
+                                                    {{ $namaMapel }}
                                                 </span>
 
                                                 <div class="nilai-container">
@@ -268,7 +269,7 @@
                                                         max="100"
                                                         step="0.01"
                                                         form="formNilai"
-                                                        name="nilai[{{ $item->id }}][{{ $mapel->id }}]"
+                                                        name="nilai[{{ $item->id }}][{{ $idMapel }}]"
                                                         value="{{ $nilai !== null ? rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.') : '' }}"
                                                         class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
@@ -279,7 +280,7 @@
                                         @empty
 
                                             <span class="text-xs text-gray-400">
-                                                Belum ada mata pelajaran.
+                                                Belum ada nilai.
                                             </span>
 
                                         @endforelse
@@ -676,15 +677,37 @@
 
         if (row) {
 
-            row.querySelectorAll('input[name*="[' + idSiswa + ']"]').forEach(function (input) {
+            row.querySelectorAll('input.nilai-input[name]').forEach(function (input) {
 
-                const cocok = input.name.match(/\[(\d+)\]$/);
+                const cocok = input.name.match(/^nilai\[[^\]]+\]\[(\d+)\]$/);
 
                 if (cocok) {
 
                     inputPerMapel[cocok[1]] = input.value;
 
                 }
+
+            });
+
+        }
+
+        // Mata pelajaran yang baru dipilih lewat tombol Tambah Nilai
+        const mapelBaru = [];
+
+        if (row) {
+
+            row.querySelectorAll('[data-tambahan] select').forEach(function (select) {
+
+                if (select.value === '') {
+
+                    return;
+
+                }
+
+                mapelBaru.push({
+                    idMapel: String(select.value),
+                    mapel: select.options[select.selectedIndex].text,
+                });
 
             });
 
@@ -700,23 +723,61 @@
 
         tbody.innerHTML = '';
 
-        const daftar = Object.entries(data.nilai);
+        // Hanya mata pelajaran yang sudah ada nilainya
+        const daftar = Object.entries(data.nilai).map(function ([idMapel, baris]) {
+
+            return {
+                idMapel: String(idMapel),
+                mapel: baris.mapel,
+                tersimpan: baris.nilai,
+                baru: false,
+            };
+
+        });
+
+        // Mapel baru yang dipilih tapi belum disimpan tetap ikut ditampilkan
+        mapelBaru.forEach(function (item) {
+
+            const sudahAda = daftar.some(function (baris) {
+
+                return baris.idMapel === item.idMapel;
+
+            });
+
+            if (!sudahAda) {
+
+                daftar.push({
+                    idMapel: item.idMapel,
+                    mapel: item.mapel,
+                    tersimpan: null,
+                    baru: true,
+                });
+
+            }
+
+        });
 
         if (daftar.length === 0) {
 
             tbody.innerHTML =
                 '<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">' +
-                'Belum ada mata pelajaran.</td></tr>';
+                'Belum ada nilai.</td></tr>';
+
+            return;
 
         }
 
-        daftar.forEach(function ([idMapel, baris]) {
+        daftar.forEach(function (baris) {
 
             // Nilai yang sedang diketik (dan belum disimpan) diutamakan
-            const adaInput = Object.prototype.hasOwnProperty.call(inputPerMapel, idMapel);
-            const nilai = adaInput && inputPerMapel[idMapel] !== ''
-                ? inputPerMapel[idMapel]
-                : baris.nilai;
+            const adaInput = Object.prototype.hasOwnProperty.call(inputPerMapel, baris.idMapel);
+            const nilai = adaInput && inputPerMapel[baris.idMapel] !== ''
+                ? inputPerMapel[baris.idMapel]
+                : baris.tersimpan;
+
+            // Nilai sudah diubah tetapi belum disimpan
+            const berubah = baris.baru
+                || (adaInput && String(inputPerMapel[baris.idMapel]) !== String(baris.tersimpan));
 
             const tr = document.createElement('tr');
             tr.className = 'border-b border-gray-200';
@@ -738,7 +799,7 @@
                 tdNilai.className += ' font-bold text-green-600';
                 tdNilai.textContent = nilai;
 
-                if (adaInput) {
+                if (berubah) {
                     tdNilai.title = 'Belum disimpan';
                 }
 
@@ -747,7 +808,7 @@
             const tdStatus = document.createElement('td');
             tdStatus.className = 'px-4 py-3 text-center';
 
-            if (adaInput) {
+            if (berubah) {
 
                 tdStatus.innerHTML =
                     '<span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">Belum disimpan</span>';
@@ -789,6 +850,144 @@
 
     /*
     |--------------------------------------------------------------------------
+    | PILIHAN MATA PELAJARAN PER SISWA
+    |--------------------------------------------------------------------------
+    |
+    | Mata pelajaran yang sudah punya nilai tidak ikut ditawarkan. Mapel yang
+    | dipilih pada baris tambahan juga langsung hilang dari pilihan baris lain,
+    | jadi satu mata pelajaran tidak mungkin dipakai dua kali untuk satu siswa.
+    |
+    */
+
+    function semuaMapelSiswa(idSiswa) {
+
+        return pilihanMapel[idSiswa] || {};
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MATA PELAJARAN YANG SEDANG DIPAKAI PADA BARIS TAMBAHAN
+    |--------------------------------------------------------------------------
+    */
+
+    function mapelTerpakai(idSiswa, kecualiSelect) {
+
+        const wrapper = document.getElementById('daftar-nilai-' + idSiswa);
+
+        const terpakai = [];
+
+        if (!wrapper) {
+
+            return terpakai;
+
+        }
+
+        wrapper.querySelectorAll('[data-tambahan] select').forEach(function (select) {
+
+            if (select !== kecualiSelect && select.value !== '') {
+
+                terpakai.push(String(select.value));
+
+            }
+
+        });
+
+        return terpakai;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DAFTAR OPSI MATA PELAJARAN
+    |--------------------------------------------------------------------------
+    |
+    | Pilihan yang sedang aktif tetap dipertahankan, mapel yang dipakai baris
+    | lain dibuang.
+    |
+    */
+
+    function opsiMapelSiswa(idSiswa, kecualiSelect) {
+
+        const semua = semuaMapelSiswa(idSiswa);
+
+        const terpilih = kecualiSelect && kecualiSelect.value !== ''
+            ? String(kecualiSelect.value)
+            : '';
+
+        const terpakai = mapelTerpakai(idSiswa, kecualiSelect);
+
+        let opsi = '<option value="">-- Pilih Mata Pelajaran --</option>';
+
+        if (terpilih !== '' && semua[terpilih] !== undefined) {
+
+            opsi += '<option value="' + terpilih + '" selected>' + semua[terpilih] + '</option>';
+
+        }
+
+        Object.keys(semua).forEach(function (id) {
+
+            if (id === terpilih || terpakai.indexOf(id) !== -1) {
+
+                return;
+
+            }
+
+            opsi += '<option value="' + id + '">' + semua[id] + '</option>';
+
+        });
+
+        return opsi;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEGARKAN PILIHAN MATA PELAJARAN
+    |--------------------------------------------------------------------------
+    |
+    | Dipanggil setiap baris tambahan ditambah, dihapus, atau mata pelajarannya
+    | diganti, supaya mapel yang sudah dipakai langsung hilang dari opsi.
+    |
+    */
+
+    function segarkanPilihanMapel(idSiswa) {
+
+        const wrapper = document.getElementById('daftar-nilai-' + idSiswa);
+
+        if (!wrapper) {
+
+            return;
+
+        }
+
+        wrapper.querySelectorAll('[data-tambahan] select').forEach(function (select) {
+
+            select.innerHTML = opsiMapelSiswa(idSiswa, select);
+
+        });
+
+    }
+
+
+    function segarkanPilihanDariInput(input) {
+
+        const row = input.closest('.nilai-row');
+
+        if (row) {
+
+            segarkanPilihanMapel(row.dataset.row);
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | TAMBAH NILAI UNTUK SATU SISWA
     |--------------------------------------------------------------------------
     |
@@ -808,29 +1007,25 @@
         }
 
         // Mata pelajaran yang belum dinilai untuk siswa ini
-        const mapel = pilihanMapel[idSiswa] || {};
+        const semua = semuaMapelSiswa(idSiswa);
 
-        const daftar = Object.entries(mapel);
+        const adaPilihan = Object.keys(semua).length > 0;
 
-        // Tandai mapel yang sudah dipakai di baris tambahan
-        const terpakai = Array.from(
-            wrapper.querySelectorAll('[data-tambahan] select')
-        ).map(function (select) {
-            return select.value;
-        }).filter(function (value) {
-            return value !== '';
-        });
+        // Mapel yang sudah dipakai pada baris tambahan lain
+        const terpakai = mapelTerpakai(idSiswa, null);
 
-        const belumDipakai = daftar.filter(function ([id]) {
-            return !terpakai.includes(id);
+        const belumDipakai = Object.keys(semua).filter(function (id) {
+
+            return terpakai.indexOf(String(id)) === -1;
+
         });
 
         if (belumDipakai.length === 0) {
 
             alert(
-                daftar.length === 0
-                    ? 'Semua mata pelajaran sudah dinilai untuk siswa ini.'
-                    : 'Semua mata pelajaran yang tersedia sudah dipilih.'
+                adaPilihan
+                    ? 'Semua mata pelajaran yang tersedia sudah dipilih.'
+                    : 'Semua mata pelajaran sudah dinilai untuk siswa ini.'
             );
 
             return;
@@ -846,9 +1041,9 @@
         // Opsi mata pelajaran
         let opsi = '<option value="">-- Pilih Mata Pelajaran --</option>';
 
-        belumDipakai.forEach(function ([id, nama]) {
+        belumDipakai.forEach(function (id) {
 
-            opsi += '<option value="' + id + '">' + nama + '</option>';
+            opsi += '<option value="' + id + '">' + semua[id] + '</option>';
 
         });
 
@@ -866,6 +1061,7 @@
                 max="100"
                 step="0.01"
                 form="formNilai"
+                oninput="segarkanPilihanDariInput(this)"
                 disabled
                 class="nilai-input w-20 rounded-lg border border-gray-300 px-3 py-1.5 text-center font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
@@ -894,7 +1090,16 @@
 
     function hapusNilaiBaris(button) {
 
+        const row = button.closest('.nilai-row');
+
         button.closest('[data-tambahan]').remove();
+
+        // Mapel yang dilepas kembali muncul di pilihan baris lain
+        if (row) {
+
+            segarkanPilihanMapel(row.dataset.row);
+
+        }
 
     }
 
@@ -905,7 +1110,8 @@
     |--------------------------------------------------------------------------
     |
     | Input baru disimpan sebagai nilai[<id siswa>][<id mata pelajaran>],
-    | sama dengan format nilai bawaan agar langsung diproses server.
+    | sama dengan format nilai bawaan agar langsung diproses server. Mapel yang
+    | baru dipilih langsung hilang dari pilihan baris tambahan lainnya.
     |
     */
 
@@ -923,12 +1129,18 @@
 
             input.disabled = true;
 
+            segarkanPilihanMapel(idSiswa);
+
             return;
+
         }
 
         input.name = 'nilai[' + idSiswa + '][' + select.value + ']';
 
         input.disabled = false;
+
+        // Mapel yang baru dipakai tidak boleh muncul di pilihan baris lain
+        segarkanPilihanMapel(idSiswa);
 
     }
 

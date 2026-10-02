@@ -5,6 +5,7 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\DataGuruController;
 use App\Http\Controllers\DataSekolahController;
 use App\Http\Controllers\DataSiswaController;
+use App\Http\Controllers\GuruMengajarController;
 use App\Http\Controllers\MataPelajaranController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\RombelController;
@@ -20,12 +21,14 @@ Route::get('/', function (Request $request) {
         return redirect()->route('login');
     }
 
-    return redirect()->route(match ($user->role) {
-        'admin' => 'admin.dashboard',
-        'guru' => 'guru.dashboard',
-        'siswa' => 'siswa.dashboard',
-        default => 'dashboard',
-    });
+    return redirect()->route(
+        match ($user->role) {
+            'admin' => 'admin.dashboard',
+            'guru' => 'guru.dashboard',
+            'siswa' => 'siswa.dashboard',
+            default => 'dashboard',
+        },
+    );
 })->name('home');
 
 Route::middleware('auth')->group(function () {
@@ -37,12 +40,13 @@ Route::middleware('auth')->group(function () {
         return view('profile');
     })->name('profile');
 
-    Route::put('/profile/password', [AuthController::class, 'updatePassword'])
-        ->name('profile.password.update');
+    Route::put('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password.update');
 
     Route::get('/input-nilai/create', function () {
         return view('input-nilai.create');
     })->name('input-nilai-create');
+
+    Route::resource('input-nilai', NilaiController::class);
 
     Route::get('/nilai-skill-passport', function () {
         return view('nilai-skill-passport');
@@ -76,85 +80,36 @@ Route::middleware('auth')->group(function () {
     //     return view('perkembangan-nilai.create');
     // })->name('perkembangan-nilai-create');
 
-    // Nama route index memakai 'data-sekolah' (bukan 'data-sekolah.index')
-    // supaya route('data-sekolah') bisa dipakai untuk redirect setelah
-    // simpan, ubah, dan hapus.
     Route::resource('data-sekolah', DataSekolahController::class)
-    ->except(['show'])
-    ->names([
-        'index' => 'data-sekolah',
-        'create' => 'data-sekolah.create',
-        'store' => 'data-sekolah.store',
-        'edit' => 'data-sekolah.edit',
-        'update' => 'data-sekolah.update',
-        'destroy' => 'data-sekolah.destroy',
-    ]);
+        ->except(['show'])
+        ->names('data-sekolah');
 
     Route::resource('data-guru', DataGuruController::class)
-    ->except(['show'])
-    ->names([
-        'index' => 'data-guru',
-        'create' => 'data-guru.create',
-        'store' => 'data-guru.store',
-        'edit' => 'data-guru.edit',
-        'update' => 'data-guru.update',
-        'destroy' => 'data-guru.destroy',
-    ]);
+        ->except(['show'])
+        ->names('data-guru');
 
-     Route::resource('data-siswa', DataSiswaController::class)
-    ->names([
-        'index' => 'data-siswa',
-        'create' => 'data-siswa.create',
-        'store' => 'data-siswa.store',
-        'show' => 'data-siswa.show',
-        'edit' => 'data-siswa.edit',
-        'update' => 'data-siswa.update',
-        'destroy' => 'data-siswa.destroy',
-    ]);
+    Route::resource('data-siswa', DataSiswaController::class)->names('data-siswa');
 
-      Route::resource('mata-pelajaran', MataPelajaranController::class)
-    ->except(['show'])
-    ->names([
-        'index' => 'mata-pelajaran',
-        'create' => 'mata-pelajaran.create',
-        'store' => 'mata-pelajaran.store',
-        'edit' => 'mata-pelajaran.edit',
-        'update' => 'mata-pelajaran.update',
-        'destroy' => 'mata-pelajaran.destroy',
-    ]);
+    Route::resource('mata-pelajaran', MataPelajaranController::class)
+        ->except(['show'])
+        ->names('mata-pelajaran');
 
-     Route::resource('rombel', RombelController::class)
-    ->names([
-        'index' => 'rombel',
-        'create' => 'rombel.create',
-        'store' => 'rombel.store',
-        'show' => 'rombel.show',
-        'edit' => 'rombel.edit',
-        'update' => 'rombel.update',
-        'destroy' => 'rombel.destroy',
-    ]);
+    Route::post('/mata-pelajaran/{mataPelajaran}/guru', [MataPelajaranController::class, 'tambahGuru'])->name('mata-pelajaran.guru.store');
+    Route::put('/mata-pelajaran/{mataPelajaran}/guru/{guruMengajar}', [MataPelajaranController::class, 'updateGuru'])->name('mata-pelajaran.guru.update');
+    Route::delete('/mata-pelajaran/{mataPelajaran}/guru/{guruMengajar}', [MataPelajaranController::class, 'hapusGuru'])->name('mata-pelajaran.guru.delete');
 
-     Route::resource('wali-kelas', WaliKelasController::class)
-    ->except(['show'])
-    ->names([
-        'index' => 'wali-kelas',
-        'create' => 'wali-kelas.create',
-        'store' => 'wali-kelas.store',
-        'edit' => 'wali-kelas.edit',
-        'update' => 'wali-kelas.update',
-        'destroy' => 'wali-kelas.destroy',
-    ]);
+    Route::resource('guru-mengajar', GuruMengajarController::class)
+        ->except(['show'])
+        ->names('guru-mengajar');
 
-    /*
-    |--------------------------------------------------------------------------
-    | INPUT NILAI
-    |--------------------------------------------------------------------------
-    */
+    Route::resource('rombel', RombelController::class)->names('rombel');
+
+    Route::resource('wali-kelas', WaliKelasController::class)
+        ->except(['show'])
+        ->names('wali-kelas');
 
     Route::get('/input-nilai', [NilaiController::class, 'index'])->name('input-nilai');
     Route::post('/input-nilai', [NilaiController::class, 'store'])->name('input-nilai.store');
-    Route::delete('/input-nilai/{siswa}', [NilaiController::class, 'destroy'])
-        ->name('input-nilai.destroy');
 
     Route::get('/penilaian', function () {
         return view('penilaian');
@@ -178,31 +133,34 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('pengguna');
 
-    /*
-    |--------------------------------------------------------------------------
-    | BACKUP & RESTORE
-    |--------------------------------------------------------------------------
-    */
-
-    Route::controller(BackupController::class)->prefix('backup')->name('backup.')->group(function () {
-    Route::get('/', 'index')->name('index');
-    Route::get('/download', 'download')->name('download');
-    Route::get('/table/{table}', 'table')->name('table');
-    Route::post('/restore', 'restore')->name('restore');
-    Route::delete('/{file}', 'destroy')->name('destroy');
-});
+    Route::controller(BackupController::class)
+        ->prefix('backup')
+        ->name('backup.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/download', 'download')->name('download');
+            Route::get('/table/{table}', 'table')->name('table');
+            Route::post('/restore', 'restore')->name('restore');
+            Route::delete('/{file}', 'destroy')->name('destroy');
+        });
 
     Route::get('/admin-dashboard', function () {
         return view('dashboard');
-    })->middleware('role:admin')->name('admin.dashboard');
+    })
+        ->middleware('role:admin')
+        ->name('admin.dashboard');
 
     Route::get('/guru-dashboard', function () {
         return view('dashboard');
-    })->middleware('role:guru')->name('guru.dashboard');
+    })
+        ->middleware('role:guru')
+        ->name('guru.dashboard');
 
     Route::get('/siswa-dashboard', function () {
         return view('dashboard');
-    })->middleware('role:siswa')->name('siswa.dashboard');
+    })
+        ->middleware('role:siswa')
+        ->name('siswa.dashboard');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

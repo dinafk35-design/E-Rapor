@@ -214,7 +214,7 @@
             <div class="flex gap-3 mt-6">
 
                 <a
-                    href="{{ route('data-guru') }}"
+                    href="{{ route('data-guru.index') }}"
                     class="px-5 py-2 rounded-lg bg-gray-500 text-white"
                 >
                     <i class="ph ph-arrow-left mr-1"></i>

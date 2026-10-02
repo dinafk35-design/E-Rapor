@@ -40,24 +40,38 @@ class NilaiController extends Controller
             ->mapWithKeys(fn ($n) => [$n->siswa_id . '-' . $n->mata_pelajaran_id => $n->nilai])
             ->all();
 
-        // Mata pelajaran yang belum dinilai, untuk setiap siswa.
-        // Mapel yang sudah dinilai tidak ikut offered lagi.
+        // Seluruh mata pelajaran, diurutkan berdasarkan nama.
         $semuaMapel = MataPelajaran::orderBy('nama_mata_pelajaran')
             ->pluck('nama_mata_pelajaran', 'id');
 
-        $sudahDinilai = NilaiSiswa::where('tahun_ajaran', $tahunAjaran)
+        // Mapel yang sudah dinilai, dikelompokkan per siswa.
+        $nilaiPerSiswa = NilaiSiswa::where('tahun_ajaran', $tahunAjaran)
             ->where('semester', $semester)
             ->get(['siswa_id', 'mata_pelajaran_id'])
-            ->groupBy('siswa_id')
-            ->map(fn ($rows) => $rows->pluck('mata_pelajaran_id')->all());
+            ->groupBy('siswa_id');
 
+        // Mapel yang sudah punya nilai -> ditampilkan pada kolom Nilai.
+        // Mapel yang belum punya nilai -> hanya jadi pilihan pada tombol
+        // Tambah Nilai, supaya mapel kosong tidak memenuhi tabel.
+        $mapelTerisi = [];
         $pilihanMapel = [];
 
         foreach ($siswa as $s) {
 
             // Key dari $semuaMapel adalah id mapel, jadi yang dibandingkan
             // adalah key-nya, bukan nama mapelnya.
-            $sudahTerisi = array_map('strval', $sudahDinilai[$s->id] ?? []);
+            $sudahTerisi = $nilaiPerSiswa->get($s->id, collect())
+                ->pluck('mata_pelajaran_id')
+                ->map(fn ($id) => (string) $id)
+                ->all();
+
+            $terisi = $semuaMapel
+                ->filter(fn ($nama, $id) => in_array((string) $id, $sudahTerisi, true));
+
+            // Filter mata pelajaran ikut membatasi mapel yang ditampilkan
+            $mapelTerisi[$s->id] = $filterMapel
+                ? $terisi->only($filterMapel)->all()
+                : $terisi->all();
 
             $pilihanMapel[$s->id] = $semuaMapel
                 ->reject(fn ($nama, $id) => in_array((string) $id, $sudahTerisi, true))
@@ -76,12 +90,13 @@ class NilaiController extends Controller
                 'nilai' => [],
             ];
 
-            foreach ($mataPelajaran as $mapel) {
+            // Hanya mata pelajaran yang sudah ada nilainya yang ditampilkan
+            foreach ($mapelTerisi[$s->id] as $idMapel => $namaMapel) {
 
-                $nilai = $tersimpan[$s->id . '-' . $mapel->id] ?? null;
+                $nilai = $tersimpan[$s->id . '-' . $idMapel] ?? null;
 
-                $rincianNilai[$s->id]['nilai'][$mapel->id] = [
-                    'mapel' => $mapel->nama_mata_pelajaran,
+                $rincianNilai[$s->id]['nilai'][$idMapel] = [
+                    'mapel' => $namaMapel,
                     'nilai' => $nilai === null
                         ? null
                         : rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.'),
@@ -107,6 +122,7 @@ class NilaiController extends Controller
             'filterMapel' => $filterMapel,
             'nilaiTersimpan' => $tersimpan,
             'guruPerMapel' => $guruPerMapel,
+            'mapelTerisi' => $mapelTerisi,
             'pilihanMapel' => $pilihanMapel,
             'rincianNilai' => $rincianNilai,
         ]);
@@ -121,7 +137,9 @@ class NilaiController extends Controller
             'tahun_ajaran' => ['required', 'string', 'max:20'],
             'semester' => ['required', 'string', 'max:20'],
             'rombel_id' => ['nullable', 'integer', 'exists:rombel,id'],
-            'nilai' => ['required', 'array'],
+            // Tidak ada input nilai sama sekali tetap boleh, misal saat
+            // pengguna menekan Simpan Nilai tanpa mengisi apa pun.
+            'nilai' => ['nullable', 'array'],
             'nilai.*' => ['array'],
             'nilai.*.*' => ['nullable', 'numeric'],
         ]);
@@ -137,7 +155,7 @@ class NilaiController extends Controller
 
         DB::transaction(function () use ($data, $tahun, $semester, $idSiswaValid, $idMapelValid, &$tersimpan) {
 
-            foreach ($data['nilai'] as $siswaId => $perMapel) {
+            foreach ($data['nilai'] ?? [] as $siswaId => $perMapel) {
 
                 // Abaikan siswa yang tidak dikenal
                 if (! isset($idSiswaValid[$siswaId])) {
