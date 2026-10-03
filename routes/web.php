@@ -10,42 +10,38 @@ use App\Http\Controllers\MataPelajaranController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\RombelController;
 use App\Http\Controllers\WaliKelasController;
+use App\Models\MataPelajaran;
+use App\Models\Rombel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (Request $request) {
     $user = $request->user();
-
     if ($user === null) {
         return redirect()->route('login');
+    } else {
+        return view('dashboard', ['user' => $user]);
     }
-
-    return redirect()->route(
-        match ($user->role) {
-            'admin' => 'admin.dashboard',
-            'guru' => 'guru.dashboard',
-            'siswa' => 'siswa.dashboard',
-            default => 'dashboard',
-        },
-    );
 })->name('home');
 
 Route::middleware('auth')->group(function () {
+    // Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
+
+    // Profile and Password Update Routes
     Route::get('/profile', function () {
         return view('profile');
     })->name('profile');
-
     Route::put('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password.update');
 
-    Route::get('/input-nilai/create', function () {
-        return view('input-nilai.create');
-    })->name('input-nilai-create');
+    // Data Sekolah
+    Route::resource('data-sekolah', DataSekolahController::class);
 
+    // Input Nilai
     Route::resource('input-nilai', NilaiController::class);
 
     Route::get('/nilai-skill-passport', function () {
@@ -68,21 +64,11 @@ Route::middleware('auth')->group(function () {
         return view('status-penilaian');
     })->name('status-penilaian');
 
-    // Route::get('/status-penilaian/create', function () {
-    //     return view('status-penilaian.create');
-    // })->name('status-penilaian-create');
-
     Route::get('/perkembangan-nilai', function () {
         return view('perkembangan-nilai');
     })->name('perkembangan-nilai');
 
-    // Route::get('/perkembangan-nilai/create', function () {
-    //     return view('perkembangan-nilai.create');
-    // })->name('perkembangan-nilai-create');
 
-    Route::resource('data-sekolah', DataSekolahController::class)
-        ->except(['show'])
-        ->names('data-sekolah');
 
     Route::resource('data-guru', DataGuruController::class)
         ->except(['show'])
@@ -143,24 +129,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/restore', 'restore')->name('restore');
             Route::delete('/{file}', 'destroy')->name('destroy');
         });
-
-    Route::get('/admin-dashboard', function () {
-        return view('dashboard');
-    })
-        ->middleware('role:admin')
-        ->name('admin.dashboard');
-
-    Route::get('/guru-dashboard', function () {
-        return view('dashboard');
-    })
-        ->middleware('role:guru')
-        ->name('guru.dashboard');
-
-    Route::get('/siswa-dashboard', function () {
-        return view('dashboard');
-    })
-        ->middleware('role:siswa')
-        ->name('siswa.dashboard');
 });
 
 require __DIR__ . '/auth.php';

@@ -28,13 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $destination = match ($request->user()->role) { 
-            'guru' => route('guru.dashboard'),
-            'siswa' => route('siswa.dashboard'),
-            default => route('dashboard'),
-        };
-
-        return redirect()->intended($destination);
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
@@ -47,6 +41,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('status', 'Anda telah keluar.');
+        return redirect('/');
     }
 }

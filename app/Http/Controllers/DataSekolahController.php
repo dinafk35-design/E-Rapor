@@ -11,8 +11,9 @@ class DataSekolahController extends Controller
 {
     public function index(): View
     {
+        $sekolah = DataSekolah::all();
         return view('data-sekolah.index', [
-            'sekolah' => DataSekolah::orderBy('nama_sekolah')->get(),
+            'sekolah' => $sekolah,
         ]);
     }
 

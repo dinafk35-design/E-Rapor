@@ -67,7 +67,7 @@ class RombelController extends Controller
         $this->simpanAnggota($rombel, $data);
 
         return redirect()
-            ->route('rombel')
+            ->route('rombel.index')
             ->with('status', 'Data Rombel berhasil disimpan.');
     }
 
@@ -111,7 +111,7 @@ class RombelController extends Controller
         $this->simpanAnggota($rombel, $data);
 
         return redirect()
-            ->route('rombel')
+            ->route('rombel.index')
             ->with('status', 'Data Rombel berhasil diperbarui.');
     }
 

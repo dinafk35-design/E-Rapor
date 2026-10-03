@@ -50,7 +50,7 @@ class DataSiswaController extends Controller
         });
 
         return redirect()
-            ->route('data-siswa')
+            ->route('data-siswa.index')
             ->with('status', 'Data Siswa berhasil disimpan. ' . $this->pesanAkun($akun));
     }
 
@@ -82,7 +82,7 @@ class DataSiswaController extends Controller
             ])
             ->save();
 
-        return redirect()->route('data-siswa')->with('status', 'Data Siswa berhasil diperbarui.');
+        return redirect()->route('data-siswa.index')->with('status', 'Data Siswa berhasil diperbarui.');
     }
 
     public function destroy(DataSiswa $data_siswa): RedirectResponse
@@ -97,7 +97,7 @@ class DataSiswaController extends Controller
             User::whereKey($userId)->delete();
         }
 
-        return redirect()->route('data-siswa')->with('status', 'Data Siswa dan akun loginnya berhasil dihapus.');
+        return redirect()->route('data-siswa.index')->with('status', 'Data Siswa dan akun loginnya berhasil dihapus.');
     }
 
     /*
@@ -127,19 +127,19 @@ class DataSiswaController extends Controller
     }
 
     protected function messages(): array
-{
-    return [
-        'nisn.required' => 'NISN wajib diisi.',
-        'nisn.unique' => 'NISN telah digunakan.',
-        'nisn.max' => 'NISN maksimal 30 karakter.',
-        
-        'nama_siswa.required' => 'Nama siswa wajib diisi.',
-        
-        'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
-        
-        'rombel_id.exists' => 'Rombel yang dipilih tidak tersedia.',
-    ];
-}
+    {
+        return [
+            'nisn.required' => 'NISN wajib diisi.',
+            'nisn.unique' => 'NISN telah digunakan.',
+            'nisn.max' => 'NISN maksimal 30 karakter.',
+
+            'nama_siswa.required' => 'Nama siswa wajib diisi.',
+
+            'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
+
+            'rombel_id.exists' => 'Rombel yang dipilih tidak tersedia.',
+        ];
+    }
 
     /**
      * Informasikan username akun yang baru dibuat kepada admin.

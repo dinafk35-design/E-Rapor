@@ -1,154 +1,585 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="content">
 
-<div class="content">
+        {{-- =====================================================
+            HEADER
+        ====================================================== --}}
+        <div
+            class="mb-6 overflow-hidden rounded-xl bg-gradient-to-r from-[#25284d] via-[#37367a] to-[#5148b8] px-6 py-5 text-white shadow-sm">
 
-    <!-- HEADER -->
-    <div class="welcome">
-        <h2 class="italic font-bold">
-            Data Sekolah
-        </h2>
+            <div class="flex items-center justify-between gap-4">
 
-        <p>
-            Kelola informasi dan identitas sekolah yang digunakan
-            dalam sistem E-Rapor SMK.
-        </p>
-    </div>
+                <div>
+                    <x-breadcrumb :items="[['label' => 'Data Master'], ['label' => 'Data Sekolah']]" />
 
-    @if (session('status'))
+                    {{-- TITLE --}}
+                    <div class="flex items-center gap-3">
 
-        <div class="mb-4 rounded-lg border border-green-300 bg-green-50 p-3 text-sm text-green-800">
-            <i class="ph ph-check-circle mr-1"></i>
-            {{ session('status') }}
-        </div>
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                            <i class="ph ph-buildings text-2xl text-white"></i>
+                        </div>
 
-    @endif
+                        <div>
+                            <h1 class="text-xl font-bold leading-tight">
+                                Data Sekolah
+                            </h1>
 
-    @if ($errors->any())
+                            <p class="mt-1 text-xs text-[#c2c2dc]">
+                                Kelola informasi sekolah yang digunakan dalam sistem E-Rapor SMK.
+                            </p>
+                        </div>
 
-        <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-            <i class="ph ph-warning-circle mr-1"></i>
-            {{ $errors->first() }}
-        </div>
+                    </div>
+                </div>
 
-    @endif
-
-    <!-- FILTER -->
-    <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <!-- PENCARIAN -->
-            <div>
-                <label class="mb-2 block text-sm font-semibold text-gray-700">
-                    Pencarian
-                </label>
-                <input type="text" id="searchSekolah"
-                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                    placeholder="Cari nama sekolah, NPSN...">
             </div>
         </div>
-        <!-- TOMBOL -->
-        <div class="mt-5 flex flex-wrap gap-3">
-            <button type="button" onclick="filterSekolah()"
-                class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
-                <i class="ph ph-magnifying-glass mr-1"></i>
-                Cari
-            </button>
-            <button type="button" onclick="resetFilterSekolah()"
-                class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
-                <i class="ph ph-arrow-counter-clockwise mr-1"></i>
-                Reset
-            </button>
+
+
+        {{-- =====================================================
+            FILTER
+        ====================================================== --}}
+        <div class="mb-6 rounded-xl bg-white p-5 shadow-sm">
+
+            <div class="mb-4 flex items-center justify-between">
+
+                <div>
+                    <div class="flex items-center gap-2">
+
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                            <i class="ph ph-funnel"></i>
+                        </div>
+
+                        <h2 class="text-sm font-bold text-slate-800">
+                            Filter Data Sekolah
+                        </h2>
+
+                    </div>
+
+                    <p class="mt-1 ml-10 text-xs text-slate-500">
+                        Gunakan pencarian untuk menemukan data sekolah dengan cepat.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                {{-- SEARCH --}}
+                <div>
+
+                    <label class="mb-2 block text-xs font-semibold text-slate-600">
+                        Cari Sekolah
+                    </label>
+
+                    <div class="relative">
+
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        </i>
+
+                        <input type="text" id="searchSekolah" placeholder="Nama sekolah atau NPSN..."
+                            class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                            onkeyup="filterSekolah()">
+
+                    </div>
+
+                </div>
+
+
+                {{-- RESET --}}
+                <div class="flex items-end">
+
+                    <button type="button" onclick="resetFilterSekolah()"
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-800">
+
+                        <i class="ph ph-arrow-counter-clockwise"></i>
+
+                        Reset Filter
+
+                    </button>
+
+                </div>
+
+            </div>
+
         </div>
-    </div>
 
-    <!-- TABEL DATA SEKOLAH -->
-    <x-table-card title="Data Sekolah" subtitle="Menampilkan daftar seluruh data sekolah yang terdaftar dalam sistem."
-        :createRoute="route('data-sekolah.create')" :items="$sekolah">
-        
-        <x-slot name="thead">
-            <th class="px-6 py-4 w-12">No</th>
-            <th class="px-6 py-4">Nama Sekolah</th>
-            <th class="px-6 py-4">NPSN</th>
-            <th class="px-6 py-4">Kepala Sekolah</th>
-            <th class="px-6 py-4">Telepon</th>
-            <th class="px-6 py-4 text-center w-44">Aksi</th>
-        </x-slot>
 
-        @forelse ($sekolah as $item)
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-5 text-gray-500">{{ $loop->iteration }}</td>
-                <td class="px-6 py-5 font-medium">{{ $item->nama_sekolah }}</td>
-                <td class="px-6 py-5">{{ $item->npsn ?? '-' }}</td>
-                <td class="px-6 py-5">{{ $item->kepala_sekolah ?? '-' }}</td>
-                <td class="px-6 py-5">{{ $item->telepon ?? '-' }}</td>
-                <td class="px-6 py-5 text-center whitespace-nowrap">
-                    <a href="{{ route('data-sekolah.edit', $item->id) }}"
-                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 transition">
-                        <i class="ph ph-pencil-simple text-base"></i>
-                        Edit
+        {{-- =====================================================
+            TABLE CARD
+        ====================================================== --}}
+        <div class="overflow-hidden rounded-xl bg-white shadow-sm">
+
+            {{-- TABLE HEADER --}}
+            <div
+                class="flex flex-col gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+
+                <div>
+
+                    <div class="flex items-center gap-2">
+
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                            <i class="ph ph-buildings"></i>
+                        </div>
+
+                        <h2 class="text-base font-bold text-slate-800">
+                            Daftar Sekolah
+                        </h2>
+
+                    </div>
+
+                    <p class="mt-1 ml-10 text-xs text-slate-500">
+                        Data sekolah yang terdaftar dalam sistem E-Rapor SMK.
+                    </p>
+
+                </div>
+
+
+                {{-- KANAN --}}
+                <div class="flex flex-wrap items-center gap-2">
+
+                    {{-- JUMLAH DATA --}}
+                    <div
+                        class="inline-flex w-fit items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+
+                        <i class="ph ph-database text-indigo-500"></i>
+
+                        <span id="jumlahSekolah">
+                            {{ $sekolah->count() }}
+                        </span>
+
+                        <span>
+                            Data
+                        </span>
+
+                    </div>
+
+
+                    {{-- TAMBAH DATA --}}
+                    <a href="{{ route('data-sekolah.create') }}"
+                        class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700">
+
+                        <i class="ph ph-plus"></i>
+
+                        Tambah Data
+
                     </a>
 
-                    <form action="{{ route('data-sekolah.destroy', $item->id) }}"
-                          method="POST"
-                          class="inline-block ml-1"
-                          data-hapus-form>
-                        @csrf
-                        @method('DELETE')
+                </div>
 
-                        <button type="submit"
-                                data-nama="{{ $item->nama_sekolah }}"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition"
-                                title="Hapus data sekolah">
-                            <i class="ph ph-trash text-base"></i>
-                            Hapus
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                    Belum ada data sekolah.
-                </td>
-            </tr>
-        @endforelse
+            </div>
 
-    </x-table-card>
 
-</div>
+            {{-- =====================================================
+                TABLE
+            ====================================================== --}}
+            <div class="overflow-x-auto">
 
-<!-- JAVASCRIPT -->
-<script>
-    function filterSekolah() {
-        const search = document.getElementById('searchSekolah').value;
-        alert("Filter diterapkan!\n\nPencarian: " + (search || "Semua"));
-        // TODO: Implement actual filtering (AJAX or form submit)
-    }
+                <table class="w-full text-left text-sm">
 
-    function resetFilterSekolah() {
-        document.getElementById('searchSekolah').value = "";
-        alert("Filter berhasil direset.");
-    }
+                    <thead class="border-b border-slate-100 bg-slate-50/80">
 
-    /* ============================= */
-    /* KONFIRMASI HAPUS             */
-    /* ============================= */
+                        <tr>
 
-    document.querySelectorAll('form[data-hapus-form]').forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            const nama = form.querySelector('button[data-nama]').dataset.nama;
+                            <th class="whitespace-nowrap px-5 py-3.5 text-xs font-bold text-slate-600">
+                                No
+                            </th>
 
-            const yakin = confirm(
-                'Yakin ingin menghapus data sekolah "' + nama + '"?\n' +
-                'Data yang sudah dihapus tidak dapat dikembalikan.'
-            );
+                            <th class="whitespace-nowrap px-5 py-3.5 text-xs font-bold text-slate-600">
+                                Sekolah
+                            </th>
 
-            if (!yakin) {
-                event.preventDefault();
+                            <th class="whitespace-nowrap px-5 py-3.5 text-xs font-bold text-slate-600">
+                                NPSN
+                            </th>
+
+                            <th class="whitespace-nowrap px-5 py-3.5 text-xs font-bold text-slate-600">
+                                Kepala Sekolah
+                            </th>
+
+                            <th class="whitespace-nowrap px-5 py-3.5 text-xs font-bold text-slate-600">
+                                Kontak
+                            </th>
+
+                            <th class="whitespace-nowrap px-5 py-3.5 text-xs font-bold text-slate-600">
+                                Alamat
+                            </th>
+
+                            <th class="whitespace-nowrap px-5 py-3.5 text-center text-xs font-bold text-slate-600">
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="sekolahTableBody" class="divide-y divide-slate-100">
+
+                        @forelse ($sekolah as $item)
+                            <tr class="sekolah-row group transition hover:bg-slate-50/70"
+                                data-nama="{{ strtolower($item->nama_sekolah ?? '') }}"
+                                data-npsn="{{ strtolower($item->npsn ?? '') }}">
+
+                                {{-- NO --}}
+                                <td class="whitespace-nowrap px-5 py-4 align-middle">
+
+                                    <span class="text-xs font-semibold text-slate-400">
+                                        {{ $loop->iteration }}
+                                    </span>
+
+                                </td>
+
+
+                                {{-- SEKOLAH --}}
+                                <td class="px-5 py-4 align-middle">
+
+                                    <div class="flex items-center gap-3">
+
+                                        <div
+                                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+
+                                            <i class="ph ph-buildings text-lg"></i>
+
+                                        </div>
+
+                                        <div class="min-w-0">
+
+                                            <p class="truncate text-sm font-semibold text-slate-800">
+                                                {{ $item->nama_sekolah ?? '-' }}
+                                            </p>
+
+                                            <p class="mt-0.5 truncate text-xs text-slate-400">
+                                                {{ $item->email ?? 'Email belum tersedia' }}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                {{-- NPSN --}}
+                                <td class="whitespace-nowrap px-5 py-4 align-middle">
+
+                                    <span class="text-xs font-medium text-slate-600">
+                                        {{ $item->npsn ?? '-' }}
+                                    </span>
+
+                                </td>
+
+
+                                {{-- KEPALA SEKOLAH --}}
+                                <td class="px-5 py-4 align-middle">
+
+                                    <div class="flex items-center gap-2">
+
+                                        <div
+                                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-400">
+
+                                            <i class="ph ph-user"></i>
+
+                                        </div>
+
+                                        <span class="text-xs font-medium text-slate-600">
+                                            {{ $item->kepala_sekolah ?? '-' }}
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                {{-- KONTAK --}}
+                                <td class="px-5 py-4 align-middle">
+
+                                    <div class="space-y-1">
+
+                                        <div class="flex items-center gap-1.5 text-xs text-slate-600">
+
+                                            <i class="ph ph-phone text-slate-400"></i>
+
+                                            <span>
+                                                {{ $item->telepon ?? '-' }}
+                                            </span>
+
+                                        </div>
+
+                                        <div
+                                            class="flex max-w-[220px] items-center gap-1.5 truncate text-xs text-slate-400">
+
+                                            <i class="ph ph-globe"></i>
+
+                                            <span class="truncate">
+                                                {{ $item->website ?? '-' }}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                {{-- ALAMAT --}}
+                                <td class="px-5 py-4 align-middle">
+
+                                    <div class="flex max-w-[280px] items-start gap-1.5">
+
+                                        <i class="ph ph-map-pin mt-0.5 shrink-0 text-slate-400"></i>
+
+                                        <span class="line-clamp-2 text-xs leading-relaxed text-slate-600">
+                                            {{ $item->alamat ?? '-' }}
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                {{-- AKSI --}}
+                                <td class="px-5 py-4 align-middle">
+
+                                    <div class="flex items-center justify-center gap-1.5">
+
+                                        {{-- EDIT --}}
+                                        <a href="{{ route('data-sekolah.edit', $item->id) }}" title="Edit Data Sekolah"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 transition hover:bg-amber-100">
+
+                                            <i class="ph ph-pencil-simple text-sm"></i>
+
+                                        </a>
+
+
+                                        {{-- DELETE --}}
+                                        <form action="{{ route('data-sekolah.destroy', $item->id) }}" method="POST"
+                                            class="delete-sekolah-form">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="button" onclick="confirmDeleteSekolah(this)"
+                                                title="Hapus Data Sekolah"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-500 transition hover:bg-red-100">
+
+                                                <i class="ph ph-trash text-sm"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+
+                                <td colspan="7" class="px-5 py-14">
+
+                                    <div class="flex flex-col items-center justify-center">
+
+                                        <div
+                                            class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50">
+
+                                            <i class="ph ph-buildings text-3xl text-slate-300">
+                                            </i>
+
+                                        </div>
+
+                                        <p class="font-semibold text-slate-700">
+                                            Belum ada data sekolah
+                                        </p>
+
+                                        <p class="mt-1 text-xs text-slate-400">
+                                            Data sekolah yang ditambahkan akan muncul di sini.
+                                        </p>
+
+                                        <a href="{{ route('data-sekolah.create') }}"
+                                            class="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700">
+
+                                            <i class="ph ph-plus"></i>
+
+                                            Tambah Data Sekolah
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        @endforelse
+
+
+                        {{-- NO RESULT FILTER --}}
+                        <tr id="noFilterResult" class="hidden">
+
+                            <td colspan="7" class="px-5 py-14">
+
+                                <div class="flex flex-col items-center justify-center">
+
+                                    <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
+
+                                        <i class="ph ph-magnifying-glass text-2xl text-slate-300">
+                                        </i>
+
+                                    </div>
+
+                                    <p class="font-semibold text-slate-700">
+                                        Data tidak ditemukan
+                                    </p>
+
+                                    <p class="mt-1 text-xs text-slate-400">
+                                        Tidak ada sekolah yang sesuai dengan pencarian.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+        JAVASCRIPT
+    ====================================================== --}}
+    <script>
+        /*
+                                |--------------------------------------------------------------------------
+                                | FILTER SEKOLAH
+                                |--------------------------------------------------------------------------
+                                */
+
+        function filterSekolah() {
+
+            const search =
+                document
+                .getElementById('searchSekolah')
+                .value
+                .toLowerCase()
+                .trim();
+
+            const rows =
+                document.querySelectorAll('.sekolah-row');
+
+            let jumlahTampil = 0;
+
+            rows.forEach(function(row) {
+
+                const nama =
+                    row.dataset.nama || '';
+
+                const npsn =
+                    row.dataset.npsn || '';
+
+                const cocokSearch =
+                    nama.includes(search) ||
+                    npsn.includes(search);
+
+                if (cocokSearch) {
+
+                    row.style.display = '';
+
+                    jumlahTampil++;
+
+                } else {
+
+                    row.style.display = 'none';
+
+                }
+
+            });
+
+
+            document
+                .getElementById('jumlahSekolah')
+                .textContent = jumlahTampil;
+
+
+            const noResult =
+                document.getElementById('noFilterResult');
+
+
+            if (
+                jumlahTampil === 0 &&
+                rows.length > 0
+            ) {
+
+                noResult.classList.remove('hidden');
+
+            } else {
+
+                noResult.classList.add('hidden');
+
             }
-        });
-    });
-</script>
 
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESET FILTER
+        |--------------------------------------------------------------------------
+        */
+
+        function resetFilterSekolah() {
+
+            document
+                .getElementById('searchSekolah')
+                .value = '';
+
+            filterSekolah();
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KONFIRMASI HAPUS
+        |--------------------------------------------------------------------------
+        */
+
+        function confirmDeleteSekolah(button) {
+
+            const form =
+                button.closest('.delete-sekolah-form');
+
+            const nama =
+                button
+                .closest('.sekolah-row')
+                ?.dataset.nama || 'sekolah ini';
+
+            const yakin =
+                confirm(
+                    'Apakah Anda yakin ingin menghapus data sekolah "' +
+                    nama +
+                    '"?\n\nData yang sudah dihapus tidak dapat dikembalikan.'
+                );
+
+            if (yakin) {
+
+                form.submit();
+
+            }
+
+        }
+    </script>
 @endsection

@@ -1,204 +1,362 @@
 @extends('layouts.app')
+
 @section('content')
-    <!-- ============================= -->
-    <!-- FORM INPUT DATA SISWA -->
-    <!-- ============================= -->
+    <div class="content">
 
-    <div class="section-title">
-        <i class="ph ph-student"></i>
-        Input Data Siswa
-    </div>
+        {{-- =====================================================
+            HEADER
+        ====================================================== --}}
+        <div
+            class="mb-6 overflow-hidden rounded-xl bg-gradient-to-r from-[#25284d] via-[#37367a] to-[#5148b8] px-6 py-5 text-white shadow-sm">
+
+            <div>
+
+                <x-breadcrumb :items="[
+                    ['label' => 'Dashboard', 'url' => route('dashboard')],
+                    ['label' => 'Data Master'],
+                    ['label' => 'Data Siswa'],
+                    ['label' => 'Tambah Data Siswa'],
+                ]" />
+
+                <div class="mt-1 flex items-center gap-3">
+
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                        <i class="ph ph-student text-2xl"></i>
+                    </div>
+
+                    <div>
+                        <h1 class="text-xl font-bold leading-tight">
+                            Tambah Data Siswa
+                        </h1>
+
+                        <p class="mt-1 text-xs text-[#c2c2dc]">
+                            Tambahkan data siswa, rombel, dan akun login yang akan digunakan dalam sistem E-Rapor SMK.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
 
 
-    <div class="bg-white rounded-xl shadow p-6 mb-6">
+        {{-- ERROR --}}
+        @if ($errors->any())
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
+
+                <div class="flex items-start gap-3">
+
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600">
+                        <i class="ph ph-warning-circle text-lg"></i>
+                    </div>
+
+                    <div>
+                        <p class="font-semibold">
+                            Data belum dapat disimpan
+                        </p>
+
+                        <p class="mt-1 text-xs text-red-600">
+                            Periksa kembali data yang diisi pada formulir.
+                        </p>
+
+                        <ul class="mt-2 list-inside list-disc text-xs">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        @endif
+
 
         <form method="POST" action="{{ route('data-siswa.store') }}" id="formSiswa">
 
             @csrf
 
-            @if ($errors->any())
-                <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-                    <i class="ph ph-warning-circle mr-1"></i>
-                    {{ $errors->first() }}
-                </div>
-            @endif
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {{-- =====================================================
+                IDENTITAS SISWA
+            ====================================================== --}}
+            <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-sm">
 
+                <div class="border-b border-slate-100 px-6 py-4">
 
-                <!-- NISN -->
-                <div>
+                    <div class="flex items-center gap-3">
 
-                    <label class="block font-semibold mb-2">
-                        NISN
-                    </label>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <i class="ph ph-identification-card text-xl"></i>
+                        </div>
 
-                    <input type="text" name="nisn" placeholder="Masukkan NISN siswa"
-                        class="w-full border rounded-lg px-4 py-2">
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-800">
+                                Identitas Siswa
+                            </h2>
 
-                    @if ($errors->has('nisn'))
-                        <p class="mt-1 text-sm text-red-600">
-                            {{ $errors->first('nisn') }}
-                        </p>
-                    @endif
+                            <p class="mt-0.5 text-xs text-slate-400">
+                                Informasi identitas utama siswa yang akan terdaftar dalam sistem.
+                            </p>
+                        </div>
 
-                </div>
-
-
-                <!-- NAMA SISWA -->
-                <div>
-
-                    <label class="block font-semibold mb-2">
-                        Nama Siswa
-                    </label>
-
-                    <input type="text" name="nama_siswa" placeholder="Masukkan nama siswa"
-                        class="w-full border rounded-lg px-4 py-2">
+                    </div>
 
                 </div>
 
 
-                <!-- JENIS KELAMIN -->
-                <div>
+                <div class="p-6">
 
-                    <label class="block font-semibold mb-2">
-                        Jenis Kelamin
-                    </label>
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                    <select name="jenis_kelamin" class="w-full border rounded-lg px-4 py-2">
+                        {{-- NISN --}}
+                        <div>
 
-                        <option value="">
-                            -- Pilih Jenis Kelamin --
-                        </option>
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-identification-card text-indigo-500"></i>
+                                NISN
+                            </label>
 
-                        <option value="L">
-                            Laki-laki
-                        </option>
+                            <input type="text" name="nisn" value="{{ old('nisn') }}"
+                                placeholder="Masukkan NISN siswa"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
-                        <option value="P">
-                            Perempuan
-                        </option>
+                            <p class="mt-1.5 text-[11px] text-slate-400">
+                                Nomor Induk Siswa Nasional.
+                            </p>
 
-                    </select>
+                            @error('nisn')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
 
-                </div>
-
-
-                <!-- TEMPAT LAHIR -->
-                <div>
-
-                    <label class="block font-semibold mb-2">
-                        Tempat Lahir
-                    </label>
-
-                    <input type="text" name="tempat_lahir" placeholder="Masukkan tempat lahir"
-                        class="w-full border rounded-lg px-4 py-2">
-
-                </div>
+                        </div>
 
 
-                <!-- TANGGAL LAHIR -->
-                <div>
+                        {{-- NAMA --}}
+                        <div>
 
-                    <label class="block font-semibold mb-2">
-                        Tanggal Lahir
-                    </label>
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-user text-indigo-500"></i>
+                                Nama Siswa
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    <input type="date" name="tanggal_lahir" class="w-full border rounded-lg px-4 py-2">
+                            <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}"
+                                placeholder="Contoh: Budi Santoso"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
-                </div>
+                            <p class="mt-1.5 text-[11px] text-slate-400">
+                                Masukkan nama lengkap siswa.
+                            </p>
 
+                            @error('nama_siswa')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
 
-                <!-- ROMBEL -->
-                <div>
-
-                    <label class="block font-semibold mb-2">
-                        Rombel / Kelas
-                    </label>
-
-                    <select name="rombel_id" class="w-full border rounded-lg px-4 py-2">
-
-                        <option value="">
-                            -- Pilih Rombel --
-                        </option>
-
-                        @foreach ($rombel as $item)
-                            <option value="{{ $item->id }}">
-                                {{ $item->nama_rombel }}
-                            </option>
-                        @endforeach
-
-                    </select>
-
-                </div>
+                        </div>
 
 
-                <!-- ALAMAT -->
-                <div class="col-span-2">
+                        {{-- JENIS KELAMIN --}}
+                        <div>
 
-                    <label class="block font-semibold mb-2">
-                        Alamat
-                    </label>
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-gender-intersex text-indigo-500"></i>
+                                Jenis Kelamin
+                            </label>
 
-                    <textarea name="alamat" rows="3" placeholder="Masukkan alamat siswa" class="w-full border rounded-lg px-4 py-2"></textarea>
+                            <select name="jenis_kelamin"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                                <option value="">-- Pilih Jenis Kelamin --</option>
+
+                                <option value="L" @selected(old('jenis_kelamin') === 'L')>
+                                    Laki-laki
+                                </option>
+
+                                <option value="P" @selected(old('jenis_kelamin') === 'P')>
+                                    Perempuan
+                                </option>
+
+                            </select>
+
+                            <p class="mt-1.5 text-[11px] text-slate-400">
+                                Pilih jenis kelamin siswa.
+                            </p>
+
+                        </div>
+
+
+                        {{-- TEMPAT LAHIR --}}
+                        <div>
+
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-map-pin text-indigo-500"></i>
+                                Tempat Lahir
+                            </label>
+
+                            <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
+                                placeholder="Masukkan tempat lahir"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                        </div>
+
+
+                        {{-- TANGGAL LAHIR --}}
+                        <div>
+
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-calendar text-indigo-500"></i>
+                                Tanggal Lahir
+                            </label>
+
+                            <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                        </div>
+
+
+                        {{-- ROMBEL --}}
+                        <div>
+
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-users-three text-indigo-500"></i>
+                                Rombel / Kelas
+                            </label>
+
+                            <select name="rombel_id"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                                <option value="">-- Pilih Rombel --</option>
+
+                                @foreach ($rombel as $item)
+                                    <option value="{{ $item->id }}" @selected(old('rombel_id') == $item->id)>
+                                        {{ $item->nama_rombel }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+
+                            <p class="mt-1.5 text-[11px] text-slate-400">
+                                Tentukan rombongan belajar siswa.
+                            </p>
+
+                        </div>
+
+
+                        {{-- ALAMAT --}}
+                        <div class="md:col-span-2">
+
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-map-pin text-indigo-500"></i>
+                                Alamat
+                            </label>
+
+                            <textarea name="alamat" rows="3" placeholder="Masukkan alamat lengkap siswa"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">{{ old('alamat') }}</textarea>
+
+                            <p class="mt-1.5 text-[11px] text-slate-400">
+                                Alamat tempat tinggal siswa.
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <!-- ===================================================== -->
-            <!-- DATA AKUN LOGIN -->
-            <!-- ===================================================== -->
+            {{-- =====================================================
+                AKUN LOGIN
+            ====================================================== --}}
+            <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-sm">
 
-            <div class="mt-6 border-t border-gray-200 pt-5">
+                <div class="border-b border-slate-100 px-6 py-4">
 
-                <div
-                    class="mb-4 flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
-                    <i class="ph ph-info mt-0.5 shrink-0"></i>
-                    <p>
-                        Akun login siswa dibuat otomatis dari data di atas.
-                        Username default memakai NISN. Kosongkan password bila
-                        ingin sistem yang menetapkannya.
-                    </p>
+                    <div class="flex items-center gap-3">
+
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                            <i class="ph ph-user-circle text-xl"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-800">
+                                Akun Login Siswa
+                            </h2>
+
+                            <p class="mt-0.5 text-xs text-slate-400">
+                                Tentukan akun yang digunakan siswa untuk masuk ke sistem.
+                            </p>
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-                    <!-- USERNAME -->
-                    <div>
+                <div class="p-6">
 
-                        <label class="mb-2 block font-semibold">
-                            Username Login
-                        </label>
+                    <div class="mb-5 flex items-start gap-3 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
 
-                        <input type="text" name="username" value="{{ old('username') }}"
-                            placeholder="Kosongkan untuk memakai NISN" class="w-full rounded-lg border px-4 py-2">
+                        <div
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-indigo-600 shadow-sm">
+                            <i class="ph ph-info"></i>
+                        </div>
 
-                        @error('username')
-                            <p class="mt-1 text-sm text-red-600">
-                                {{ $message }}
+                        <div>
+                            <p class="text-xs font-semibold text-indigo-800">
+                                Informasi akun
                             </p>
-                        @enderror
+
+                            <p class="mt-1 text-xs leading-relaxed text-indigo-700">
+                                Akun login siswa dapat dibuat bersamaan dengan data siswa.
+                                Jika username dikosongkan, sistem akan menggunakan
+                                <strong>NISN</strong> sebagai username.
+                            </p>
+                        </div>
 
                     </div>
 
 
-                    <!-- PASSWORD -->
-                    <div>
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                        <label class="mb-2 block font-semibold">
-                            Password Awal
-                        </label>
+                        {{-- USERNAME --}}
+                        <div>
 
-                        <input type="password" name="password" placeholder="Kosongkan untuk dibuatkan sistem"
-                            class="w-full rounded-lg border px-4 py-2">
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-user-circle text-violet-500"></i>
+                                Username Login
+                            </label>
 
-                        @error('password')
-                            <p class="mt-1 text-sm text-red-600">
-                                {{ $message }}
-                            </p>
-                        @enderror
+                            <input type="text" name="username" value="{{ old('username') }}"
+                                placeholder="Kosongkan untuk memakai NISN"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100">
+
+                            @error('username')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+
+                        </div>
+
+
+                        {{-- PASSWORD --}}
+                        <div>
+
+                            <label class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                                <i class="ph ph-lock-key text-violet-500"></i>
+                                Password Awal
+                            </label>
+
+                            <input type="password" name="password" placeholder="Kosongkan untuk dibuatkan sistem"
+                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100">
+
+                            @error('password')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+
+                        </div>
 
                     </div>
 
@@ -207,21 +365,25 @@
             </div>
 
 
-            <!-- BUTTON -->
+            {{-- =====================================================
+                ACTION
+            ====================================================== --}}
+            <div
+                class="flex flex-col-reverse gap-3 rounded-xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
 
-            <div class="flex gap-3 mt-6">
+                <a href="{{ route('data-siswa.index') }}"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">
 
-                <a href="{{ route('data-siswa') }}" class="px-5 py-2 rounded-lg bg-gray-500 text-white">
-                    <i class="ph ph-arrow-left mr-1"></i>
+                    <i class="ph ph-arrow-left"></i>
                     Kembali
+
                 </a>
 
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200">
 
-                <button type="submit" onclick="simpanData(event)" class="px-5 py-2 rounded-lg bg-blue-600 text-white">
-
-                    <i class="ph ph-floppy-disk mr-1"></i>
-
-                    Simpan
+                    <i class="ph ph-floppy-disk"></i>
+                    Simpan Data Siswa
 
                 </button>
 
@@ -230,78 +392,4 @@
         </form>
 
     </div>
-
-
-
-    </div>
 @endsection
-
-<!-- ============================= -->
-<!-- JAVASCRIPT -->
-<!-- ============================= -->
-
-<script>
-    /* ============================= */
-    /* EDIT DATA SISWA */
-    /* ============================= */
-
-    function editData() {
-
-        document.querySelector(
-            'input[name="nisn"]'
-        ).value = "1234567890";
-
-
-        document.querySelector(
-            'input[name="nama_siswa"]'
-        ).value = "Budi Santoso";
-
-
-        document.querySelector(
-            'select[name="jenis_kelamin"]'
-        ).value = "L";
-
-
-        document.querySelector(
-            'input[name="tempat_lahir"]'
-        ).value = "Palembang";
-
-
-        document.querySelector(
-            'input[name="tanggal_lahir"]'
-        ).value = "2009-05-12";
-
-
-        document.querySelector(
-            'select[name="rombel_id"]'
-        ).value = "3";
-
-
-        document.querySelector(
-            'textarea[name="alamat"]'
-        ).value = "Jl. Contoh No. 10 Palembang";
-
-
-        window.scrollTo({
-
-            top: 0,
-
-            behavior: 'smooth'
-
-        });
-
-    }
-
-
-    /* ============================= */
-    /* SIMPAN DATA SISWA */
-    /* ============================= */
-
-    function simpanData(event) {
-
-        // Kirim form ke server agar tersimpan di database
-
-        document.getElementById('formSiswa').submit();
-
-    }
-</script>

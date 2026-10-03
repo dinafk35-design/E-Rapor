@@ -2,265 +2,353 @@
 
 @section('content')
 
-<div class="content">
+    <div class="content">
 
-    <!-- HEADER -->
-    <div class="welcome">
-        <h2 class="italic font-bold">
-            Tambah Data Mata Pelajaran
-        </h2>
+        {{-- =====================================================
+            HEADER
+        ====================================================== --}}
+        <div
+            class="mb-6 overflow-hidden rounded-xl bg-gradient-to-r from-[#25284d] via-[#37367a] to-[#5148b8] px-6 py-5 text-white shadow-sm">
 
-        <p>
-            Kelola data mata pelajaran yang digunakan dalam sistem E-Rapor SMK.
-        </p>
-    </div>
+            <x-breadcrumb :items="[
+                ['label' => 'Dashboard', 'url' => route('dashboard')],
+                ['label' => 'Data Master'],
+                ['label' => 'Mata Pelajaran', 'url' => route('mata-pelajaran.index')],
+                ['label' => 'Tambah Data Mata Pelajaran'],
+            ]" />
 
+            <div class="mt-1 flex items-center gap-3">
 
-    <!-- ============================= -->
-    <!-- PESAN ERROR -->
-    <!-- ============================= -->
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                    <i class="ph ph-book-open text-2xl"></i>
+                </div>
 
-    @if ($errors->any())
+                <div>
+                    <h1 class="text-xl font-bold">
+                        Tambah Mata Pelajaran
+                    </h1>
 
-        <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-            <i class="ph ph-warning-circle mr-1"></i>
-            {{ $errors->first() }}
+                    <p class="mt-1 text-xs text-[#c2c2dc]">
+                        Tambahkan mata pelajaran dan tentukan guru yang mengajar.
+                    </p>
+                </div>
+
+            </div>
+
         </div>
 
-    @endif
+
+        {{-- =====================================================
+            ERROR
+        ====================================================== --}}
+        @if ($errors->any())
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 shadow-sm">
+
+                <div class="flex items-start gap-3">
+
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600">
+                        <i class="ph ph-warning-circle text-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-red-800">
+                            Data belum dapat disimpan
+                        </p>
+
+                        <p class="mt-1 text-xs text-red-700">
+                            Periksa kembali data yang ditandai sebelum menyimpan.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+        @endif
 
 
-    <!-- ============================= -->
-    <!-- FORM INPUT MATA PELAJARAN -->
-    <!-- ============================= -->
+        <form method="POST" action="{{ route('mata-pelajaran.store') }}" id="formMataPelajaran">
 
-    <div class="section-title">
-        <i class="ph ph-book"></i>
-        Input Data Mata Pelajaran
-    </div>
-
-
-    <div class="bg-white rounded-xl shadow p-6 mb-6">
-
-        <form
-            method="POST"
-            action="{{ route('mata-pelajaran.store') }}"
-            id="formMataPelajaran"
-        >
             @csrf
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                <!-- KODE MATA PELAJARAN -->
-                <div>
+            {{-- =====================================================
+                INFORMASI MATA PELAJARAN
+            ====================================================== --}}
+            <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
 
-                    <label class="block font-semibold mb-2">
-                        Kode Mata Pelajaran
-                    </label>
+                <div class="mb-5 flex items-center gap-3">
 
-                    <input
-                        type="text"
-                        name="kode_mata_pelajaran"
-                        value="{{ old('kode_mata_pelajaran') }}"
-                        placeholder="Contoh: RPL001"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5"
-                    >
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                        <i class="ph ph-book-open text-lg"></i>
+                    </div>
 
-                    @error('kode_mata_pelajaran')
-                        <p class="text-red-500 text-sm mt-1">
-                            {{ $message }}
+                    <div>
+
+                        <h2 class="text-base font-bold text-slate-800">
+                            Informasi Mata Pelajaran
+                        </h2>
+
+                        <p class="text-[11px] text-slate-400">
+                            Masukkan identitas dasar mata pelajaran yang akan digunakan dalam E-Rapor.
                         </p>
-                    @enderror
+
+                    </div>
 
                 </div>
 
 
-                <!-- NAMA MATA PELAJARAN -->
-                <div>
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                    <label class="block font-semibold mb-2">
-                        Nama Mata Pelajaran
-                    </label>
+                    {{-- KODE --}}
+                    <div>
 
-                    <input
-                        type="text"
-                        name="nama_mata_pelajaran"
-                        value="{{ old('nama_mata_pelajaran') }}"
-                        placeholder="Masukkan nama mata pelajaran"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5"
-                        required
-                    >
+                        <label class="mb-2 block text-xs font-semibold text-slate-700">
+                            Kode Mata Pelajaran
+                        </label>
 
-                    @error('nama_mata_pelajaran')
-                        <p class="text-red-500 text-sm mt-1">
-                            {{ $message }}
+                        <div class="relative">
+
+                            <i class="ph ph-hash absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            </i>
+
+                            <input type="text" name="kode_mata_pelajaran" value="{{ old('kode_mata_pelajaran') }}"
+                                placeholder="Contoh: RPL001"
+                                class="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+
+                        </div>
+
+                        <p class="mt-1.5 text-[10px] text-slate-400">
+                            Gunakan kode yang konsisten dengan sistem akademik sekolah.
                         </p>
-                    @enderror
 
-                </div>
+                        @error('kode_mata_pelajaran')
+                            <p class="mt-1 text-xs text-red-500">
+                                {{ $message }}
+                            </p>
+                        @enderror
 
-
-                <!-- KELOMPOK -->
-                <div>
-
-                    <label class="block font-semibold mb-2">
-                        Kelompok
-                    </label>
-
-                    <select
-                        name="kelompok"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5"
-                    >
-
-                        <option value="">
-                            -- Pilih Kelompok --
-                        </option>
-
-                        <option value="A" {{ old('kelompok') === 'A' ? 'selected' : '' }}>
-                            Kelompok A
-                        </option>
-
-                        <option value="B" {{ old('kelompok') === 'B' ? 'selected' : '' }}>
-                            kelompok B
-                        </option>
-
-                        <option value="C" {{ old('kelompok') === 'C' ? 'selected' : '' }}>
-                            Kelompok C
-                        </option>
-
-                        <option value="Muatan Lokal" {{ old('kelompok') === 'Muatan Lokal' ? 'selected' : '' }}>
-                            Muatan Lokal
-                        </option>
-
-                    </select>
-
-                </div>
+                    </div>
 
 
-                <!-- SEKOLAH -->
-                <div>
+                    {{-- NAMA --}}
+                    <div>
 
-                    <label class="block font-semibold mb-2">
-                        Sekolah
-                    </label>
+                        <label class="mb-2 block text-xs font-semibold text-slate-700">
+                            Nama Mata Pelajaran
+                            <span class="text-red-500">*</span>
+                        </label>
 
-                    <select
-                        name="sekolah_id"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5"
-                    >
+                        <div class="relative">
 
-                        <option value="">
-                            -- Pilih Sekolah --
-                        </option>
+                            <i class="ph ph-book-bookmark absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            </i>
 
-                        @foreach ($sekolah as $item)
+                            <input type="text" name="nama_mata_pelajaran" value="{{ old('nama_mata_pelajaran') }}"
+                                placeholder="Contoh: Pemrograman Web"
+                                class="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                                required>
 
-                            <option
-                                value="{{ $item->id }}"
-                                {{ (string) old('sekolah_id') === (string) $item->id ? 'selected' : '' }}
-                            >
-                                {{ $item->nama_sekolah }}
-                            </option>
+                        </div>
 
-                        @endforeach
-
-                    </select>
-
-                    @error('sekolah_id')
-                        <p class="text-red-500 text-sm mt-1">
-                            {{ $message }}
+                        <p class="mt-1.5 text-[10px] text-slate-400">
+                            Masukkan nama mata pelajaran secara lengkap.
                         </p>
-                    @enderror
+
+                        @error('nama_mata_pelajaran')
+                            <p class="mt-1 text-xs text-red-500">
+                                {{ $message }}
+                            </p>
+                        @enderror
+
+                    </div>
+
+
+                    {{-- KELOMPOK --}}
+                    <div>
+
+                        <label class="mb-2 block text-xs font-semibold text-slate-700">
+                            Kelompok
+                        </label>
+
+                        <div class="relative">
+
+                            <i class="ph ph-stack absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            </i>
+
+                            <select name="kelompok"
+                                class="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+
+                                <option value="">
+                                    -- Pilih Kelompok --
+                                </option>
+
+                                <option value="A" @selected(old('kelompok') === 'A')>
+                                    Kelompok A
+                                </option>
+
+                                <option value="B" @selected(old('kelompok') === 'B')>
+                                    Kelompok B
+                                </option>
+
+                                <option value="C" @selected(old('kelompok') === 'C')>
+                                    Kelompok C
+                                </option>
+
+                                <option value="Muatan Lokal" @selected(old('kelompok') === 'Muatan Lokal')>
+                                    Muatan Lokal
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <p class="mt-1.5 text-[10px] text-slate-400">
+                            Tentukan kelompok mata pelajaran sesuai struktur kurikulum.
+                        </p>
+
+                    </div>
+
+
+                    {{-- SEKOLAH --}}
+                    <div>
+
+                        <label class="mb-2 block text-xs font-semibold text-slate-700">
+                            Sekolah
+                            <span class="text-red-500">*</span>
+                        </label>
+
+                        <div class="relative">
+
+                            <i class="ph ph-buildings absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            </i>
+
+                            <select name="sekolah_id"
+                                class="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+
+                                <option value="">
+                                    -- Pilih Sekolah --
+                                </option>
+
+                                @foreach ($sekolah as $item)
+                                    <option value="{{ $item->id }}" @selected((string) old('sekolah_id') === (string) $item->id)>
+                                        {{ $item->nama_sekolah }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+
+                        </div>
+
+                        <p class="mt-1.5 text-[10px] text-slate-400">
+                            Pilih sekolah tempat mata pelajaran ini digunakan.
+                        </p>
+
+                        @error('sekolah_id')
+                            <p class="mt-1 text-xs text-red-500">
+                                {{ $message }}
+                            </p>
+                        @enderror
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <!-- ============================================ -->
-            <!-- PILIH GURU YANG MENGAJAR                       -->
-            <!-- ============================================ -->
+            {{-- =====================================================
+                GURU MENGAJAR
+            ====================================================== --}}
+            <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
 
-            <div class="mt-8 border-t pt-6">
+                <div class="mb-5 flex flex-wrap items-start justify-between gap-4">
 
-                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div class="flex items-start gap-3">
 
-                    <div>
-
-                        <div class="flex items-center gap-2">
-
-                            <i class="ph ph-chalkboard-teacher text-xl text-blue-600"></i>
-
-                            <h3 class="text-lg font-bold text-slate-800">
-                                Guru yang Mengajar
-                            </h3>
-
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                            <i class="ph ph-chalkboard-teacher text-lg"></i>
                         </div>
 
-                        <p class="text-sm text-slate-500 mt-1">
-                            Pilih guru dari data guru yang tersedia. Boleh dikosongkan
-                            dan bisa ditambah nanti dari halaman edit.
-                        </p>
+                        <div>
+
+                            <h2 class="text-base font-bold text-slate-800">
+                                Guru yang Mengajar
+                            </h2>
+
+                            <p class="mt-1 max-w-2xl text-[11px] leading-relaxed text-slate-400">
+                                Hubungkan mata pelajaran dengan guru, rombel, tahun ajaran,
+                                dan semester. Relasi ini juga dapat dikelola kembali melalui halaman edit.
+                            </p>
+
+                        </div>
 
                     </div>
 
 
-                    <button
-                        type="button"
-                        onclick="tambahBarisGuru()"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition"
-                    >
-
+                    <button type="button" onclick="tambahBarisGuru()"
+                        class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700">
                         <i class="ph ph-plus"></i>
-
                         Tambah Guru
-
                     </button>
 
                 </div>
 
 
                 @if ($guru->isEmpty())
+                    <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
 
-                    <div class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+                        <div class="flex items-start gap-3">
 
-                        <i class="ph ph-warning-circle mr-1"></i>
+                            <i class="ph ph-warning-circle mt-0.5 text-lg text-amber-600"></i>
 
-                        Belum ada data guru. Silakan tambahkan data guru terlebih dahulu.
+                            <div>
+
+                                <p class="text-sm font-semibold text-amber-800">
+                                    Belum ada data guru
+                                </p>
+
+                                <p class="mt-1 text-xs text-amber-700">
+                                    Tambahkan data guru terlebih dahulu sebelum membuat relasi guru mengajar.
+                                </p>
+
+                            </div>
+
+                        </div>
 
                     </div>
-
                 @else
-
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
 
                         <table class="w-full text-sm">
 
-                            <thead class="bg-slate-50 border-b">
+                            <thead class="border-b border-slate-200 bg-slate-50">
 
                                 <tr>
 
-                                    <th class="px-4 py-3 font-semibold text-slate-700">
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600">
                                         No
                                     </th>
 
-                                    <th class="px-4 py-3 font-semibold text-slate-700">
+                                    <th class="min-w-[240px] px-4 py-3 text-left text-xs font-semibold text-slate-600">
                                         Guru
                                     </th>
 
-                                    <th class="px-4 py-3 font-semibold text-slate-700">
+                                    <th class="min-w-[180px] px-4 py-3 text-left text-xs font-semibold text-slate-600">
                                         Rombel
                                     </th>
 
-                                    <th class="px-4 py-3 font-semibold text-slate-700">
+                                    <th class="min-w-[160px] px-4 py-3 text-left text-xs font-semibold text-slate-600">
                                         Tahun Ajaran
                                     </th>
 
-                                    <th class="px-4 py-3 font-semibold text-slate-700">
+                                    <th class="min-w-[140px] px-4 py-3 text-left text-xs font-semibold text-slate-600">
                                         Semester
                                     </th>
 
-                                    <th class="px-4 py-3 text-center font-semibold text-slate-700">
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600">
                                         Aksi
                                     </th>
 
@@ -277,45 +365,33 @@
                                     $barisTahunLama = (array) old('tahun_ajaran', []);
                                     $barisSemesterLama = (array) old('semester', []);
 
-                                    /*
-                                    | Kalau ada input lama dari validasi gagal, tampilkan
-                                    | sebanyak baris itu. Selain itu satu baris kosong.
-                                    */
                                     $jumlahBaris = $barisGuruLama === [] ? 1 : count($barisGuruLama);
                                 @endphp
 
                                 @for ($i = 0; $i < $jumlahBaris; $i++)
+                                    <tr class="border-b border-slate-100">
 
-                                    <tr class="border-b">
-
-                                        <td class="px-4 py-3 text-slate-600 nomor-guru">
+                                        <td class="px-4 py-3 text-sm text-slate-500 nomor-guru">
                                             {{ $i + 1 }}
                                         </td>
 
 
                                         <td class="px-4 py-3">
 
-                                            <select
-                                                name="guru_id[]"
-                                                class="pilihan-guru w-full border border-gray-300 rounded-lg px-3 py-2"
-                                            >
+                                            <select name="guru_id[]"
+                                                class="pilihan-guru w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                                                 <option value="">
                                                     -- Pilih Guru --
                                                 </option>
 
                                                 @foreach ($guru as $item)
-
-                                                    <option
-                                                        value="{{ $item->id }}"
-                                                        {{ (string) ($barisGuruLama[$i] ?? '') === (string) $item->id ? 'selected' : '' }}
-                                                    >
+                                                    <option value="{{ $item->id }}" @selected((string) ($barisGuruLama[$i] ?? '') === (string) $item->id)>
                                                         {{ $item->nama_guru }}
                                                         @if ($item->nip)
                                                             - {{ $item->nip }}
                                                         @endif
                                                     </option>
-
                                                 @endforeach
 
                                             </select>
@@ -325,30 +401,23 @@
 
                                         <td class="px-4 py-3">
 
-                                            <select
-                                                name="rombel_id[]"
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2"
-                                            >
+                                            <select name="rombel_id[]"
+                                                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                                                 <option value="">
                                                     -- Pilih Rombel --
                                                 </option>
 
                                                 @foreach ($rombel as $item)
-
-                                                    <option
-                                                        value="{{ $item->id }}"
-                                                        {{ (string) ($barisRombelLama[$i] ?? '') === (string) $item->id ? 'selected' : '' }}
-                                                    >
+                                                    <option value="{{ $item->id }}" @selected((string) ($barisRombelLama[$i] ?? '') === (string) $item->id)>
                                                         {{ $item->nama_rombel }}
                                                     </option>
-
                                                 @endforeach
 
                                             </select>
 
                                             @error('rombel_id.' . $i)
-                                                <p class="text-red-500 text-sm mt-1">
+                                                <p class="mt-1 text-xs text-red-500">
                                                     {{ $message }}
                                                 </p>
                                             @enderror
@@ -358,20 +427,15 @@
 
                                         <td class="px-4 py-3">
 
-                                            <select
-                                                name="tahun_ajaran[]"
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2"
-                                            >
+                                            <select name="tahun_ajaran[]"
+                                                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                                                 <option value="">
                                                     -- Tahun Ajaran --
                                                 </option>
 
                                                 @foreach (['2025/2026', '2026/2027', '2027/2028'] as $tahun)
-                                                    <option
-                                                        value="{{ $tahun }}"
-                                                        {{ ($barisTahunLama[$i] ?? '') === $tahun ? 'selected' : '' }}
-                                                    >
+                                                    <option value="{{ $tahun }}" @selected(($barisTahunLama[$i] ?? '') === $tahun)>
                                                         {{ $tahun }}
                                                     </option>
                                                 @endforeach
@@ -383,20 +447,15 @@
 
                                         <td class="px-4 py-3">
 
-                                            <select
-                                                name="semester[]"
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2"
-                                            >
+                                            <select name="semester[]"
+                                                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                                                 <option value="">
                                                     -- Semester --
                                                 </option>
 
                                                 @foreach (['Ganjil', 'Genap'] as $pilihanSemester)
-                                                    <option
-                                                        value="{{ $pilihanSemester }}"
-                                                        {{ ($barisSemesterLama[$i] ?? '') === $pilihanSemester ? 'selected' : '' }}
-                                                    >
+                                                    <option value="{{ $pilihanSemester }}" @selected(($barisSemesterLama[$i] ?? '') === $pilihanSemester)>
                                                         {{ $pilihanSemester }}
                                                     </option>
                                                 @endforeach
@@ -408,22 +467,15 @@
 
                                         <td class="px-4 py-3 text-center">
 
-                                            <button
-                                                type="button"
-                                                onclick="hapusBarisGuru(this)"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
-                                            >
-
+                                            <button type="button" onclick="hapusBarisGuru(this)"
+                                                class="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
                                                 <i class="ph ph-trash"></i>
-
                                                 Hapus
-
                                             </button>
 
                                         </td>
 
                                     </tr>
-
                                 @endfor
 
                             </tbody>
@@ -431,34 +483,27 @@
                         </table>
 
                     </div>
-
                 @endif
 
             </div>
 
 
-            <!-- BUTTON -->
+            {{-- =====================================================
+                ACTION
+            ====================================================== --}}
+            <div
+                class="flex flex-col-reverse gap-3 rounded-xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
 
-            <div class="flex gap-3 mt-6">
-
-                <a
-                    href="{{ route('mata-pelajaran.index') }}"
-                    class="px-5 py-2 rounded-lg bg-gray-500 text-white"
-                >
-                    <i class="ph ph-arrow-left mr-1"></i>
+                <a href="{{ route('mata-pelajaran.index') }}"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-5 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">
+                    <i class="ph ph-arrow-left"></i>
                     Kembali
                 </a>
 
-
-                <button
-                    type="submit"
-                    class="px-5 py-2 rounded-lg bg-blue-600 text-white"
-                >
-
-                    <i class="ph ph-floppy-disk mr-1"></i>
-
-                    Simpan
-
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700">
+                    <i class="ph ph-floppy-disk"></i>
+                    Simpan Mata Pelajaran
                 </button>
 
             </div>
@@ -467,203 +512,168 @@
 
     </div>
 
-</div>
 
+    {{-- =====================================================
+        TEMPLATE BARIS GURU
+    ====================================================== --}}
+    <template id="templateBarisGuru">
 
-<!-- ============================================================ -->
-<!-- TEMPLATE BARIS GURU (disalin oleh JavaScript)               -->
-<!-- ============================================================ -->
+        <tr class="border-b border-slate-100">
 
-<template id="templateBarisGuru">
+            <td class="px-4 py-3 text-sm text-slate-500 nomor-guru"></td>
 
-    <tr class="border-b">
+            <td class="px-4 py-3">
 
-        <td class="px-4 py-3 text-slate-600 nomor-guru"></td>
+                <select name="guru_id[]"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
-
-        <td class="px-4 py-3">
-
-            <select
-                name="guru_id[]"
-                class="pilihan-guru w-full border border-gray-300 rounded-lg px-3 py-2"
-            >
-
-                <option value="">
-                    -- Pilih Guru --
-                </option>
-
-                @foreach ($guru as $item)
-
-                    <option value="{{ $item->id }}">
-                        {{ $item->nama_guru }}
-                        @if ($item->nip)
-                            - {{ $item->nip }}
-                        @endif
+                    <option value="">
+                        -- Pilih Guru --
                     </option>
 
-                @endforeach
+                    @foreach ($guru as $item)
+                        <option value="{{ $item->id }}">
+                            {{ $item->nama_guru }}
+                            @if ($item->nip)
+                                - {{ $item->nip }}
+                            @endif
+                        </option>
+                    @endforeach
 
-            </select>
+                </select>
 
-        </td>
+            </td>
 
 
-        <td class="px-4 py-3">
+            <td class="px-4 py-3">
 
-            <select
-                name="rombel_id[]"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2"
-            >
+                <select name="rombel_id[]"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
-                <option value="">
-                    -- Pilih Rombel --
-                </option>
-
-                @foreach ($rombel as $item)
-
-                    <option value="{{ $item->id }}">
-                        {{ $item->nama_rombel }}
+                    <option value="">
+                        -- Pilih Rombel --
                     </option>
 
-                @endforeach
+                    @foreach ($rombel as $item)
+                        <option value="{{ $item->id }}">
+                            {{ $item->nama_rombel }}
+                        </option>
+                    @endforeach
 
-            </select>
+                </select>
 
-        </td>
-
-
-        <td class="px-4 py-3">
-
-            <select
-                name="tahun_ajaran[]"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2"
-            >
-
-                <option value="">
-                    -- Tahun Ajaran --
-                </option>
-
-                <option value="2025/2026">
-                    2025/2026
-                </option>
-
-                <option value="2026/2027">
-                    2026/2027
-                </option>
-
-                <option value="2027/2028">
-                    2027/2028
-                </option>
-
-            </select>
-
-        </td>
+            </td>
 
 
-        <td class="px-4 py-3">
+            <td class="px-4 py-3">
 
-            <select
-                name="semester[]"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2"
-            >
+                <select name="tahun_ajaran[]"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
-                <option value="">
-                    -- Semester --
-                </option>
+                    <option value="">
+                        -- Tahun Ajaran --
+                    </option>
 
-                <option value="Ganjil">
-                    Ganjil
-                </option>
+                    <option value="2025/2026">2025/2026</option>
+                    <option value="2026/2027">2026/2027</option>
+                    <option value="2027/2028">2027/2028</option>
 
-                <option value="Genap">
-                    Genap
-                </option>
+                </select>
 
-            </select>
-
-        </td>
+            </td>
 
 
-        <td class="px-4 py-3 text-center">
+            <td class="px-4 py-3">
 
-            <button
-                type="button"
-                onclick="hapusBarisGuru(this)"
-                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
-            >
+                <select name="semester[]"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
-                <i class="ph ph-trash"></i>
+                    <option value="">
+                        -- Semester --
+                    </option>
 
-                Hapus
+                    <option value="Ganjil">Ganjil</option>
+                    <option value="Genap">Genap</option>
 
-            </button>
+                </select>
 
-        </td>
-
-    </tr>
-
-</template>
+            </td>
 
 
-<!-- ============================= -->
-<!-- JAVASCRIPT -->
-<!-- ============================= -->
+            <td class="px-4 py-3 text-center">
 
-<script>
+                <button type="button" onclick="hapusBarisGuru(this)"
+                    class="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
+                    <i class="ph ph-trash"></i>
+                    Hapus
+                </button>
 
-/* ============================================================== */
-/* TAMBAH BARIS GURU                                               */
-/* ============================================================== */
+            </td>
 
-function tambahBarisGuru() {
+        </tr>
 
-    const wrapper = document.getElementById('wrapperGuruMengajar');
-
-    const template = document.getElementById('templateBarisGuru');
-
-    if (!wrapper || !template) {
-        return;
-    }
-
-    wrapper.appendChild(template.content.cloneNode(true));
-
-    perbaruiNomorGuru();
-
-}
+    </template>
 
 
-/* ============================================================== */
-/* HAPUS BARIS GURU                                               */
-/* ============================================================== */
+    <script>
+        function tambahBarisGuru() {
 
-function hapusBarisGuru(tombol) {
+            const wrapper =
+                document.getElementById('wrapperGuruMengajar');
 
-    const baris = tombol.closest('tr');
+            const template =
+                document.getElementById('templateBarisGuru');
 
-    baris.remove();
+            if (!wrapper || !template) {
+                return;
+            }
 
-    perbaruiNomorGuru();
+            wrapper.appendChild(
+                template.content.cloneNode(true)
+            );
 
-}
+            perbaruiNomorGuru();
+
+        }
 
 
-/* ============================================================== */
-/* NOMOR URUT BARIS GURU                                          */
-/* ============================================================== */
+        function hapusBarisGuru(tombol) {
 
-function perbaruiNomorGuru() {
+            const baris = tombol.closest('tr');
 
-    document
-        .querySelectorAll('#wrapperGuruMengajar .nomor-guru')
-        .forEach(function(kolom, index) {
+            if (!baris) {
+                return;
+            }
 
-            kolom.textContent = index + 1;
+            const wrapper =
+                document.getElementById('wrapperGuruMengajar');
 
-        });
+            const jumlahBaris =
+                wrapper.querySelectorAll('tr').length;
 
-}
+            if (jumlahBaris <= 1) {
+                alert('Minimal harus tersedia satu baris guru.');
+                return;
+            }
 
-</script>
+            baris.remove();
 
+            perbaruiNomorGuru();
+
+        }
+
+
+        function perbaruiNomorGuru() {
+
+            document
+                .querySelectorAll('#wrapperGuruMengajar .nomor-guru')
+                .forEach(function(kolom, index) {
+
+                    kolom.textContent = index + 1;
+
+                });
+
+        }
+    </script>
 
 @endsection

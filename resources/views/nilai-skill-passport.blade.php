@@ -1,1803 +1,1550 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="space-y-6">
 
-<div class="min-h-screen bg-gray-100 p-6">
+        {{-- =========================================================
+            HEADER
+        ========================================================== --}}
+        <div
+            class="overflow-hidden rounded-xl bg-gradient-to-r from-[#25284d] via-[#37367a] to-[#5148b8] px-6 py-5 text-white shadow-sm">
 
-```
-<!-- HEADER -->
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">
-        Nilai Skill Passport
-    </h1>
+            {{-- Breadcrumb --}}
+            <x-breadcrumb :items="[
+                ['label' => 'Dashboard', 'url' => route('dashboard')],
+                ['label' => 'Penilaian'],
+                ['label' => 'Nilai Skill Passport', 'icon' => 'ph-identification-card'],
+            ]" />
 
-    <p class="mt-1 text-sm text-gray-500">
-        Kelola nilai kompetensi dan keterampilan siswa pada Skill Passport.
-    </p>
-</div>
+            <div class="mt-3 flex items-start justify-between gap-4">
 
+                <div class="flex items-start gap-4">
 
-<!-- FILTER -->
-<div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+                    <div
+                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                        <i class="ph ph-identification-card text-2xl"></i>
+                    </div>
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight">
+                            Nilai Skill Passport
+                        </h1>
 
-        <!-- PENCARIAN -->
-        <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Cari Siswa
-            </label>
+                        <p class="mt-1 max-w-2xl text-xs leading-5 text-indigo-100">
+                            Kelola nilai kompetensi dan keterampilan siswa pada Skill Passport
+                            berdasarkan tahun ajaran, semester, rombel, dan kompetensi.
+                        </p>
+                    </div>
 
-            <div class="relative">
+                </div>
 
-                <span class="absolute left-3 top-3 text-gray-400">
-                    <i class="ph ph-magnifying-glass"></i>
-                </span>
+                {{-- Tambah Data --}}
+                <a href="{{ route('nilai-skill-passport-create') }}"
+                    class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-xs font-semibold text-[#37367a] shadow-sm transition hover:bg-indigo-50">
 
-                <input
-                    type="text"
-                    id="searchSiswa"
-                    placeholder="Cari nama / NISN..."
-                    class="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                    <i class="ph ph-plus-circle text-base"></i>
+
+                    <span>Tambah Nilai</span>
+
+                </a>
 
             </div>
         </div>
 
 
-        <!-- TAHUN AJARAN -->
-        <div>
+        {{-- =========================================================
+            RINGKASAN
+        ========================================================== --}}
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Tahun Ajaran
-            </label>
+            {{-- Total Data --}}
+            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
 
-            <select
-                id="filterTahun"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                <div class="flex items-center justify-between">
 
-                <option value="">
-                    Semua Tahun Ajaran
-                </option>
+                    <div>
+                        <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                            Total Nilai
+                        </p>
 
-                <option value="2025/2026">
-                    2025/2026
-                </option>
+                        <p id="jumlahData" class="mt-1 text-2xl font-bold text-slate-800">
+                            0
+                        </p>
 
-                <option value="2026/2027">
-                    2026/2027
-                </option>
+                        <p class="mt-1 text-[11px] text-slate-400">
+                            Data Skill Passport
+                        </p>
+                    </div>
 
-            </select>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                        <i class="ph ph-identification-card text-xl"></i>
+                    </div>
 
-        </div>
+                </div>
 
-
-        <!-- SEMESTER -->
-        <div>
-
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Semester
-            </label>
-
-            <select
-                id="filterSemester"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-
-                <option value="">
-                    Semua Semester
-                </option>
-
-                <option value="Ganjil">
-                    Ganjil
-                </option>
-
-                <option value="Genap">
-                    Genap
-                </option>
-
-            </select>
-
-        </div>
+            </div>
 
 
-        <!-- KELAS -->
-        <div>
+            {{-- Sangat Baik --}}
+            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
 
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Kelas
-            </label>
+                <div class="flex items-center justify-between">
 
-            <select
-                id="filterKelas"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                    <div>
+                        <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                            Sangat Baik
+                        </p>
 
-                <option value="">
-                    Semua Kelas
-                </option>
+                        <p id="jumlahSangatBaik" class="mt-1 text-2xl font-bold text-green-600">
+                            0
+                        </p>
 
-                <option value="X RPL 1">
-                    X RPL 1
-                </option>
+                        <p class="mt-1 text-[11px] text-slate-400">
+                            Kompetensi sangat baik
+                        </p>
+                    </div>
 
-                <option value="X RPL 2">
-                    X RPL 2
-                </option>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                        <i class="ph ph-medal text-xl"></i>
+                    </div>
 
-                <option value="XI RPL 1">
-                    XI RPL 1
-                </option>
+                </div>
 
-                <option value="XI RPL 2">
-                    XI RPL 2
-                </option>
+            </div>
 
-                <option value="XII RPL 1">
-                    XII RPL 1
-                </option>
 
-            </select>
+            {{-- Baik --}}
+            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+                        <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                            Baik
+                        </p>
+
+                        <p id="jumlahBaik" class="mt-1 text-2xl font-bold text-blue-600">
+                            0
+                        </p>
+
+                        <p class="mt-1 text-[11px] text-slate-400">
+                            Kompetensi baik
+                        </p>
+                    </div>
+
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                        <i class="ph ph-check-circle text-xl"></i>
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
 
-        <!-- SKILL -->
-        <div>
+        {{-- =========================================================
+            FILTER
+        ========================================================== --}}
+        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
-            <label class="mb-2 block text-sm font-semibold text-gray-700">
-                Kompetensi / Skill
-            </label>
+            <div class="mb-4 flex items-center justify-between gap-3">
 
-            <select
-                id="filterSkill"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                <div>
+                    <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                        <i class="ph ph-funnel text-indigo-500"></i>
+                        Filter Data
+                    </h2>
 
-                <option value="">
-                    Semua Skill
-                </option>
+                    <p class="mt-1 text-[11px] text-slate-400">
+                        Gunakan filter untuk menampilkan data Skill Passport tertentu.
+                    </p>
+                </div>
 
-                <option value="Pemrograman Web">
-                    Pemrograman Web
-                </option>
+                <button type="button" onclick="resetFilter()"
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-[11px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50">
 
-                <option value="Basis Data">
-                    Basis Data
-                </option>
+                    <i class="ph ph-arrow-counter-clockwise"></i>
 
-                <option value="UI/UX Design">
-                    UI/UX Design
-                </option>
+                    Reset
 
-                <option value="Pemrograman Mobile">
-                    Pemrograman Mobile
-                </option>
+                </button>
 
-                <option value="Jaringan Komputer">
-                    Jaringan Komputer
-                </option>
-
-            </select>
-
-        </div>
-
-    </div>
+            </div>
 
 
-    <!-- BUTTON -->
-    <div class="mt-5 flex flex-wrap gap-3">
+            <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
 
-        <button
-            onclick="filterData()"
-            type="button"
-            class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
+                {{-- Search --}}
+                <div class="lg:col-span-1">
 
-            <i class="ph ph-magnifying-glass"></i> Cari
+                    <label for="searchSiswa" class="mb-1.5 block text-[11px] font-medium text-slate-600">
+                        Cari Siswa
+                    </label>
 
-        </button>
+                    <div class="relative">
 
+                        <i
+                            class="ph ph-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-        <button
-            onclick="resetFilter()"
-            type="button"
-            class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
+                        <input type="text" id="searchSiswa" placeholder="Nama atau NISN..."
+                            class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100">
 
-            <i class="ph ph-arrow-counter-clockwise"></i> Reset
+                    </div>
 
-        </button>
-
-
-        <a
-            href="{{ route('nilai-skill-passport-create') }}"
-            class="ml-auto rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700">
-
-            + Tambah Nilai
-
-        </a>
-
-    </div>
-
-</div>
+                </div>
 
 
+                {{-- Tahun Ajaran --}}
+                <div>
 
-<!-- TABEL -->
-<div class="overflow-hidden rounded-xl bg-white shadow-sm">
-
-    <!-- HEADER TABEL -->
-    <div class="border-b border-gray-200 px-6 py-4">
-
-        <h2 class="text-lg font-bold text-gray-800">
-            Daftar Nilai Skill Passport
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-500">
-            Data kompetensi dan keterampilan siswa.
-        </p>
-
-    </div>
-
-
-    <!-- TABLE RESPONSIVE -->
-    <div class="overflow-x-auto">
-
-        <table class="w-full min-w-[1100px] text-left text-sm">
-
-            <thead class="bg-gray-50 text-xs uppercase text-gray-600">
-
-                <tr>
-
-                    <th class="px-6 py-4">
-                        No
-                    </th>
-
-                    <th class="px-6 py-4">
-                        NISN
-                    </th>
-
-                    <th class="px-6 py-4">
-                        Nama Siswa
-                    </th>
-
-                    <th class="px-6 py-4">
-                        Kelas
-                    </th>
-
-                    <th class="px-6 py-4">
-                        Kompetensi / Skill
-                    </th>
-
-                    <th class="px-6 py-4 text-center">
-                        Nilai
-                    </th>
-
-                    <th class="px-6 py-4 text-center">
-                        Predikat
-                    </th>
-
-                    <th class="px-6 py-4 text-center">
+                    <label for="tahunAjaran" class="mb-1.5 block text-[11px] font-medium text-slate-600">
                         Tahun Ajaran
-                    </th>
+                    </label>
 
-                    <th class="px-6 py-4 text-center">
+                    <select id="tahunAjaran"
+                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-700 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100">
+
+                        <option value="">Semua Tahun</option>
+                        <option value="2025/2026">2025/2026</option>
+                        <option value="2026/2027">2026/2027</option>
+
+                    </select>
+
+                </div>
+
+
+                {{-- Semester --}}
+                <div>
+
+                    <label for="semester" class="mb-1.5 block text-[11px] font-medium text-slate-600">
                         Semester
-                    </th>
+                    </label>
 
-                    <th class="px-6 py-4 text-center">
-                        Aksi
-                    </th>
+                    <select id="semester"
+                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-700 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100">
 
-                </tr>
+                        <option value="">Semua Semester</option>
+                        <option value="Ganjil">Ganjil</option>
+                        <option value="Genap">Genap</option>
 
-            </thead>
+                    </select>
 
+                </div>
 
-            <tbody
-                id="tabelSkill"
-                class="divide-y divide-gray-200">
 
+                {{-- Kelas --}}
+                <div>
 
-                <!-- ================================================= -->
-                <!-- DATA 1 -->
-                <!-- ================================================= -->
+                    <label for="kelas" class="mb-1.5 block text-[11px] font-medium text-slate-600">
+                        Kelas / Rombel
+                    </label>
 
-                <tr
-                    data-nama="Ahmad Fauzan"
-                    data-nisn="00654321"
-                    data-tahun="2026/2027"
-                    data-semester="Ganjil"
-                    data-kelas="XI RPL 1"
-                    data-skill="Pemrograman Web"
-                    class="skill-row transition hover:bg-gray-50">
+                    <select id="kelas"
+                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-700 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100">
 
-                    <td class="px-6 py-5">
-                        1
-                    </td>
+                        <option value="">Semua Kelas</option>
+                        <option value="X RPL 1">X RPL 1</option>
+                        <option value="X RPL 2">X RPL 2</option>
+                        <option value="XI RPL 1">XI RPL 1</option>
+                        <option value="XI RPL 2">XI RPL 2</option>
+                        <option value="XII RPL 1">XII RPL 1</option>
 
+                    </select>
 
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654321
-                    </td>
+                </div>
 
 
-                    <td class="px-6 py-5">
+                {{-- Kompetensi --}}
+                <div>
 
-                        <div class="font-semibold text-gray-800">
-                            Ahmad Fauzan
-                        </div>
+                    <label for="skill" class="mb-1.5 block text-[11px] font-medium text-slate-600">
+                        Kompetensi / Skill
+                    </label>
 
-                    </td>
+                    <select id="skill"
+                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-700 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100">
 
+                        <option value="">Semua Kompetensi</option>
+                        <option value="Pemrograman Web">Pemrograman Web</option>
+                        <option value="Basis Data">Basis Data</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="Pemrograman Mobile">Pemrograman Mobile</option>
+                        <option value="Jaringan Komputer">Jaringan Komputer</option>
 
-                    <td class="px-6 py-5">
+                    </select>
 
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 1
-                        </span>
+                </div>
 
-                    </td>
+            </div>
 
 
-                    <!-- SKILL -->
-                    <td class="px-6 py-5">
+            {{-- Filter status --}}
+            <div id="filterStatus"
+                class="mt-4 hidden items-center justify-between gap-3 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2.5">
 
-                        <span class="skill-text">
-                            Pemrograman Web
-                        </span>
+                <div class="flex items-center gap-2 text-[11px] text-indigo-700">
 
-                        <select
-                            class="skill-input hidden w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                    <i class="ph ph-funnel"></i>
 
-                            <option value="Pemrograman Web">
-                                Pemrograman Web
-                            </option>
+                    <span>
+                        Filter aktif.
+                        Menampilkan
+                        <strong id="jumlahHasil">0</strong>
+                        data.
+                    </span>
 
-                            <option value="Basis Data">
-                                Basis Data
-                            </option>
+                </div>
 
-                            <option value="UI/UX Design">
-                                UI/UX Design
-                            </option>
+                <button type="button" onclick="resetFilter()"
+                    class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800">
+                    Hapus filter
+                </button>
 
-                            <option value="Pemrograman Mobile">
-                                Pemrograman Mobile
-                            </option>
+            </div>
 
-                            <option value="Jaringan Komputer">
-                                Jaringan Komputer
-                            </option>
+        </div>
 
-                        </select>
 
-                    </td>
+        {{-- =========================================================
+            TABLE
+        ========================================================== --}}
+        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 
+            {{-- Table Header --}}
+            <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
 
-                    <!-- NILAI -->
-                    <td class="px-6 py-5 text-center">
+                <div>
+                    <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-800">
 
-                        <span class="nilai-text font-bold text-green-600">
-                            88
-                        </span>
+                        <i class="ph ph-list-dashes text-indigo-500"></i>
 
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value="88"
-                            class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-2 text-center font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                        Daftar Nilai Skill Passport
 
-                    </td>
+                    </h2>
 
+                    <p class="mt-1 text-[11px] text-slate-400">
+                        Data kompetensi dan keterampilan siswa yang telah dinilai.
+                    </p>
+                </div>
 
-                    <!-- PREDIKAT -->
-                    <td class="px-6 py-5 text-center">
+                <div
+                    class="hidden items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-2 text-[11px] text-slate-500 sm:flex">
+
+                    <i class="ph ph-info"></i>
+
+                    Klik <strong>Edit</strong> untuk mengubah data.
+
+                </div>
+
+            </div>
+
+
+            {{-- Table --}}
+            <div class="overflow-x-auto">
+
+                <table class="w-full min-w-[1200px] text-left">
+
+                    <thead class="border-b border-slate-200 bg-slate-50">
+
+                        <tr class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+
+                            <th class="px-4 py-3 text-center">
+                                No
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Siswa
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Kelas
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Kompetensi / Skill
+                            </th>
+
+                            <th class="px-4 py-3 text-center">
+                                Nilai
+                            </th>
+
+                            <th class="px-4 py-3 text-center">
+                                Predikat
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Tahun Ajaran
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Semester
+                            </th>
+
+                            <th class="px-4 py-3 text-center">
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="skillTableBody" class="divide-y divide-slate-100 text-xs">
+
+                        {{-- =================================================
+                            DATA DUMMY
+                            Ganti dengan foreach dari database ketika backend
+                            Skill Passport sudah tersedia.
+                        ================================================== --}}
+
+                        @php
+                            $dataSkill = [
+                                [
+                                    'nisn' => '00654321',
+                                    'nama' => 'Ahmad Fauzan',
+                                    'kelas' => 'XI RPL 1',
+                                    'skill' => 'Pemrograman Web',
+                                    'nilai' => 88,
+                                    'predikat' => 'Baik',
+                                    'tahun' => '2026/2027',
+                                    'semester' => 'Ganjil',
+                                ],
+                                [
+                                    'nisn' => '00654322',
+                                    'nama' => 'Budi Santoso',
+                                    'kelas' => 'XI RPL 1',
+                                    'skill' => 'Basis Data',
+                                    'nilai' => 92,
+                                    'predikat' => 'Sangat Baik',
+                                    'tahun' => '2026/2027',
+                                    'semester' => 'Ganjil',
+                                ],
+                                [
+                                    'nisn' => '00654323',
+                                    'nama' => 'Citra Lestari',
+                                    'kelas' => 'XI RPL 1',
+                                    'skill' => 'UI/UX Design',
+                                    'nilai' => 90,
+                                    'predikat' => 'Sangat Baik',
+                                    'tahun' => '2026/2027',
+                                    'semester' => 'Ganjil',
+                                ],
+                                [
+                                    'nisn' => '00654324',
+                                    'nama' => 'Dimas Pratama',
+                                    'kelas' => 'XI RPL 2',
+                                    'skill' => 'Pemrograman Mobile',
+                                    'nilai' => 75,
+                                    'predikat' => 'Cukup',
+                                    'tahun' => '2026/2027',
+                                    'semester' => 'Genap',
+                                ],
+                                [
+                                    'nisn' => '00654325',
+                                    'nama' => 'Eka Putri',
+                                    'kelas' => 'X RPL 1',
+                                    'skill' => 'Jaringan Komputer',
+                                    'nilai' => 65,
+                                    'predikat' => 'Kurang',
+                                    'tahun' => '2026/2027',
+                                    'semester' => 'Genap',
+                                ],
+                            ];
+                        @endphp
 
-                        <span class="predikat-text rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Baik
-                        </span>
 
-                        <select
-                            class="predikat-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                        @foreach ($dataSkill as $index => $item)
+                            <tr class="skill-row transition hover:bg-slate-50" data-nama="{{ strtolower($item['nama']) }}"
+                                data-nisn="{{ strtolower($item['nisn']) }}" data-kelas="{{ strtolower($item['kelas']) }}"
+                                data-skill="{{ strtolower($item['skill']) }}" data-tahun="{{ $item['tahun'] }}"
+                                data-semester="{{ $item['semester'] }}" data-predikat="{{ $item['predikat'] }}">
 
-                            <option value="Sangat Baik">
-                                Sangat Baik
-                            </option>
+                                {{-- No --}}
+                                <td class="px-4 py-4 text-center">
 
-                            <option value="Baik" selected>
-                                Baik
-                            </option>
+                                    <span class="text-[11px] font-medium text-slate-400">
+                                        {{ $index + 1 }}
+                                    </span>
 
-                            <option value="Cukup">
-                                Cukup
-                            </option>
+                                </td>
 
-                            <option value="Kurang">
-                                Kurang
-                            </option>
 
-                        </select>
+                                {{-- Siswa --}}
+                                <td class="px-4 py-4">
 
-                    </td>
+                                    <div class="flex items-center gap-3">
 
+                                        <div
+                                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
 
-                    <!-- TAHUN -->
-                    <td class="px-6 py-5 text-center">
+                                            <i class="ph ph-student text-lg"></i>
 
-                        <span class="tahun-text">
-                            2026/2027
-                        </span>
+                                        </div>
 
-                        <select
-                            class="tahun-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                                        <div>
 
-                            <option value="2025/2026">
-                                2025/2026
-                            </option>
+                                            <p class="font-semibold text-slate-700">
+                                                {{ $item['nama'] }}
+                                            </p>
 
-                            <option value="2026/2027" selected>
-                                2026/2027
-                            </option>
+                                            <p class="mt-0.5 text-[10px] text-slate-400">
+                                                NISN {{ $item['nisn'] }}
+                                            </p>
 
-                        </select>
+                                        </div>
 
-                    </td>
+                                    </div>
 
+                                </td>
 
-                    <!-- SEMESTER -->
-                    <td class="px-6 py-5 text-center">
 
-                        <span class="semester-text">
-                            Ganjil
-                        </span>
+                                {{-- Kelas --}}
+                                <td class="px-4 py-4">
 
-                        <select
-                            class="semester-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                                    <span
+                                        class="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-[10px] font-medium text-slate-600">
 
-                            <option value="Ganjil" selected>
-                                Ganjil
-                            </option>
+                                        <i class="ph ph-users-three"></i>
 
-                            <option value="Genap">
-                                Genap
-                            </option>
+                                        {{ $item['kelas'] }}
 
-                        </select>
+                                    </span>
 
-                    </td>
+                                </td>
 
 
-                    <!-- AKSI -->
-                    <td class="px-6 py-5 text-center">
+                                {{-- Skill --}}
+                                <td class="px-4 py-4">
 
-                        <div class="flex justify-center gap-2">
+                                    <span class="skill-text font-medium text-slate-700">
+                                        {{ $item['skill'] }}
+                                    </span>
 
-                            <button
-                                type="button"
-                                onclick="editData(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white hover:bg-yellow-600">
+                                    <select
+                                        class="skill-input hidden w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
-                                <i class="ph ph-pencil-simple"></i> Edit
+                                        <option value="Pemrograman Web"
+                                            {{ $item['skill'] === 'Pemrograman Web' ? 'selected' : '' }}>
+                                            Pemrograman Web
+                                        </option>
 
-                            </button>
+                                        <option value="Basis Data"
+                                            {{ $item['skill'] === 'Basis Data' ? 'selected' : '' }}>
+                                            Basis Data
+                                        </option>
 
+                                        <option value="UI/UX Design"
+                                            {{ $item['skill'] === 'UI/UX Design' ? 'selected' : '' }}>
+                                            UI/UX Design
+                                        </option>
 
-                            <button
-                                type="button"
-                                onclick="saveData(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white hover:bg-green-700">
+                                        <option value="Pemrograman Mobile"
+                                            {{ $item['skill'] === 'Pemrograman Mobile' ? 'selected' : '' }}>
+                                            Pemrograman Mobile
+                                        </option>
 
-                                <i class="ph ph-floppy-disk"></i> Simpan
+                                        <option value="Jaringan Komputer"
+                                            {{ $item['skill'] === 'Jaringan Komputer' ? 'selected' : '' }}>
+                                            Jaringan Komputer
+                                        </option>
 
-                            </button>
+                                    </select>
 
+                                </td>
 
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white hover:bg-gray-600">
 
-                                <i class="ph ph-x"></i> Batal
+                                {{-- Nilai --}}
+                                <td class="px-4 py-4 text-center">
 
-                            </button>
+                                    <span
+                                        class="nilai-text inline-flex min-w-[42px] items-center justify-center rounded-lg bg-indigo-50 px-2.5 py-1.5 font-bold text-indigo-700">
+                                        {{ $item['nilai'] }}
+                                    </span>
 
-                        </div>
+                                    <input type="number" min="0" max="100" value="{{ $item['nilai'] }}"
+                                        class="nilai-input hidden w-20 rounded-lg border border-slate-200 px-2.5 py-2 text-center text-xs font-semibold outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
-                    </td>
+                                </td>
 
-                </tr>
 
+                                {{-- Predikat --}}
+                                <td class="px-4 py-4 text-center">
 
+                                    <span
+                                        class="predikat-text inline-flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-semibold">
+                                        {{ $item['predikat'] }}
+                                    </span>
 
-                <!-- ================================================= -->
-                <!-- DATA 2 -->
-                <!-- ================================================= -->
+                                    <select
+                                        class="predikat-input hidden rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
-                <tr
-                    data-nama="Budi Santoso"
-                    data-nisn="00654322"
-                    data-tahun="2026/2027"
-                    data-semester="Ganjil"
-                    data-kelas="XI RPL 1"
-                    data-skill="Basis Data"
-                    class="skill-row transition hover:bg-gray-50">
+                                        <option value="Sangat Baik"
+                                            {{ $item['predikat'] === 'Sangat Baik' ? 'selected' : '' }}>
+                                            Sangat Baik
+                                        </option>
 
-                    <td class="px-6 py-5">
-                        2
-                    </td>
+                                        <option value="Baik" {{ $item['predikat'] === 'Baik' ? 'selected' : '' }}>
+                                            Baik
+                                        </option>
 
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654322
-                    </td>
+                                        <option value="Cukup" {{ $item['predikat'] === 'Cukup' ? 'selected' : '' }}>
+                                            Cukup
+                                        </option>
 
-                    <td class="px-6 py-5">
-                        <div class="font-semibold text-gray-800">
-                            Budi Santoso
-                        </div>
-                    </td>
+                                        <option value="Kurang" {{ $item['predikat'] === 'Kurang' ? 'selected' : '' }}>
+                                            Kurang
+                                        </option>
 
-                    <td class="px-6 py-5">
+                                    </select>
 
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 1
-                        </span>
+                                </td>
 
-                    </td>
 
+                                {{-- Tahun --}}
+                                <td class="px-4 py-4">
 
-                    <td class="px-6 py-5">
+                                    <span class="tahun-text text-slate-600">
+                                        {{ $item['tahun'] }}
+                                    </span>
 
-                        <span class="skill-text">
-                            Basis Data
-                        </span>
+                                    <select
+                                        class="tahun-input hidden rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
-                        <select
-                            class="skill-input hidden w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                                        <option value="2025/2026" {{ $item['tahun'] === '2025/2026' ? 'selected' : '' }}>
+                                            2025/2026
+                                        </option>
 
-                            <option value="Pemrograman Web">
-                                Pemrograman Web
-                            </option>
+                                        <option value="2026/2027" {{ $item['tahun'] === '2026/2027' ? 'selected' : '' }}>
+                                            2026/2027
+                                        </option>
 
-                            <option value="Basis Data" selected>
-                                Basis Data
-                            </option>
+                                    </select>
 
-                            <option value="UI/UX Design">
-                                UI/UX Design
-                            </option>
+                                </td>
 
-                            <option value="Pemrograman Mobile">
-                                Pemrograman Mobile
-                            </option>
 
-                            <option value="Jaringan Komputer">
-                                Jaringan Komputer
-                            </option>
+                                {{-- Semester --}}
+                                <td class="px-4 py-4">
 
-                        </select>
+                                    <span class="semester-text text-slate-600">
+                                        {{ $item['semester'] }}
+                                    </span>
 
-                    </td>
+                                    <select
+                                        class="semester-input hidden rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
 
+                                        <option value="Ganjil" {{ $item['semester'] === 'Ganjil' ? 'selected' : '' }}>
+                                            Ganjil
+                                        </option>
 
-                    <td class="px-6 py-5 text-center">
+                                        <option value="Genap" {{ $item['semester'] === 'Genap' ? 'selected' : '' }}>
+                                            Genap
+                                        </option>
 
-                        <span class="nilai-text font-bold text-green-600">
-                            92
-                        </span>
+                                    </select>
 
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value="92"
-                            class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-2 text-center font-semibold">
+                                </td>
 
-                    </td>
 
+                                {{-- Aksi --}}
+                                <td class="px-4 py-4">
 
-                    <td class="px-6 py-5 text-center">
+                                    <div class="flex items-center justify-center gap-1.5">
 
-                        <span class="predikat-text rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Sangat Baik
-                        </span>
+                                        {{-- Edit --}}
+                                        <button type="button" onclick="editData(this)"
+                                            class="edit-button inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-2 text-[10px] font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100">
 
-                        <select
-                            class="predikat-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                                            <i class="ph ph-pencil-simple"></i>
 
-                            <option value="Sangat Baik" selected>
-                                Sangat Baik
-                            </option>
+                                            Edit
 
-                            <option value="Baik">
-                                Baik
-                            </option>
+                                        </button>
 
-                            <option value="Cukup">
-                                Cukup
-                            </option>
 
-                            <option value="Kurang">
-                                Kurang
-                            </option>
+                                        {{-- Simpan --}}
+                                        <button type="button" onclick="saveData(this)"
+                                            class="save-button hidden inline-flex items-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-2.5 py-2 text-[10px] font-semibold text-green-600 transition hover:border-green-300 hover:bg-green-100">
 
-                        </select>
+                                            <i class="ph ph-check"></i>
 
-                    </td>
+                                            Simpan
 
+                                        </button>
 
-                    <td class="px-6 py-5 text-center">
 
-                        <span class="tahun-text">
-                            2026/2027
-                        </span>
+                                        {{-- Batal --}}
+                                        <button type="button" onclick="cancelEdit(this)"
+                                            class="cancel-button hidden inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-[10px] font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-100">
 
-                        <select
-                            class="tahun-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                                            <i class="ph ph-x"></i>
 
-                            <option value="2025/2026">
-                                2025/2026
-                            </option>
+                                            Batal
 
-                            <option value="2026/2027" selected>
-                                2026/2027
-                            </option>
+                                        </button>
 
-                        </select>
+                                    </div>
 
-                    </td>
+                                </td>
 
+                            </tr>
+                        @endforeach
 
-                    <td class="px-6 py-5 text-center">
 
-                        <span class="semester-text">
-                            Ganjil
-                        </span>
+                        {{-- Empty State --}}
+                        <tr id="emptyState" class="hidden">
 
-                        <select
-                            class="semester-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                            <td colspan="9" class="px-6 py-14 text-center">
 
-                            <option value="Ganjil" selected>
-                                Ganjil
-                            </option>
+                                <div
+                                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
 
-                            <option value="Genap">
-                                Genap
-                            </option>
+                                    <i class="ph ph-magnifying-glass text-xl"></i>
 
-                        </select>
+                                </div>
 
-                    </td>
+                                <p class="mt-3 text-sm font-semibold text-slate-600">
+                                    Data tidak ditemukan
+                                </p>
 
+                                <p class="mt-1 text-xs text-slate-400">
+                                    Coba ubah kata kunci atau filter yang digunakan.
+                                </p>
 
-                    <td class="px-6 py-5 text-center">
+                            </td>
 
-                        <div class="flex justify-center gap-2">
+                        </tr>
 
-                            <button
-                                type="button"
-                                onclick="editData(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white">
+                    </tbody>
 
-                                <i class="ph ph-pencil-simple"></i> Edit
+                </table>
 
-                            </button>
+            </div>
 
-                            <button
-                                type="button"
-                                onclick="saveData(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white">
 
-                                <i class="ph ph-floppy-disk"></i> Simpan
+            {{-- Table Footer --}}
+            <div
+                class="flex flex-col gap-2 border-t border-slate-100 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
 
-                            </button>
+                <p class="text-[11px] text-slate-400">
 
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white">
+                    Menampilkan
+                    <span id="footerJumlahData" class="font-semibold text-slate-600">
+                        0
+                    </span>
+                    data Skill Passport
 
-                                <i class="ph ph-x"></i> Batal
+                </p>
 
-                            </button>
+                <p class="text-[10px] text-slate-400">
+                    Data dapat diedit langsung melalui tombol Edit.
+                </p>
 
-                        </div>
-
-                    </td>
-
-                </tr>
-
-
-
-                <!-- ================================================= -->
-                <!-- DATA 3 -->
-                <!-- ================================================= -->
-
-                <tr
-                    data-nama="Citra Lestari"
-                    data-nisn="00654323"
-                    data-tahun="2026/2027"
-                    data-semester="Ganjil"
-                    data-kelas="XI RPL 1"
-                    data-skill="UI/UX Design"
-                    class="skill-row transition hover:bg-gray-50">
-
-                    <td class="px-6 py-5">
-                        3
-                    </td>
-
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654323
-                    </td>
-
-                    <td class="px-6 py-5">
-                        <div class="font-semibold text-gray-800">
-                            Citra Lestari
-                        </div>
-                    </td>
-
-                    <td class="px-6 py-5">
-
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 1
-                        </span>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <span class="skill-text">
-                            UI/UX Design
-                        </span>
-
-                        <select
-                            class="skill-input hidden w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Pemrograman Web">
-                                Pemrograman Web
-                            </option>
-
-                            <option value="Basis Data">
-                                Basis Data
-                            </option>
-
-                            <option value="UI/UX Design" selected>
-                                UI/UX Design
-                            </option>
-
-                            <option value="Pemrograman Mobile">
-                                Pemrograman Mobile
-                            </option>
-
-                            <option value="Jaringan Komputer">
-                                Jaringan Komputer
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="nilai-text font-bold text-green-600">
-                            90
-                        </span>
-
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value="90"
-                            class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-2 text-center font-semibold">
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="predikat-text rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Sangat Baik
-                        </span>
-
-                        <select
-                            class="predikat-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Sangat Baik" selected>
-                                Sangat Baik
-                            </option>
-
-                            <option value="Baik">
-                                Baik
-                            </option>
-
-                            <option value="Cukup">
-                                Cukup
-                            </option>
-
-                            <option value="Kurang">
-                                Kurang
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="tahun-text">
-                            2026/2027
-                        </span>
-
-                        <select
-                            class="tahun-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="2025/2026">
-                                2025/2026
-                            </option>
-
-                            <option value="2026/2027" selected>
-                                2026/2027
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="semester-text">
-                            Ganjil
-                        </span>
-
-                        <select
-                            class="semester-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Ganjil" selected>
-                                Ganjil
-                            </option>
-
-                            <option value="Genap">
-                                Genap
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <div class="flex justify-center gap-2">
-
-                            <button
-                                type="button"
-                                onclick="editData(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-pencil-simple"></i> Edit
-
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="saveData(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-floppy-disk"></i> Simpan
-
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-x"></i> Batal
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-
-
-                <!-- ================================================= -->
-                <!-- DATA 4 -->
-                <!-- ================================================= -->
-
-                <tr
-                    data-nama="Dimas Pratama"
-                    data-nisn="00654324"
-                    data-tahun="2026/2027"
-                    data-semester="Genap"
-                    data-kelas="XI RPL 2"
-                    data-skill="Pemrograman Mobile"
-                    class="skill-row transition hover:bg-gray-50">
-
-                    <td class="px-6 py-5">
-                        4
-                    </td>
-
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654324
-                    </td>
-
-                    <td class="px-6 py-5">
-                        <div class="font-semibold text-gray-800">
-                            Dimas Pratama
-                        </div>
-                    </td>
-
-                    <td class="px-6 py-5">
-
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            XI RPL 2
-                        </span>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <span class="skill-text">
-                            Pemrograman Mobile
-                        </span>
-
-                        <select
-                            class="skill-input hidden w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Pemrograman Web">
-                                Pemrograman Web
-                            </option>
-
-                            <option value="Basis Data">
-                                Basis Data
-                            </option>
-
-                            <option value="UI/UX Design">
-                                UI/UX Design
-                            </option>
-
-                            <option value="Pemrograman Mobile" selected>
-                                Pemrograman Mobile
-                            </option>
-
-                            <option value="Jaringan Komputer">
-                                Jaringan Komputer
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="nilai-text font-bold text-green-600">
-                            85
-                        </span>
-
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value="85"
-                            class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-2 text-center font-semibold">
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="predikat-text rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Baik
-                        </span>
-
-                        <select
-                            class="predikat-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Sangat Baik">
-                                Sangat Baik
-                            </option>
-
-                            <option value="Baik" selected>
-                                Baik
-                            </option>
-
-                            <option value="Cukup">
-                                Cukup
-                            </option>
-
-                            <option value="Kurang">
-                                Kurang
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="tahun-text">
-                            2026/2027
-                        </span>
-
-                        <select
-                            class="tahun-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="2025/2026">
-                                2025/2026
-                            </option>
-
-                            <option value="2026/2027" selected>
-                                2026/2027
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="semester-text">
-                            Genap
-                        </span>
-
-                        <select
-                            class="semester-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Ganjil">
-                                Ganjil
-                            </option>
-
-                            <option value="Genap" selected>
-                                Genap
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <div class="flex justify-center gap-2">
-
-                            <button
-                                type="button"
-                                onclick="editData(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-pencil-simple"></i> Edit
-
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="saveData(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-floppy-disk"></i> Simpan
-
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-x"></i> Batal
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-
-
-                <!-- ================================================= -->
-                <!-- DATA 5 -->
-                <!-- ================================================= -->
-
-                <tr
-                    data-nama="Eka Putri"
-                    data-nisn="00654325"
-                    data-tahun="2026/2027"
-                    data-semester="Genap"
-                    data-kelas="X RPL 1"
-                    data-skill="Jaringan Komputer"
-                    class="skill-row transition hover:bg-gray-50">
-
-                    <td class="px-6 py-5">
-                        5
-                    </td>
-
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        00654325
-                    </td>
-
-                    <td class="px-6 py-5">
-                        <div class="font-semibold text-gray-800">
-                            Eka Putri
-                        </div>
-                    </td>
-
-                    <td class="px-6 py-5">
-
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                            X RPL 1
-                        </span>
-
-                    </td>
-
-
-                    <td class="px-6 py-5">
-
-                        <span class="skill-text">
-                            Jaringan Komputer
-                        </span>
-
-                        <select
-                            class="skill-input hidden w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Pemrograman Web">
-                                Pemrograman Web
-                            </option>
-
-                            <option value="Basis Data">
-                                Basis Data
-                            </option>
-
-                            <option value="UI/UX Design">
-                                UI/UX Design
-                            </option>
-
-                            <option value="Pemrograman Mobile">
-                                Pemrograman Mobile
-                            </option>
-
-                            <option value="Jaringan Komputer" selected>
-                                Jaringan Komputer
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="nilai-text font-bold text-green-600">
-                            87
-                        </span>
-
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value="87"
-                            class="nilai-input hidden w-20 rounded-lg border border-gray-300 px-3 py-2 text-center font-semibold">
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="predikat-text rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Baik
-                        </span>
-
-                        <select
-                            class="predikat-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Sangat Baik">
-                                Sangat Baik
-                            </option>
-
-                            <option value="Baik" selected>
-                                Baik
-                            </option>
-
-                            <option value="Cukup">
-                                Cukup
-                            </option>
-
-                            <option value="Kurang">
-                                Kurang
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="tahun-text">
-                            2026/2027
-                        </span>
-
-                        <select
-                            class="tahun-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="2025/2026">
-                                2025/2026
-                            </option>
-
-                            <option value="2026/2027" selected>
-                                2026/2027
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <span class="semester-text">
-                            Genap
-                        </span>
-
-                        <select
-                            class="semester-input hidden rounded-lg border border-gray-300 px-3 py-2 text-sm">
-
-                            <option value="Ganjil">
-                                Ganjil
-                            </option>
-
-                            <option value="Genap" selected>
-                                Genap
-                            </option>
-
-                        </select>
-
-                    </td>
-
-
-                    <td class="px-6 py-5 text-center">
-
-                        <div class="flex justify-center gap-2">
-
-                            <button
-                                type="button"
-                                onclick="editData(this)"
-                                class="edit-btn rounded-lg bg-yellow-500 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-pencil-simple"></i> Edit
-
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="saveData(this)"
-                                class="save-btn hidden rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-floppy-disk"></i> Simpan
-
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="cancelEdit(this)"
-                                class="cancel-btn hidden rounded-lg bg-gray-500 px-4 py-2 text-xs font-semibold text-white">
-
-                                <i class="ph ph-x"></i> Batal
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-
-    <!-- FOOTER -->
-    <div class="flex flex-col gap-3 border-t border-gray-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-
-        <p class="text-sm text-gray-500">
-
-            Menampilkan
-
-            <span
-                id="jumlahData"
-                class="font-semibold text-gray-700">
-                5
-            </span>
-
-            data siswa
-
-        </p>
-
-
-        <div class="flex gap-2">
-
-            <button
-                class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
-
-                Sebelumnya
-
-            </button>
-
-            <button
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
-
-                1
-
-            </button>
-
-            <button
-                class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
-
-                Berikutnya
-
-            </button>
+            </div>
 
         </div>
 
     </div>
 
-</div>
-```
 
-</div>
+    {{-- =============================================================
+        JAVASCRIPT
+    ============================================================= --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-<!-- ========================================================= -->
+            const searchSiswa = document.getElementById('searchSiswa');
+            const tahunAjaran = document.getElementById('tahunAjaran');
+            const semester = document.getElementById('semester');
+            const kelas = document.getElementById('kelas');
+            const skill = document.getElementById('skill');
 
-<!-- JAVASCRIPT -->
+            /*
+             * ---------------------------------------------------------
+             * WARNA PREDIKAT
+             * ---------------------------------------------------------
+             */
 
-<!-- ========================================================= -->
+            function updatePredikatStyle(element, predikat) {
 
-<script>
+                if (!element) return;
 
+                element.classList.remove(
+                    'bg-green-100',
+                    'text-green-700',
+                    'bg-blue-100',
+                    'text-blue-700',
+                    'bg-yellow-100',
+                    'text-yellow-700',
+                    'bg-red-100',
+                    'text-red-700',
+                    'bg-slate-100',
+                    'text-slate-600'
+                );
 
-// ============================================================
-// FILTER DATA
-// ============================================================
+                switch (predikat) {
 
-function filterData() {
+                    case 'Sangat Baik':
 
-    const search =
-        document.getElementById('searchSiswa')
-        .value
-        .toLowerCase();
+                        element.classList.add(
+                            'bg-green-100',
+                            'text-green-700'
+                        );
 
-    const tahun =
-        document.getElementById('filterTahun')
-        .value;
+                        break;
 
-    const semester =
-        document.getElementById('filterSemester')
-        .value;
 
-    const kelas =
-        document.getElementById('filterKelas')
-        .value;
+                    case 'Baik':
 
-    const skill =
-        document.getElementById('filterSkill')
-        .value;
+                        element.classList.add(
+                            'bg-blue-100',
+                            'text-blue-700'
+                        );
 
+                        break;
 
-    const rows =
-        document.querySelectorAll('#tabelSkill tr');
 
+                    case 'Cukup':
 
-    let jumlah = 0;
+                        element.classList.add(
+                            'bg-yellow-100',
+                            'text-yellow-700'
+                        );
 
+                        break;
 
-    rows.forEach(row => {
 
-        const nama =
-            row.dataset.nama.toLowerCase();
+                    case 'Kurang':
 
-        const nisn =
-            row.dataset.nisn.toLowerCase();
+                        element.classList.add(
+                            'bg-red-100',
+                            'text-red-700'
+                        );
 
-        const rowTahun =
-            row.dataset.tahun;
+                        break;
 
-        const rowSemester =
-            row.dataset.semester;
 
-        const rowKelas =
-            row.dataset.kelas;
+                    default:
 
-        const rowSkill =
-            row.dataset.skill;
+                        element.classList.add(
+                            'bg-slate-100',
+                            'text-slate-600'
+                        );
 
+                        break;
 
-        const cocokSearch =
-            nama.includes(search) ||
-            nisn.includes(search);
+                }
 
-        const cocokTahun =
-            tahun === '' ||
-            rowTahun === tahun;
+            }
 
-        const cocokSemester =
-            semester === '' ||
-            rowSemester === semester;
 
-        const cocokKelas =
-            kelas === '' ||
-            rowKelas === kelas;
+            /*
+             * ---------------------------------------------------------
+             * UPDATE WARNA SEMUA PREDIKAT SAAT LOAD
+             * ---------------------------------------------------------
+             */
 
-        const cocokSkill =
-            skill === '' ||
-            rowSkill === skill;
+            document.querySelectorAll('.skill-row').forEach(function(row) {
 
+                const predikatText =
+                    row.querySelector('.predikat-text');
 
-        if (
-            cocokSearch &&
-            cocokTahun &&
-            cocokSemester &&
-            cocokKelas &&
-            cocokSkill
-        ) {
+                if (predikatText) {
 
-            row.style.display = '';
+                    updatePredikatStyle(
+                        predikatText,
+                        predikatText.textContent.trim()
+                    );
 
-            jumlah++;
+                }
 
-        } else {
+            });
 
-            row.style.display = 'none';
 
-        }
+            /*
+             * ---------------------------------------------------------
+             * FILTER DATA
+             * ---------------------------------------------------------
+             */
 
-    });
+            window.filterData = function() {
 
+                const search =
+                    searchSiswa.value.toLowerCase().trim();
 
-    document.getElementById('jumlahData').innerText =
-        jumlah;
+                const tahun =
+                    tahunAjaran.value;
 
-}
+                const semesterValue =
+                    semester.value;
 
+                const kelasValue =
+                    kelas.value.toLowerCase();
 
+                const skillValue =
+                    skill.value.toLowerCase();
 
-// ============================================================
-// RESET FILTER
-// ============================================================
 
-function resetFilter() {
+                const rows =
+                    document.querySelectorAll('.skill-row');
 
-    document.getElementById('searchSiswa').value = '';
 
-    document.getElementById('filterTahun').value = '';
+                let jumlah = 0;
+                let sangatBaik = 0;
+                let baik = 0;
 
-    document.getElementById('filterSemester').value = '';
+                let filterAktif =
+                    search !== '' ||
+                    tahun !== '' ||
+                    semesterValue !== '' ||
+                    kelasValue !== '' ||
+                    skillValue !== '';
 
-    document.getElementById('filterKelas').value = '';
 
-    document.getElementById('filterSkill').value = '';
+                rows.forEach(function(row) {
 
-    filterData();
+                    const nama =
+                        row.dataset.nama || '';
 
-}
+                    const nisn =
+                        row.dataset.nisn || '';
 
+                    const rowKelas =
+                        row.dataset.kelas || '';
 
+                    const rowSkill =
+                        row.dataset.skill || '';
 
-// ============================================================
-// EDIT DATA
-// ============================================================
+                    const rowTahun =
+                        row.dataset.tahun || '';
 
-function editData(button) {
+                    const rowSemester =
+                        row.dataset.semester || '';
 
-    const row = button.closest('tr');
+                    const rowPredikat =
+                        row.dataset.predikat || '';
 
 
-    // Ambil semua input
-    const skillInput =
-        row.querySelector('.skill-input');
+                    const cocokSearch =
+                        search === '' ||
+                        nama.includes(search) ||
+                        nisn.includes(search);
 
-    const nilaiInput =
-        row.querySelector('.nilai-input');
 
-    const predikatInput =
-        row.querySelector('.predikat-input');
+                    const cocokTahun =
+                        tahun === '' ||
+                        rowTahun === tahun;
 
-    const tahunInput =
-        row.querySelector('.tahun-input');
 
-    const semesterInput =
-        row.querySelector('.semester-input');
+                    const cocokSemester =
+                        semesterValue === '' ||
+                        rowSemester === semesterValue;
 
 
-    // Simpan data lama
-    row.dataset.oldSkill =
-        skillInput.value;
+                    const cocokKelas =
+                        kelasValue === '' ||
+                        rowKelas === kelasValue;
 
-    row.dataset.oldNilai =
-        nilaiInput.value;
 
-    row.dataset.oldPredikat =
-        predikatInput.value;
+                    const cocokSkill =
+                        skillValue === '' ||
+                        rowSkill === skillValue;
 
-    row.dataset.oldTahun =
-        tahunInput.value;
 
-    row.dataset.oldSemester =
-        semesterInput.value;
+                    const tampil =
+                        cocokSearch &&
+                        cocokTahun &&
+                        cocokSemester &&
+                        cocokKelas &&
+                        cocokSkill;
 
 
-    // Tampilkan input
-    skillInput.classList.remove('hidden');
+                    row.style.display =
+                        tampil ? '' : 'none';
 
-    nilaiInput.classList.remove('hidden');
 
-    predikatInput.classList.remove('hidden');
+                    if (tampil) {
 
-    tahunInput.classList.remove('hidden');
+                        jumlah++;
 
-    semesterInput.classList.remove('hidden');
 
+                        if (rowPredikat === 'Sangat Baik') {
+                            sangatBaik++;
+                        }
 
-    // Sembunyikan text biasa
-    row.querySelector('.skill-text')
-        .classList.add('hidden');
+                        if (rowPredikat === 'Baik') {
+                            baik++;
+                        }
 
-    row.querySelector('.nilai-text')
-        .classList.add('hidden');
+                    }
 
-    row.querySelector('.predikat-text')
-        .classList.add('hidden');
+                });
 
-    row.querySelector('.tahun-text')
-        .classList.add('hidden');
 
-    row.querySelector('.semester-text')
-        .classList.add('hidden');
+                /*
+                 * -----------------------------------------------------
+                 * UPDATE STATISTIK
+                 * -----------------------------------------------------
+                 */
 
+                document.getElementById('jumlahData').textContent =
+                    jumlah;
 
-    // Tombol
-    row.querySelector('.edit-btn')
-        .classList.add('hidden');
+                document.getElementById('jumlahSangatBaik').textContent =
+                    sangatBaik;
 
-    row.querySelector('.save-btn')
-        .classList.remove('hidden');
+                document.getElementById('jumlahBaik').textContent =
+                    baik;
 
-    row.querySelector('.cancel-btn')
-        .classList.remove('hidden');
 
-}
+                document.getElementById('footerJumlahData').textContent =
+                    jumlah;
 
 
+                const jumlahHasil =
+                    document.getElementById('jumlahHasil');
 
-// ============================================================
-// SIMPAN DATA
-// ============================================================
+                if (jumlahHasil) {
+                    jumlahHasil.textContent = jumlah;
+                }
 
-function saveData(button) {
 
-    const row = button.closest('tr');
+                /*
+                 * -----------------------------------------------------
+                 * FILTER STATUS
+                 * -----------------------------------------------------
+                 */
 
+                const filterStatus =
+                    document.getElementById('filterStatus');
 
-    const skillInput =
-        row.querySelector('.skill-input');
 
-    const nilaiInput =
-        row.querySelector('.nilai-input');
+                if (filterStatus) {
 
-    const predikatInput =
-        row.querySelector('.predikat-input');
+                    filterStatus.classList.toggle(
+                        'hidden',
+                        !filterAktif
+                    );
 
-    const tahunInput =
-        row.querySelector('.tahun-input');
+                    filterStatus.classList.toggle(
+                        'flex',
+                        filterAktif
+                    );
 
-    const semesterInput =
-        row.querySelector('.semester-input');
+                }
 
 
-    const nilai =
-        Number(nilaiInput.value);
+                /*
+                 * -----------------------------------------------------
+                 * EMPTY STATE
+                 * -----------------------------------------------------
+                 */
 
+                const emptyState =
+                    document.getElementById('emptyState');
 
-    // Validasi nilai
-    if (
-        nilaiInput.value === '' ||
-        nilai < 0 ||
-        nilai > 100
-    ) {
 
-        alert('Nilai harus berada di antara 0 sampai 100.');
+                if (emptyState) {
 
-        nilaiInput.focus();
+                    emptyState.classList.toggle(
+                        'hidden',
+                        jumlah !== 0
+                    );
 
-        return;
+                }
 
-    }
+            };
 
 
-    // Update tampilan
-    row.querySelector('.skill-text')
-        .textContent = skillInput.value;
+            /*
+             * ---------------------------------------------------------
+             * RESET FILTER
+             * ---------------------------------------------------------
+             */
 
-    row.querySelector('.nilai-text')
-        .textContent = nilaiInput.value;
+            window.resetFilter = function() {
 
-    row.querySelector('.predikat-text')
-        .textContent = predikatInput.value;
+                searchSiswa.value = '';
+                tahunAjaran.value = '';
+                semester.value = '';
+                kelas.value = '';
+                skill.value = '';
 
-    row.querySelector('.tahun-text')
-        .textContent = tahunInput.value;
+                filterData();
 
-    row.querySelector('.semester-text')
-        .textContent = semesterInput.value;
+            };
 
 
-    // Update data filter
-    row.dataset.tahun =
-        tahunInput.value;
+            /*
+             * ---------------------------------------------------------
+             * EVENT FILTER
+             * ---------------------------------------------------------
+             */
 
-    row.dataset.semester =
-        semesterInput.value;
+            searchSiswa.addEventListener(
+                'input',
+                filterData
+            );
 
-    row.dataset.skill =
-        skillInput.value;
+            tahunAjaran.addEventListener(
+                'change',
+                filterData
+            );
 
+            semester.addEventListener(
+                'change',
+                filterData
+            );
 
-    // Sembunyikan input
-    skillInput.classList.add('hidden');
+            kelas.addEventListener(
+                'change',
+                filterData
+            );
 
-    nilaiInput.classList.add('hidden');
+            skill.addEventListener(
+                'change',
+                filterData
+            );
 
-    predikatInput.classList.add('hidden');
 
-    tahunInput.classList.add('hidden');
+            /*
+             * ---------------------------------------------------------
+             * EDIT DATA
+             * ---------------------------------------------------------
+             */
 
-    semesterInput.classList.add('hidden');
+            window.editData = function(button) {
 
+                const row =
+                    button.closest('.skill-row');
 
-    // Tampilkan text
-    row.querySelector('.skill-text')
-        .classList.remove('hidden');
 
-    row.querySelector('.nilai-text')
-        .classList.remove('hidden');
+                /*
+                 * Simpan nilai lama
+                 */
 
-    row.querySelector('.predikat-text')
-        .classList.remove('hidden');
+                row.dataset.oldSkill =
+                    row.querySelector('.skill-input').value;
 
-    row.querySelector('.tahun-text')
-        .classList.remove('hidden');
+                row.dataset.oldNilai =
+                    row.querySelector('.nilai-input').value;
 
-    row.querySelector('.semester-text')
-        .classList.remove('hidden');
+                row.dataset.oldPredikat =
+                    row.querySelector('.predikat-input').value;
 
+                row.dataset.oldTahun =
+                    row.querySelector('.tahun-input').value;
 
-    // Tombol
-    row.querySelector('.edit-btn')
-        .classList.remove('hidden');
+                row.dataset.oldSemester =
+                    row.querySelector('.semester-input').value;
 
-    row.querySelector('.save-btn')
-        .classList.add('hidden');
 
-    row.querySelector('.cancel-btn')
-        .classList.add('hidden');
+                /*
+                 * Tampilkan input
+                 */
 
+                row.querySelector('.skill-text')
+                    .classList.add('hidden');
 
-    // Hapus data sementara
-    delete row.dataset.oldSkill;
-    delete row.dataset.oldNilai;
-    delete row.dataset.oldPredikat;
-    delete row.dataset.oldTahun;
-    delete row.dataset.oldSemester;
+                row.querySelector('.skill-input')
+                    .classList.remove('hidden');
 
 
-    alert('Data Skill Passport berhasil diubah.');
+                row.querySelector('.nilai-text')
+                    .classList.add('hidden');
 
-}
+                row.querySelector('.nilai-input')
+                    .classList.remove('hidden');
 
 
+                row.querySelector('.predikat-text')
+                    .classList.add('hidden');
 
-// ============================================================
-// BATAL EDIT
-// ============================================================
+                row.querySelector('.predikat-input')
+                    .classList.remove('hidden');
 
-function cancelEdit(button) {
 
-    const row = button.closest('tr');
+                row.querySelector('.tahun-text')
+                    .classList.add('hidden');
 
+                row.querySelector('.tahun-input')
+                    .classList.remove('hidden');
 
-    const skillInput =
-        row.querySelector('.skill-input');
 
-    const nilaiInput =
-        row.querySelector('.nilai-input');
+                row.querySelector('.semester-text')
+                    .classList.add('hidden');
 
-    const predikatInput =
-        row.querySelector('.predikat-input');
+                row.querySelector('.semester-input')
+                    .classList.remove('hidden');
 
-    const tahunInput =
-        row.querySelector('.tahun-input');
 
-    const semesterInput =
-        row.querySelector('.semester-input');
+                /*
+                 * Tombol
+                 */
 
+                row.querySelector('.edit-button')
+                    .classList.add('hidden');
 
-    // Kembalikan nilai lama
-    skillInput.value =
-        row.dataset.oldSkill;
+                row.querySelector('.save-button')
+                    .classList.remove('hidden');
 
-    nilaiInput.value =
-        row.dataset.oldNilai;
+                row.querySelector('.cancel-button')
+                    .classList.remove('hidden');
 
-    predikatInput.value =
-        row.dataset.oldPredikat;
+            };
 
-    tahunInput.value =
-        row.dataset.oldTahun;
 
-    semesterInput.value =
-        row.dataset.oldSemester;
+            /*
+             * ---------------------------------------------------------
+             * SIMPAN DATA
+             * ---------------------------------------------------------
+             */
 
+            window.saveData = function(button) {
 
-    // Sembunyikan input
-    skillInput.classList.add('hidden');
+                const row =
+                    button.closest('.skill-row');
 
-    nilaiInput.classList.add('hidden');
 
-    predikatInput.classList.add('hidden');
+                const skillInput =
+                    row.querySelector('.skill-input');
 
-    tahunInput.classList.add('hidden');
+                const nilaiInput =
+                    row.querySelector('.nilai-input');
 
-    semesterInput.classList.add('hidden');
+                const predikatInput =
+                    row.querySelector('.predikat-input');
 
+                const tahunInput =
+                    row.querySelector('.tahun-input');
 
-    // Tampilkan text
-    row.querySelector('.skill-text')
-        .classList.remove('hidden');
+                const semesterInput =
+                    row.querySelector('.semester-input');
 
-    row.querySelector('.nilai-text')
-        .classList.remove('hidden');
 
-    row.querySelector('.predikat-text')
-        .classList.remove('hidden');
+                const nilai =
+                    Number(nilaiInput.value);
 
-    row.querySelector('.tahun-text')
-        .classList.remove('hidden');
 
-    row.querySelector('.semester-text')
-        .classList.remove('hidden');
+                /*
+                 * Validasi nilai
+                 */
 
+                if (
+                    nilaiInput.value === '' ||
+                    nilai < 0 ||
+                    nilai > 100
+                ) {
 
-    // Tombol
-    row.querySelector('.edit-btn')
-        .classList.remove('hidden');
+                    alert(
+                        'Nilai harus berada di antara 0 sampai 100.'
+                    );
 
-    row.querySelector('.save-btn')
-        .classList.add('hidden');
+                    nilaiInput.focus();
 
-    row.querySelector('.cancel-btn')
-        .classList.add('hidden');
+                    return;
 
+                }
 
-    // Hapus data sementara
-    delete row.dataset.oldSkill;
-    delete row.dataset.oldNilai;
-    delete row.dataset.oldPredikat;
-    delete row.dataset.oldTahun;
-    delete row.dataset.oldSemester;
 
-}
+                /*
+                 * Update text
+                 */
 
-</script>
+                row.querySelector('.skill-text')
+                    .textContent =
+                    skillInput.value;
 
+
+                row.querySelector('.nilai-text')
+                    .textContent =
+                    nilai;
+
+
+                const predikatText =
+                    row.querySelector('.predikat-text');
+
+
+                predikatText.textContent =
+                    predikatInput.value;
+
+
+                row.querySelector('.tahun-text')
+                    .textContent =
+                    tahunInput.value;
+
+
+                row.querySelector('.semester-text')
+                    .textContent =
+                    semesterInput.value;
+
+
+                /*
+                 * Update dataset
+                 */
+
+                row.dataset.skill =
+                    skillInput.value.toLowerCase();
+
+                row.dataset.nilai =
+                    nilai;
+
+                row.dataset.predikat =
+                    predikatInput.value;
+
+                row.dataset.tahun =
+                    tahunInput.value;
+
+                row.dataset.semester =
+                    semesterInput.value;
+
+
+                /*
+                 * Update warna predikat
+                 */
+
+                updatePredikatStyle(
+                    predikatText,
+                    predikatInput.value
+                );
+
+
+                /*
+                 * Kembalikan tampilan normal
+                 */
+
+                row.querySelector('.skill-text')
+                    .classList.remove('hidden');
+
+                skillInput.classList.add('hidden');
+
+
+                row.querySelector('.nilai-text')
+                    .classList.remove('hidden');
+
+                nilaiInput.classList.add('hidden');
+
+
+                predikatText
+                    .classList.remove('hidden');
+
+                predikatInput.classList.add('hidden');
+
+
+                row.querySelector('.tahun-text')
+                    .classList.remove('hidden');
+
+                tahunInput.classList.add('hidden');
+
+
+                row.querySelector('.semester-text')
+                    .classList.remove('hidden');
+
+                semesterInput.classList.add('hidden');
+
+
+                /*
+                 * Tombol
+                 */
+
+                row.querySelector('.edit-button')
+                    .classList.remove('hidden');
+
+                row.querySelector('.save-button')
+                    .classList.add('hidden');
+
+                row.querySelector('.cancel-button')
+                    .classList.add('hidden');
+
+
+                /*
+                 * Refresh statistik/filter
+                 */
+
+                filterData();
+
+
+                alert(
+                    'Data Skill Passport berhasil diubah.'
+                );
+
+            };
+
+
+            /*
+             * ---------------------------------------------------------
+             * BATAL EDIT
+             * ---------------------------------------------------------
+             */
+
+            window.cancelEdit = function(button) {
+
+                const row =
+                    button.closest('.skill-row');
+
+
+                /*
+                 * Ambil nilai lama
+                 */
+
+                const oldSkill =
+                    row.dataset.oldSkill;
+
+                const oldNilai =
+                    row.dataset.oldNilai;
+
+                const oldPredikat =
+                    row.dataset.oldPredikat;
+
+                const oldTahun =
+                    row.dataset.oldTahun;
+
+                const oldSemester =
+                    row.dataset.oldSemester;
+
+
+                /*
+                 * Kembalikan input
+                 */
+
+                row.querySelector('.skill-input')
+                    .value = oldSkill;
+
+                row.querySelector('.nilai-input')
+                    .value = oldNilai;
+
+                row.querySelector('.predikat-input')
+                    .value = oldPredikat;
+
+                row.querySelector('.tahun-input')
+                    .value = oldTahun;
+
+                row.querySelector('.semester-input')
+                    .value = oldSemester;
+
+
+                /*
+                 * Kembalikan text
+                 */
+
+                row.querySelector('.skill-text')
+                    .textContent = oldSkill;
+
+
+                row.querySelector('.nilai-text')
+                    .textContent = oldNilai;
+
+
+                const predikatText =
+                    row.querySelector('.predikat-text');
+
+
+                predikatText.textContent =
+                    oldPredikat;
+
+
+                row.querySelector('.tahun-text')
+                    .textContent = oldTahun;
+
+
+                row.querySelector('.semester-text')
+                    .textContent = oldSemester;
+
+
+                /*
+                 * Kembalikan dataset
+                 */
+
+                row.dataset.skill =
+                    oldSkill.toLowerCase();
+
+                row.dataset.nilai =
+                    oldNilai;
+
+                row.dataset.predikat =
+                    oldPredikat;
+
+                row.dataset.tahun =
+                    oldTahun;
+
+                row.dataset.semester =
+                    oldSemester;
+
+
+                /*
+                 * Kembalikan warna predikat
+                 */
+
+                updatePredikatStyle(
+                    predikatText,
+                    oldPredikat
+                );
+
+
+                /*
+                 * Kembalikan tampilan normal
+                 */
+
+                row.querySelector('.skill-text')
+                    .classList.remove('hidden');
+
+                row.querySelector('.skill-input')
+                    .classList.add('hidden');
+
+
+                row.querySelector('.nilai-text')
+                    .classList.remove('hidden');
+
+                row.querySelector('.nilai-input')
+                    .classList.add('hidden');
+
+
+                predikatText
+                    .classList.remove('hidden');
+
+                row.querySelector('.predikat-input')
+                    .classList.add('hidden');
+
+
+                row.querySelector('.tahun-text')
+                    .classList.remove('hidden');
+
+                row.querySelector('.tahun-input')
+                    .classList.add('hidden');
+
+
+                row.querySelector('.semester-text')
+                    .classList.remove('hidden');
+
+                row.querySelector('.semester-input')
+                    .classList.add('hidden');
+
+
+                /*
+                 * Tombol
+                 */
+
+                row.querySelector('.edit-button')
+                    .classList.remove('hidden');
+
+                row.querySelector('.save-button')
+                    .classList.add('hidden');
+
+                row.querySelector('.cancel-button')
+                    .classList.add('hidden');
+
+            };
+
+
+            /*
+             * ---------------------------------------------------------
+             * FILTER PERTAMA KALI
+             * ---------------------------------------------------------
+             */
+
+            filterData();
+
+        });
+    </script>
 @endsection

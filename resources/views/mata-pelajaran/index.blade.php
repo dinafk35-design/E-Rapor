@@ -4,82 +4,175 @@
 
     <div class="content">
 
-        ```
-        <!-- ============================= -->
-        <!-- HEADER -->
-        <!-- ============================= -->
+        {{-- =====================================================
+            HEADER
+        ====================================================== --}}
+        <div
+            class="mb-6 overflow-hidden rounded-xl bg-gradient-to-r from-[#25284d] via-[#37367a] to-[#5148b8] px-6 py-5 text-white shadow-sm">
 
-        <div class="welcome">
-            <h2 class="italic font-bold">
-                Data Mata Pelajaran
-            </h2>
+            <x-breadcrumb :items="[
+                ['label' => 'Dashboard', 'url' => route('dashboard')],
+                ['label' => 'Data Master'],
+                ['label' => 'Mata Pelajaran'],
+            ]" />
 
-            <p>
-                Kelola data mata pelajaran yang digunakan dalam sistem E-Rapor SMK.
-            </p>
+            <div class="mt-1 flex items-center justify-between gap-4">
+
+                <div class="flex items-center gap-3">
+
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                        <i class="ph ph-book-open text-2xl text-white"></i>
+                    </div>
+
+                    <div>
+                        <h1 class="text-xl font-bold leading-tight">
+                            Data Mata Pelajaran
+                        </h1>
+
+                        <p class="mt-1 text-xs text-[#c2c2dc]">
+                            Kelola mata pelajaran, kelompok, sekolah, dan guru yang mengajar.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="hidden rounded-xl bg-white/10 px-5 py-3 ring-1 ring-white/10 sm:block">
+                    <p class="text-[10px] uppercase tracking-wide text-[#c2c2dc]">
+                        Total Mata Pelajaran
+                    </p>
+
+                    <p class="mt-0.5 text-2xl font-bold">
+                        {{ $mataPelajaran->count() }}
+                    </p>
+                </div>
+
+            </div>
         </div>
 
 
-        <!-- ============================= -->
-        <!-- PESAN BERHASIL -->
-        <!-- ============================= -->
-
+        {{-- =====================================================
+            ALERT
+        ====================================================== --}}
         @if (session('status'))
-            <div class="mb-4 rounded-lg border border-green-300 bg-green-50 p-3 text-sm text-green-800">
-                <i class="ph ph-check-circle mr-1"></i>
-                {{ session('status') }}
+            <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                        <i class="ph ph-check-circle text-lg"></i>
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-emerald-800">
+                            Berhasil
+                        </p>
+
+                        <p class="mt-1 text-xs text-emerald-700">
+                            {{ session('status') }}
+                        </p>
+                    </div>
+
+                </div>
             </div>
         @endif
 
-
-        <!-- ============================= -->
-        <!-- PESAN ERROR -->
-        <!-- ============================= -->
 
         @if ($errors->any())
-            <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-                <i class="ph ph-warning-circle mr-1"></i>
-                {{ $errors->first() }}
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 shadow-sm">
+                <div class="flex items-start gap-3">
+
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600">
+                        <i class="ph ph-warning-circle text-lg"></i>
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-red-800">
+                            Terjadi kesalahan
+                        </p>
+
+                        <p class="mt-1 text-xs text-red-700">
+                            {{ $errors->first() }}
+                        </p>
+                    </div>
+
+                </div>
             </div>
         @endif
 
 
-        <!-- ============================= -->
-        <!-- FILTER -->
-        <!-- ============================= -->
-
+        {{-- =====================================================
+            FILTER
+        ====================================================== --}}
         <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="mb-4 flex items-center justify-between">
 
-                <!-- PENCARIAN -->
+                <div class="flex items-center gap-2">
 
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                        <i class="ph ph-funnel"></i>
+                    </div>
+
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-800">
+                            Filter Mata Pelajaran
+                        </h2>
+
+                        <p class="text-[11px] text-slate-400">
+                            Cari mata pelajaran berdasarkan kode, nama, atau kelompok.
+                        </p>
+                    </div>
+
+                </div>
+
+                <span id="filterStatus"
+                    class="hidden rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-semibold text-indigo-600">
+                    Filter aktif
+                </span>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+
+                {{-- PENCARIAN --}}
                 <div>
 
-                    <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    <label class="mb-2 block text-xs font-semibold text-slate-700">
                         Pencarian
                     </label>
 
-                    <input type="text" id="searchMapel"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                        placeholder="Cari kode atau nama mata pelajaran...">
+                    <div class="relative">
+
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        </i>
+
+                        <input type="text" id="searchMapel"
+                            class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                            placeholder="Cari kode atau nama mata pelajaran...">
+
+                    </div>
+
+                    <p class="mt-1.5 text-[10px] text-slate-400">
+                        Hasil pencarian diperbarui otomatis saat mengetik.
+                    </p>
 
                 </div>
 
 
-                <!-- KELOMPOK -->
-
+                {{-- KELOMPOK --}}
                 <div>
 
-                    <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    <label class="mb-2 block text-xs font-semibold text-slate-700">
                         Kelompok
                     </label>
 
                     <select id="kelompokMapel"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                        class="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                         <option value="">
-                            Semua
+                            Semua Kelompok
                         </option>
 
                         <option value="A">
@@ -94,50 +187,61 @@
                             Kelompok C
                         </option>
 
+                        <option value="Muatan Lokal">
+                            Muatan Lokal
+                        </option>
+
                     </select>
+
+                </div>
+
+
+                {{-- RESET --}}
+                <div class="flex items-end">
+
+                    <button type="button" onclick="resetFilterMapel()"
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-100 px-5 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">
+                        <i class="ph ph-arrow-counter-clockwise"></i>
+                        Reset Filter
+                    </button>
 
                 </div>
 
             </div>
 
 
-            <!-- TOMBOL FILTER -->
+            {{-- HASIL --}}
+            <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
 
-            <div class="mt-5 flex flex-wrap gap-3">
+                <div class="flex items-center gap-2 text-xs text-slate-500">
 
-                <button type="button" onclick="filterMapel()"
-                    class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
+                    <i class="ph ph-list-magnifying-glass text-indigo-500"></i>
 
-                    <i class="ph ph-magnifying-glass mr-1"></i>
+                    <span>
+                        Menampilkan
+                        <strong id="jumlahHasil" class="font-semibold text-slate-700">
+                            {{ $mataPelajaran->count() }}
+                        </strong>
+                        mata pelajaran
+                    </span>
 
-                    Cari
+                </div>
 
-                </button>
-
-
-                <button type="button" onclick="resetFilterMapel()"
-                    class="rounded-lg bg-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">
-
-                    <i class="ph ph-arrow-counter-clockwise mr-1"></i>
-
-                    Reset
-
-                </button>
+                <span class="text-[10px] text-slate-400">
+                    Filter otomatis
+                </span>
 
             </div>
 
         </div>
 
 
-        <!-- ============================= -->
-        <!-- TABEL MATA PELAJARAN -->
-        <!-- ============================= -->
-
-        <x-table-card title="Data Mata Pelajaran"
-            subtitle="Menampilkan daftar seluruh mata pelajaran yang terdaftar dalam sistem." :createRoute="route('mata-pelajaran.create')"
+        {{-- =====================================================
+            TABLE
+        ====================================================== --}}
+        <x-table-card title="Daftar Mata Pelajaran"
+            subtitle="Menampilkan seluruh mata pelajaran yang terdaftar dalam sistem E-Rapor SMK." :createRoute="route('mata-pelajaran.create')"
             :items="$mataPelajaran">
-
-            <!-- HEADER TABEL -->
 
             <x-slot:thead>
 
@@ -146,11 +250,7 @@
                 </th>
 
                 <th class="px-6 py-4">
-                    Kode Mata Pelajaran
-                </th>
-
-                <th class="px-6 py-4">
-                    Nama Mata Pelajaran
+                    Mata Pelajaran
                 </th>
 
                 <th class="px-6 py-4">
@@ -165,120 +265,138 @@
                     Guru Mengajar
                 </th>
 
-                <th class="px-6 py-4 text-center min-w-[220px]">
+                <th class="min-w-[220px] px-6 py-4 text-center">
                     Aksi
                 </th>
 
             </x-slot:thead>
 
 
-            <!-- BODY TABEL -->
-
             @forelse ($mataPelajaran as $item)
-                <tr class="status-row transition hover:bg-gray-50">
+                <tr class="status-row transition hover:bg-slate-50"
+                    data-kode="{{ strtolower($item->kode_mata_pelajaran ?? '') }}"
+                    data-nama="{{ strtolower($item->nama_mata_pelajaran ?? '') }}"
+                    data-kelompok="{{ strtolower($item->kelompok ?? '') }}">
 
-                    <!-- NOMOR -->
-
-                    <td class="px-6 py-5">
+                    {{-- NO --}}
+                    <td class="px-6 py-5 text-sm text-slate-500">
                         {{ $loop->iteration }}
                     </td>
 
 
-                    <!-- KODE -->
-
-                    <td class="px-6 py-5 font-medium text-gray-700">
-                        {{ $item->kode_mata_pelajaran ?? '-' }}
-                    </td>
-
-
-                    <!-- NAMA -->
-
+                    {{-- MATA PELAJARAN --}}
                     <td class="px-6 py-5">
 
-                        <div class="font-semibold text-gray-800">
-                            {{ $item->nama_mata_pelajaran ?? '-' }}
+                        <div class="flex items-center gap-3">
+
+                            <div
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                                <i class="ph ph-book-open"></i>
+                            </div>
+
+                            <div>
+
+                                <div class="font-semibold text-slate-800">
+                                    {{ $item->nama_mata_pelajaran ?? '-' }}
+                                </div>
+
+                                <div class="mt-0.5 text-[11px] text-slate-400">
+                                    Kode:
+                                    {{ $item->kode_mata_pelajaran ?? 'Belum diisi' }}
+                                </div>
+
+                            </div>
+
                         </div>
 
                     </td>
 
 
-                    <!-- KELOMPOK -->
-
+                    {{-- KELOMPOK --}}
                     <td class="px-6 py-5">
 
                         @if ($item->kelompok)
-                            <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-
-                                Kelompok {{ $item->kelompok }}
-
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                                <i class="ph ph-stack"></i>
+                                {{ $item->kelompok === 'Muatan Lokal' ? 'Muatan Lokal' : 'Kelompok ' . $item->kelompok }}
                             </span>
                         @else
-                            <span class="text-gray-500">
-                                -
+                            <span class="text-sm text-slate-400">
+                                Belum ditentukan
                             </span>
                         @endif
 
                     </td>
 
-                    <!-- SEKOLAH -->
 
-                    <td class="px-6 py-5 text-gray-600">
-                        {{ $item->sekolah->nama_sekolah ?? '-' }}
+                    {{-- SEKOLAH --}}
+                    <td class="px-6 py-5">
+
+                        <div class="flex items-center gap-2">
+
+                            <i class="ph ph-buildings text-slate-400"></i>
+
+                            <span class="text-sm text-slate-700">
+                                {{ $item->sekolah->nama_sekolah ?? '-' }}
+                            </span>
+
+                        </div>
+
                     </td>
 
 
-                    <!-- GURU PENGAJAR -->
-
+                    {{-- GURU --}}
                     <td class="px-6 py-5">
 
                         @if ($item->guruMengajar && $item->guruMengajar->count() > 0)
-                            @foreach ($item->guruMengajar as $relasi)
-                                <div class="mb-1">
-                                    <span
-                                        class="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                            <div class="space-y-1">
 
-                                        <i class="ph ph-user"></i>
+                                @foreach ($item->guruMengajar as $relasi)
+                                    <div>
+                                        <span
+                                            class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                                            <i class="ph ph-chalkboard-teacher"></i>
+                                            {{ $relasi->guru->nama_guru ?? '-' }}
+                                        </span>
+                                    </div>
+                                @endforeach
 
-                                        {{ $relasi->guru->nama_guru ?? '-' }}
+                            </div>
 
-                                    </span>
-                                </div>
-                            @endforeach
+                            <p class="mt-2 text-[10px] text-slate-400">
+                                {{ $item->guruMengajar->count() }} guru terhubung
+                            </p>
                         @else
-                            <span class="text-gray-500">
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                                <i class="ph ph-warning-circle"></i>
                                 Belum ada guru
                             </span>
                         @endif
 
                     </td>
 
-                    <!-- AKSI -->
 
-                    <td class="px-6 py-5 text-center whitespace-nowrap">
+                    {{-- AKSI --}}
+                    <td class="px-6 py-5 text-center">
 
-                        <!-- EDIT -->
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
 
-                        <a href="{{ route('mata-pelajaran.edit', $item->id) }}"
-                            class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600">
+                            <a href="{{ route('mata-pelajaran.edit', $item->id) }}"
+                                class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-600">
+                                <i class="ph ph-pencil-simple"></i>
+                                Edit
+                            </a>
 
-                            <i class="ph ph-pencil-simple text-sm"></i>
+                            <button type="button"
+                                onclick="lihatRelasi('{{ $item->id }}', @js($item->nama_mata_pelajaran))"
+                                class="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                                <i class="ph ph-link-simple"></i>
+                                Relasi
+                            </button>
 
-                            Edit
-
-                        </a>
-
-
-                        <!-- RELASI -->
-
-                        <a href="#"
-                            onclick="lihatRelasi('{{ $item->id }}', '{{ addslashes($item->nama_mata_pelajaran) }}')"
-                            class="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700">
-
-                            <i class="ph ph-link-simple text-sm"></i>
-
-                            Relasi
-
-                        </a>
+                        </div>
 
                     </td>
 
@@ -287,93 +405,121 @@
             @empty
 
                 <tr>
+                    <td colspan="6" class="px-6 py-12 text-center">
 
-                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
 
-                        Belum ada data mata pelajaran.
+                            <div
+                                class="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+                                <i class="ph ph-book-open text-2xl"></i>
+                            </div>
+
+                            <p class="font-semibold text-slate-700">
+                                Belum ada data mata pelajaran
+                            </p>
+
+                            <p class="mt-1 text-xs text-slate-400">
+                                Tambahkan mata pelajaran untuk mulai mengelola data akademik.
+                            </p>
+
+                        </div>
 
                     </td>
-
                 </tr>
             @endforelse
 
         </x-table-card>
-        ```
 
     </div>
 
-    <!-- ============================= -->
 
-    <!-- JAVASCRIPT -->
-
-    <!-- ============================= -->
-
+    {{-- =====================================================
+        JAVASCRIPT
+    ====================================================== --}}
     <script>
-        /* ============================= */
-        /* FILTER MATA PELAJARAN */
-        /* ============================= */
+        const searchMapel = document.getElementById('searchMapel');
+        const kelompokMapel = document.getElementById('kelompokMapel');
+        const jumlahHasil = document.getElementById('jumlahHasil');
+        const filterStatus = document.getElementById('filterStatus');
+
 
         function filterMapel() {
 
-            const search =
-                document.getElementById('searchMapel').value.toLowerCase();
+            const search = searchMapel.value.toLowerCase().trim();
+            const kelompok = kelompokMapel.value.toLowerCase().trim();
 
-            const kelompok =
-                document.getElementById('kelompokMapel').value.toLowerCase();
+            const rows = document.querySelectorAll('.status-row');
 
-            const rows =
-                document.querySelectorAll('.status-row');
-
+            let jumlah = 0;
 
             rows.forEach(function(row) {
 
-                const text =
-                    row.innerText.toLowerCase();
+                const kode = row.dataset.kode || '';
+                const nama = row.dataset.nama || '';
+                const kelompokData = row.dataset.kelompok || '';
 
                 const cocokSearch =
-                    search === '' || text.includes(search);
+                    search === '' ||
+                    kode.includes(search) ||
+                    nama.includes(search);
 
                 const cocokKelompok =
-                    kelompok === '' || text.includes('kelompok ' + kelompok);
+                    kelompok === '' ||
+                    kelompokData === kelompok;
 
-                if (cocokSearch && cocokKelompok) {
+                const tampil =
+                    cocokSearch &&
+                    cocokKelompok;
 
-                    row.style.display = '';
+                row.style.display = tampil ? '' : 'none';
 
-                } else {
-
-                    row.style.display = 'none';
-
+                if (tampil) {
+                    jumlah++;
                 }
 
             });
 
+
+            if (jumlahHasil) {
+                jumlahHasil.textContent = jumlah;
+            }
+
+
+            const filterAktif =
+                search !== '' ||
+                kelompok !== '';
+
+            if (filterStatus) {
+                filterStatus.classList.toggle(
+                    'hidden',
+                    !filterAktif
+                );
+            }
+
         }
 
 
-        /* ============================= */
-        /* RESET FILTER */
-        /* ============================= */
+        searchMapel.addEventListener(
+            'input',
+            filterMapel
+        );
+
+
+        kelompokMapel.addEventListener(
+            'change',
+            filterMapel
+        );
+
 
         function resetFilterMapel() {
 
-            document.getElementById('searchMapel').value = '';
+            searchMapel.value = '';
+            kelompokMapel.value = '';
 
-            document.getElementById('kelompokMapel').value = '';
-
-            document.querySelectorAll('.status-row')
-                .forEach(function(row) {
-
-                    row.style.display = '';
-
-                });
+            filterMapel();
 
         }
 
-
-        /* ============================= */
-        /* LIHAT RELASI */
-        /* ============================= */
 
         function lihatRelasi(id, nama) {
 
@@ -384,6 +530,9 @@
             );
 
         }
+
+
+        filterMapel();
     </script>
 
 @endsection

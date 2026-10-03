@@ -50,7 +50,7 @@ class WaliKelasController extends Controller
         }
 
         return redirect()
-            ->route('wali-kelas')
+            ->route('wali-kelas.index')
             ->with('status', 'Data Wali Kelas berhasil disimpan.');
     }
 
@@ -75,7 +75,7 @@ class WaliKelasController extends Controller
         $wali_kela->update($data);
 
         return redirect()
-            ->route('wali-kelas')
+            ->route('wali-kelas.index')
             ->with('status', 'Data Wali Kelas berhasil diperbarui.');
     }
 
