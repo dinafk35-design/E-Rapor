@@ -9,6 +9,7 @@ use App\Services\PembuatanAkun;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class DataSiswaController extends Controller
@@ -44,14 +45,19 @@ class DataSiswaController extends Controller
                 'password' => $request->input('password'),
             ]);
 
-            $siswa->forceFill(['user_id' => $hasil['user']->id])->save();
+            $siswa->forceFill([
+                'user_id' => $hasil['user']->id,
+            ])->save();
 
             return $hasil;
         });
 
         return redirect()
             ->route('data-siswa.index')
-            ->with('status', 'Data Siswa berhasil disimpan. ' . $this->pesanAkun($akun));
+            ->with(
+                'status',
+                'Data Siswa berhasil disimpan. ' . $this->pesanAkun($akun)
+            );
     }
 
     public function show(DataSiswa $data_siswa): View
@@ -69,9 +75,14 @@ class DataSiswaController extends Controller
         ]);
     }
 
-    public function update(Request $request, DataSiswa $data_siswa): RedirectResponse
-    {
-        $data = $request->validate($this->rules());
+    public function update(
+        Request $request,
+        DataSiswa $data_siswa
+    ): RedirectResponse {
+        // Abaikan NISN milik siswa yang sedang diedit
+        $data = $request->validate(
+            $this->rules($data_siswa->id)
+        );
 
         $data_siswa->update($data);
 
@@ -82,7 +93,9 @@ class DataSiswaController extends Controller
             ])
             ->save();
 
-        return redirect()->route('data-siswa.index')->with('status', 'Data Siswa berhasil diperbarui.');
+        return redirect()
+            ->route('data-siswa.index')
+            ->with('status', 'Data Siswa berhasil diperbarui.');
     }
 
     public function destroy(DataSiswa $data_siswa): RedirectResponse
@@ -97,7 +110,12 @@ class DataSiswaController extends Controller
             User::whereKey($userId)->delete();
         }
 
-        return redirect()->route('data-siswa.index')->with('status', 'Data Siswa dan akun loginnya berhasil dihapus.');
+        return redirect()
+            ->route('data-siswa.index')
+            ->with(
+                'status',
+                'Data Siswa dan akun loginnya berhasil dihapus.'
+            );
     }
 
     /*
@@ -109,20 +127,64 @@ class DataSiswaController extends Controller
     /**
      * Aturan validasi data siswa.
      *
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, mixed>>
      */
-    protected function rules(): array
+    protected function rules(?int $ignoreId = null): array
     {
         return [
-            'nisn' => ['required', 'string', 'max:30', 'unique:data_siswa,nisn'],
-            'nama_siswa' => ['required', 'string', 'max:255'],
-            'jenis_kelamin' => ['nullable', 'in:L,P'],
-            'tempat_lahir' => ['nullable', 'string', 'max:100'],
-            'tanggal_lahir' => ['nullable', 'date'],
-            'rombel_id' => ['nullable', 'integer', 'exists:rombel,id'],
-            'alamat' => ['nullable', 'string', 'max:1000'],
-            'username' => ['nullable', 'string', 'max:255'],
-            'password' => ['nullable', 'string', 'min:8'],
+            'nisn' => [
+                'required',
+                'string',
+                'max:30',
+                Rule::unique('data_siswa', 'nisn')
+                    ->ignore($ignoreId),
+            ],
+
+            'nama_siswa' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'jenis_kelamin' => [
+                'nullable',
+                'in:L,P',
+            ],
+
+            'tempat_lahir' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+
+            'tanggal_lahir' => [
+                'nullable',
+                'date',
+            ],
+
+            'rombel_id' => [
+                'nullable',
+                'integer',
+                'exists:rombel,id',
+            ],
+
+            'alamat' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+
+            'username' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+            ],
         ];
     }
 
@@ -146,14 +208,16 @@ class DataSiswaController extends Controller
      *
      * Password awal hanya ditampilkan bila sistem yang menetapkannya.
      *
-     * @param  array{user: User, password: ?string, dibuatSistem: bool}  $akun
+     * @param array{user: User, password: ?string, dibuatSistem: bool} $akun
      */
     protected function pesanAkun(array $akun): string
     {
-        $pesan = 'Akun login "' . $akun['user']->username . '" juga telah dibuat untuk siswa ini.';
+        $pesan = 'Akun login "' . $akun['user']->username
+            . '" juga telah dibuat untuk siswa ini.';
 
         if ($akun['dibuatSistem']) {
-            $pesan .= ' Password awal: ' . $akun['password'] . ' (simpan catatan ini, password hanya ditampilkan sekali).';
+            $pesan .= ' Password awal: ' . $akun['password']
+                . ' (simpan catatan ini, password hanya ditampilkan sekali).';
         }
 
         return $pesan;

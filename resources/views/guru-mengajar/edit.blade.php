@@ -332,7 +332,7 @@
                     <!-- ACTION -->
                     <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
 
-                        <a href="{{ route('guru-mengajar') }}"
+                        <a href="{{ route('guru-mengajar.index') }}"
                             class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">
                             <i class="ph ph-arrow-left"></i>
                             Batal

@@ -285,25 +285,34 @@ class MataPelajaranController extends Controller
     /**
      * Menghapus Mata Pelajaran
      */
+
     public function destroy(MataPelajaran $mataPelajaran): RedirectResponse
     {
         /*
-        |--------------------------------------------------------------------------
-        | HAPUS RELASI GURU
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | CEK RELASI GURU MENGAJAR
+    |--------------------------------------------------------------------------
+    */
 
-        $mataPelajaran->guruMengajar()->delete();
+        if ($mataPelajaran->guruMengajar()->exists()) {
+            return redirect()
+                ->route('mata-pelajaran.index')
+                ->withErrors([
+                    'delete' => 'Mata Pelajaran "' . $mataPelajaran->nama_mata_pelajaran . '" tidak dapat dihapus karena masih memiliki guru yang mengajar.',
+                ]);
+        }
 
         /*
-        |--------------------------------------------------------------------------
-        | HAPUS MATA PELAJARAN
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | HAPUS MATA PELAJARAN
+    |--------------------------------------------------------------------------
+    */
 
         $mataPelajaran->delete();
 
-        return redirect()->route('mata-pelajaran.index')->with('status', 'Data Mata Pelajaran berhasil dihapus.');
+        return redirect()
+            ->route('mata-pelajaran.index')
+            ->with('status', 'Data Mata Pelajaran berhasil dihapus.');
     }
 
     /**

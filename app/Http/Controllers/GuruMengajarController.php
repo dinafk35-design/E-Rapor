@@ -100,13 +100,13 @@ class GuruMengajarController extends Controller
                 $guru_mengajar,
                 'Guru "' . $pengganti->nama_guru . '" sudah tercatat mengajar '
                     . ($guru_mengajar->mataPelajaran->nama_mata_pelajaran ?? 'mata pelajaran ini')
-                    . ' pada '.($guru_mengajar->rombel->nama_romel ?? 'rombel yang sama')
+                    . ' pada ' . ($guru_mengajar->rombel->nama_romel ?? 'rombel yang sama')
                     . '. Silakan pilih guru lain.'
             );
         }
 
         return redirect()
-            ->route('guru-mengajar')
+            ->route('guru-mengajar.index')
             ->with('status', 'Guru pengajar ' . ($guru_mengajar->mataPelajaran->nama_mata_pelajaran ?? '')
                 . ' berhasil diganti dari "' . ($guru_mengajar->guru?->nama_guru ?? '-')
                 . '" menjadi "' . $pengganti->nama_guru . '".');
@@ -130,14 +130,14 @@ class GuruMengajarController extends Controller
         } catch (QueryException) {
             // Jangan tampilkan error SQL mentah kepada admin.
             return redirect()
-                ->route('data-guru.relasi', $guru_mengajar->guru_id)
+                ->route('guru-mengajar.index')
                 ->withErrors([
                     'relasi' => 'Relasi guru mengajar tidak dapat dilepas. Silakan coba kembali.',
                 ]);
         }
 
         return redirect()
-            ->route('data-guru.relasi', $guru_mengajar->guru_id)
+            ->route('guru-mengajar.index')
             ->with('status', 'Relasi "' . $namaGuru . ' - ' . $namaMapel . '" berhasil dilepas. '
                 . 'Data Mata Pelajaran tetap tersimpan.');
     }

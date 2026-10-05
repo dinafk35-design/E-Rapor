@@ -384,73 +384,217 @@
     ====================================================== --}}
     <div id="modalRelasiGuru"
         class="fixed inset-0 z-[999] hidden items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
-        <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
-            {{-- MODAL HEADER --}}
+
+        <div class="w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+
+            {{-- HEADER --}}
             <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+
                 <div class="flex items-center gap-3">
+
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                         <i class="ph ph-link-simple-horizontal text-xl"></i>
                     </div>
+
                     <div>
                         <h3 class="text-sm font-bold text-slate-800">
                             Relasi Guru
                         </h3>
+
                         <p class="text-xs text-slate-400">
-                            Informasi penugasan guru
+                            Informasi penugasan dan tanggung jawab guru
                         </p>
                     </div>
+
                 </div>
+
                 <button type="button" onclick="tutupRelasi()"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
+
                     <i class="ph ph-x text-lg"></i>
+
                 </button>
+
             </div>
-            {{-- MODAL CONTENT --}}
+
+
+            {{-- CONTENT --}}
             <div class="max-h-[70vh] overflow-y-auto px-5 py-5">
-                {{-- NAMA --}}
-                <div class="mb-5 rounded-xl bg-slate-50 p-4">
-                    <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                        Guru
-                    </p>
-                    <p id="relasiNamaGuru" class="mt-1 text-base font-bold text-slate-800">
-                        -
-                    </p>
+
+                {{-- IDENTITAS GURU --}}
+                <div class="mb-5 flex items-center gap-3 rounded-xl bg-slate-50 p-4">
+
+                    <div id="relasiAvatar"
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-sm font-bold text-indigo-600">
+                        G
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                            Guru
+                        </p>
+
+                        <p id="relasiNamaGuru" class="mt-0.5 truncate text-base font-bold text-slate-800">
+                            -
+                        </p>
+
+                        <p id="relasiTotal" class="mt-0.5 text-xs text-slate-400">
+                            0 relasi
+                        </p>
+
+                    </div>
+
                 </div>
-                {{-- MAPEL --}}
-                <div class="mb-5">
-                    <div class="mb-3 flex items-center justify-between">
+
+
+                {{-- =====================================================
+                MATA PELAJARAN
+            ====================================================== --}}
+                <div class="mb-4 rounded-xl border border-slate-100 bg-white">
+
+                    <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+
                         <div class="flex items-center gap-2">
-                            <i class="ph ph-book-open text-indigo-500"></i>
-                            <h4 class="text-sm font-bold text-slate-700">
-                                Mata Pelajaran
-                            </h4>
+
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                                <i class="ph ph-book-open"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-700">
+                                    Guru Mengajar
+                                </h4>
+
+                                <p class="text-[10px] text-slate-400">
+                                    Mata pelajaran yang diampu
+                                </p>
+                            </div>
+
                         </div>
+
                         <span id="jumlahMapelRelasi"
                             class="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-600">
                             0
                         </span>
+
                     </div>
-                    <div id="relasiMapelContainer">
-                        {{-- Diisi JavaScript --}}
+
+                    <div id="relasiMapelContainer" class="space-y-2 p-3">
                     </div>
+
                 </div>
+
+
+                {{-- =====================================================
+                WALI KELAS
+            ====================================================== --}}
+                <div class="mb-4 rounded-xl border border-slate-100 bg-white">
+
+                    <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+
+                        <div class="flex items-center gap-2">
+
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                                <i class="ph ph-identification-card"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-700">
+                                    Wali Kelas
+                                </h4>
+
+                                <p class="text-[10px] text-slate-400">
+                                    Kelas yang menjadi tanggung jawab
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <span id="jumlahWaliKelas"
+                            class="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-600">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div id="relasiWaliKelasContainer" class="space-y-2 p-3">
+                    </div>
+
+                </div>
+
+
+                {{-- =====================================================
+                ROMBEL DIAMPU
+            ====================================================== --}}
+                <div class="mb-5 rounded-xl border border-slate-100 bg-white">
+
+                    <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+
+                        <div class="flex items-center gap-2">
+
+                            <div
+                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                                <i class="ph ph-users-three"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-700">
+                                    Rombel Diampu
+                                </h4>
+
+                                <p class="text-[10px] text-slate-400">
+                                    Rombongan belajar yang diampu
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <span id="jumlahRombelDiampu"
+                            class="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-600">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div id="relasiRombelContainer" class="space-y-2 p-3">
+                    </div>
+
+                </div>
+
+
                 {{-- INFO --}}
-                <div class="rounded-xl border border-amber-100 bg-amber-50 p-3">
+                <div class="rounded-xl border border-blue-100 bg-blue-50 p-3">
+
                     <div class="flex gap-2">
-                        <i class="ph ph-info mt-0.5 text-amber-500"></i>
-                        <p class="text-xs leading-relaxed text-amber-700">
-                            Relasi mata pelajaran digunakan untuk menentukan guru yang mengajar pada sistem E-Rapor.
+
+                        <i class="ph ph-info mt-0.5 text-blue-500"></i>
+
+                        <p class="text-xs leading-relaxed text-blue-700">
+                            Relasi guru digunakan untuk menentukan mata pelajaran yang
+                            diampu, wali kelas, serta rombongan belajar yang menjadi
+                            tanggung jawab guru pada sistem E-Rapor.
                         </p>
+
                     </div>
+
                 </div>
+
             </div>
-            {{-- MODAL FOOTER --}}
+
+
+            {{-- FOOTER --}}
             <div class="flex justify-end border-t border-slate-100 px-5 py-4">
+
                 <button type="button" onclick="tutupRelasi()"
                     class="rounded-lg bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-200">
+
                     Tutup
+
                 </button>
+
             </div>
+
         </div>
     </div>
     {{-- =====================================================
@@ -458,19 +602,42 @@
     ====================================================== --}}
     <script>
         /*
-                                                                                            |--------------------------------------------------------------------------
-                                                                                            | DATA RELASI GURU
-                                                                                            |--------------------------------------------------------------------------
-                                                                                            */
+        |--------------------------------------------------------------------------
+        | DATA RELASI GURU
+        |--------------------------------------------------------------------------
+        */
+
         const dataGuruRelasi = @js(
     $guru
         ->mapWithKeys(function ($item) {
             return [
                 $item->id => [
                     'nama' => $item->nama_guru,
+
+                    // Guru Mengajar / Mata Pelajaran
                     'mata_pelajaran' => $item->guruMengajar
                         ->map(function ($relasi) {
                             return $relasi->mataPelajaran->nama_mata_pelajaran ?? null;
+                        })
+                        ->filter()
+                        ->unique()
+                        ->values()
+                        ->toArray(),
+
+                    // Wali Kelas
+                    'wali_kelas' => $item->waliKelas
+                        ->map(function ($wali) {
+                            return $wali->rombel->nama_rombel ?? ($wali->nama_rombel ?? null);
+                        })
+                        ->filter()
+                        ->unique()
+                        ->values()
+                        ->toArray(),
+
+                    // Rombel yang Diampu
+                    'rombel_diampu' => $item->rombelDiampu
+                        ->map(function ($rombel) {
+                            return $rombel->nama_rombel ?? null;
                         })
                         ->filter()
                         ->unique()
@@ -481,198 +648,463 @@
         })
         ->toArray(),
 );
+
+
         /*
         |--------------------------------------------------------------------------
         | LIHAT RELASI
         |--------------------------------------------------------------------------
         */
+
         function lihatRelasi(id) {
+
             const data = dataGuruRelasi[id];
+
             if (!data) {
                 return;
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATA
+            |--------------------------------------------------------------------------
+            */
+
+            const mapel = data.mata_pelajaran || [];
+            const waliKelas = data.wali_kelas || [];
+            const rombelDiampu = data.rombel_diampu || [];
+
+            const totalRelasi =
+                mapel.length +
+                waliKelas.length +
+                rombelDiampu.length;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | IDENTITAS GURU
+            |--------------------------------------------------------------------------
+            */
+
             document.getElementById('relasiNamaGuru').textContent =
                 data.nama || '-';
-            const container =
+
+            document.getElementById('relasiAvatar').textContent =
+                (data.nama || 'G').charAt(0).toUpperCase();
+
+            document.getElementById('relasiTotal').textContent =
+                `${totalRelasi} relasi`;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | GURU MENGAJAR
+            |--------------------------------------------------------------------------
+            */
+
+            const mapelContainer =
                 document.getElementById('relasiMapelContainer');
-            const jumlah =
+
+            const jumlahMapel =
                 document.getElementById('jumlahMapelRelasi');
-            container.innerHTML = '';
-            const mapel =
-                data.mata_pelajaran || [];
-            jumlah.textContent =
-                mapel.length;
+
+            mapelContainer.innerHTML = '';
+
+            jumlahMapel.textContent = mapel.length;
+
+
             if (mapel.length === 0) {
-                container.innerHTML = `
-                    <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center">
-                        <div class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-300">
-                            <i class="ph ph-book-open text-xl"></i>
-                        </div>
-                        <p class="text-xs font-semibold text-slate-500">
-                            Belum ada mata pelajaran
-                        </p>
-                        <p class="mt-1 text-[11px] text-slate-400">
-                            Guru ini belum memiliki mata pelajaran yang diampu.
-                        </p>
+
+                mapelContainer.innerHTML = `
+                <div class="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
+
+                    <div class="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-300">
+                        <i class="ph ph-book-open text-lg"></i>
                     </div>
-                `;
+
+                    <p class="text-[11px] font-semibold text-slate-500">
+                        Belum ada mata pelajaran
+                    </p>
+
+                    <p class="mt-1 text-[10px] text-slate-400">
+                        Guru ini belum memiliki mata pelajaran yang diampu.
+                    </p>
+
+                </div>
+            `;
+
             } else {
+
                 mapel.forEach(function(namaMapel, index) {
-                    const item = document.createElement('div');
-                    item.className =
-                        'mb-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-3 shadow-sm';
-                    item.innerHTML = `
-                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-xs font-bold text-indigo-600">
+
+                    mapelContainer.innerHTML += `
+                    <div class="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50/70 px-3 py-2.5">
+
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-[10px] font-bold text-indigo-600">
                             ${index + 1}
                         </div>
-                        <div class="min-w-0">
-                            <p class="truncate text-xs font-semibold text-slate-700">
-                                ${escapeHtml(namaMapel)}
-                            </p>
-                        </div>
-                    `;
-                    container.appendChild(item);
+
+                        <p class="min-w-0 truncate text-xs font-semibold text-slate-700">
+                            ${escapeHtml(namaMapel)}
+                        </p>
+
+                    </div>
+                `;
+
                 });
+
             }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | WALI KELAS
+            |--------------------------------------------------------------------------
+            */
+
+            const waliContainer =
+                document.getElementById('relasiWaliKelasContainer');
+
+            const jumlahWaliKelas =
+                document.getElementById('jumlahWaliKelas');
+
+            waliContainer.innerHTML = '';
+
+            jumlahWaliKelas.textContent =
+                waliKelas.length;
+
+
+            if (waliKelas.length === 0) {
+
+                waliContainer.innerHTML = `
+                <div class="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
+
+                    <div class="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-300">
+                        <i class="ph ph-identification-card text-lg"></i>
+                    </div>
+
+                    <p class="text-[11px] font-semibold text-slate-500">
+                        Bukan wali kelas
+                    </p>
+
+                    <p class="mt-1 text-[10px] text-slate-400">
+                        Guru ini belum ditugaskan sebagai wali kelas.
+                    </p>
+
+                </div>
+            `;
+
+            } else {
+
+                waliKelas.forEach(function(namaRombel, index) {
+
+                    waliContainer.innerHTML += `
+                    <div class="flex items-center gap-3 rounded-lg border border-amber-100 bg-amber-50/50 px-3 py-2.5">
+
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-[10px] font-bold text-amber-600">
+                            ${index + 1}
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <p class="text-[10px] font-medium uppercase tracking-wide text-amber-500">
+                                Wali Kelas
+                            </p>
+
+                            <p class="truncate text-xs font-semibold text-slate-700">
+                                ${escapeHtml(namaRombel)}
+                            </p>
+
+                        </div>
+
+                    </div>
+                `;
+
+                });
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ROMBEL DIAMPU
+            |--------------------------------------------------------------------------
+            */
+
+            const rombelContainer =
+                document.getElementById('relasiRombelContainer');
+
+            const jumlahRombel =
+                document.getElementById('jumlahRombelDiampu');
+
+            rombelContainer.innerHTML = '';
+
+            jumlahRombel.textContent =
+                rombelDiampu.length;
+
+
+            if (rombelDiampu.length === 0) {
+
+                rombelContainer.innerHTML = `
+                <div class="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
+
+                    <div class="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-300">
+                        <i class="ph ph-users-three text-lg"></i>
+                    </div>
+
+                    <p class="text-[11px] font-semibold text-slate-500">
+                        Belum ada rombel
+                    </p>
+
+                    <p class="mt-1 text-[10px] text-slate-400">
+                        Guru ini belum memiliki rombel yang diampu.
+                    </p>
+
+                </div>
+            `;
+
+            } else {
+
+                rombelDiampu.forEach(function(namaRombel, index) {
+
+                    rombelContainer.innerHTML += `
+                    <div class="flex items-center gap-3 rounded-lg border border-emerald-100 bg-emerald-50/50 px-3 py-2.5">
+
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-[10px] font-bold text-emerald-600">
+                            ${index + 1}
+                        </div>
+
+                        <p class="min-w-0 truncate text-xs font-semibold text-slate-700">
+                            ${escapeHtml(namaRombel)}
+                        </p>
+
+                    </div>
+                `;
+
+                });
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BUKA MODAL
+            |--------------------------------------------------------------------------
+            */
+
             const modal =
                 document.getElementById('modalRelasiGuru');
+
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
             document.body.classList.add('overflow-hidden');
         }
+
+
         /*
         |--------------------------------------------------------------------------
         | TUTUP MODAL
         |--------------------------------------------------------------------------
         */
+
         function tutupRelasi() {
+
             const modal =
                 document.getElementById('modalRelasiGuru');
+
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+
             document.body.classList.remove('overflow-hidden');
         }
+
+
         /*
         |--------------------------------------------------------------------------
         | ESC TUTUP MODAL
         |--------------------------------------------------------------------------
         */
+
         document.addEventListener('keydown', function(event) {
+
             if (event.key === 'Escape') {
                 tutupRelasi();
             }
+
         });
+
+
         /*
         |--------------------------------------------------------------------------
         | KLIK BACKDROP
         |--------------------------------------------------------------------------
         */
+
         document
             .getElementById('modalRelasiGuru')
             .addEventListener('click', function(event) {
+
                 if (event.target === this) {
                     tutupRelasi();
                 }
+
             });
+
+
         /*
         |--------------------------------------------------------------------------
         | ESCAPE HTML
         |--------------------------------------------------------------------------
         */
+
         function escapeHtml(text) {
+
             const div =
                 document.createElement('div');
+
             div.textContent = text;
+
             return div.innerHTML;
         }
+
+
         /*
         |--------------------------------------------------------------------------
         | FILTER GURU
         |--------------------------------------------------------------------------
         */
+
         function filterGuru() {
+
             const search =
                 document
                 .getElementById('searchGuru')
                 .value
                 .toLowerCase()
                 .trim();
+
             const jenisKelamin =
                 document
                 .getElementById('filterJenisKelamin')
                 .value;
+
             const rows =
                 document.querySelectorAll('.guru-row');
+
             let jumlahTampil = 0;
+
+
             rows.forEach(function(row) {
+
                 const nama =
                     row.dataset.nama || '';
+
                 const nip =
                     row.dataset.nip || '';
+
                 const nik =
                     row.dataset.nik || '';
+
                 const jk =
                     row.dataset.jk || '';
+
+
                 const cocokSearch =
                     nama.includes(search) ||
                     nip.includes(search) ||
                     nik.includes(search);
+
+
                 const cocokJenisKelamin =
                     jenisKelamin === '' ||
                     jk === jenisKelamin;
+
+
                 if (
                     cocokSearch &&
                     cocokJenisKelamin
                 ) {
+
                     row.style.display = '';
+
                     jumlahTampil++;
+
                 } else {
+
                     row.style.display = 'none';
+
                 }
+
             });
+
+
             document
                 .getElementById('jumlahGuru')
                 .textContent = jumlahTampil;
+
+
             const noResult =
                 document.getElementById('noFilterResult');
+
+
             if (
                 jumlahTampil === 0 &&
                 rows.length > 0
             ) {
+
                 noResult.classList.remove('hidden');
+
             } else {
+
                 noResult.classList.add('hidden');
+
             }
+
         }
+
+
         /*
         |--------------------------------------------------------------------------
         | RESET FILTER
         |--------------------------------------------------------------------------
         */
+
         function resetFilterGuru() {
+
             document
                 .getElementById('searchGuru')
                 .value = '';
+
             document
                 .getElementById('filterJenisKelamin')
                 .value = '';
+
             filterGuru();
+
         }
+
+
         /*
         |--------------------------------------------------------------------------
         | KONFIRMASI HAPUS
         |--------------------------------------------------------------------------
         */
+
         function confirmDeleteGuru(button) {
+
             const form =
                 button.closest('.delete-guru-form');
+
             const yakin =
                 confirm(
                     'Apakah Anda yakin ingin menghapus data guru ini?'
                 );
+
             if (yakin) {
                 form.submit();
             }
+
         }
     </script>
 @endsection

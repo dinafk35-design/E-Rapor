@@ -39,7 +39,7 @@ class DataSekolahController extends Controller
         DataSekolah::create($data);
 
         return redirect()
-            ->route('data-sekolah')
+            ->route('data-sekolah.index')
             ->with('status', 'Data Sekolah berhasil disimpan.');
     }
 
@@ -67,7 +67,7 @@ class DataSekolahController extends Controller
         $data_sekolah->update($data);
 
         return redirect()
-            ->route('data-sekolah')
+            ->route('data-sekolah.index')
             ->with('status', 'Data Sekolah berhasil diperbarui.');
     }
 
@@ -76,7 +76,7 @@ class DataSekolahController extends Controller
         $data_sekolah->delete();
 
         return redirect()
-            ->route('data-sekolah')
+            ->route('data-sekolah.index')
             ->with('status', 'Data Sekolah berhasil dihapus.');
     }
 }

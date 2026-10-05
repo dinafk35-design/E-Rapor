@@ -118,9 +118,18 @@
                                 NISN
                             </label>
 
-                            <input type="text" name="nisn" value="{{ old('nisn', $siswa->nisn) }}"
-                                placeholder="Masukkan NISN siswa"
-                                class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+                            <div class="relative">
+                                <input type="text" id="nisn" name="nisn" value="{{ old('nisn', $siswa->nisn) }}"
+                                    readonly
+                                    class="w-full cursor-not-allowed rounded-lg border border-slate-200 bg-slate-100 px-4 py-2.5 pr-10 text-sm text-slate-500 outline-none">
+
+                                <i class="ph ph-lock-key absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            </div>
+
+                            <p class="mt-1.5 flex items-center gap-1 text-xs text-slate-500">
+                                <i class="ph ph-info"></i>
+                                NISN tidak dapat diubah karena merupakan identitas unik siswa.
+                            </p>
                         </div>
 
 
