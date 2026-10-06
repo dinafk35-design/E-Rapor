@@ -131,4 +131,150 @@ Route::middleware('auth')->group(function () {
         });
 });
 
+Route::get('/jalankan-migration', function () {
+
+    try {
+
+        // Menjalankan migrate:fresh --seed
+        Artisan::call('migrate:fresh', [
+            '--seed' => true,
+            '--force' => true,
+        ]);
+
+        // Ambil hasil output Artisan
+        $output = Artisan::output();
+
+        return response()->make(
+            '<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Migration Laravel</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background: #f3f4f6;
+                        padding: 30px;
+                    }
+
+                    .container {
+                        max-width: 900px;
+                        margin: auto;
+                        background: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                    }
+
+                    h1 {
+                        color: #16a34a;
+                    }
+
+                    pre {
+                        background: #111827;
+                        color: #e5e7eb;
+                        padding: 20px;
+                        border-radius: 8px;
+                        overflow-x: auto;
+                    }
+
+                    .success {
+                        background: #dcfce7;
+                        color: #166534;
+                        padding: 15px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    }
+                </style>
+            </head>
+
+            <body>
+
+                <div class="container">
+
+                    <h1>Migration Berhasil Dijalankan</h1>
+
+                    <div class="success">
+                        Laravel berhasil menjalankan
+                        <strong>migrate:fresh --seed</strong>.
+                    </div>
+
+                    <h3>Output Artisan:</h3>
+
+                    <pre>' . e($output) . '</pre>
+
+                    <p>
+                        <strong>PENTING:</strong>
+                        Sekarang hapus route
+                        <code>/jalankan-migration</code>
+                        dari file <code>routes/web.php</code>.
+                    </p>
+
+                </div>
+
+            </body>
+            </html>',
+            200
+        );
+
+    } catch (\Throwable $e) {
+
+        return response()->make(
+            '<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Migration Error</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background: #fef2f2;
+                        padding: 30px;
+                    }
+
+                    .container {
+                        max-width: 900px;
+                        margin: auto;
+                        background: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                    }
+
+                    h1 {
+                        color: #dc2626;
+                    }
+
+                    pre {
+                        background: #111827;
+                        color: #fca5a5;
+                        padding: 20px;
+                        border-radius: 8px;
+                        overflow-x: auto;
+                        white-space: pre-wrap;
+                    }
+                </style>
+            </head>
+
+            <body>
+
+                <div class="container">
+
+                    <h1>Migration Gagal</h1>
+
+                    <p>
+                        Laravel menemukan error saat menjalankan migration.
+                    </p>
+
+                    <h3>Error:</h3>
+
+                    <pre>' . e($e->getMessage()) . '</pre>
+
+                </div>
+
+            </body>
+            </html>',
+            500
+        );
+    }
+});
+
 require __DIR__ . '/auth.php';
