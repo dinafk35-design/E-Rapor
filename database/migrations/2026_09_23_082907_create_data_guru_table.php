@@ -11,12 +11,6 @@ return new class extends Migration
         if (!Schema::hasTable('data_guru')) {
             Schema::create('data_guru', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('user_id')
-                    ->nullable()
-                    ->unique()
-                    ->after('id')
-                    ->constrained('users')
-                    ->nullOnDelete();
                 $table->string('nip')->nullable();
                 $table->string('nama_guru')->nullable();
                 $table->string('nik')->nullable();
@@ -26,6 +20,7 @@ return new class extends Migration
                 $table->string('tempat_lahir')->nullable();
                 $table->date('tanggal_lahir')->nullable();
                 $table->text('alamat')->nullable();
+
                 $table->timestamps();
             });
         }
