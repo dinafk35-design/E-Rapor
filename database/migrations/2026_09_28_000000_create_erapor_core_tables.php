@@ -129,25 +129,32 @@ return new class extends Migration
         // INDEKS PENDUKUNG
         // ---------------------------------------------------------
 
-        if (Schema::hasTable('nilai_siswa') && ! Schema::hasTable('nilai_siswa_unik')) {
-            // Nilai satu siswa pada satu mata pelajaran hanya boleh satu baris
-            // per tahun ajaran + semester, sehingga input nilai bersifat idempoten.
+        // Mempercepat pencarian nilai siswa per kelas / mata pelajaran.
+        // Dijaga hasIndex supaya aman dijalankan ulang pada database lama
+        // yang sudah punya indeks tersebut.
+        if (
+            Schema::hasTable('nilai_siswa') &&
+            ! Schema::hasIndex('nilai_siswa', 'nilai_siswa_cari')
+        ) {
+            Schema::table('nilai_siswa', function (Blueprint $table): void {
+                $table->index(
+                    ['siswa_id', 'mata_pelajaran_id', 'tahun_ajaran', 'semester'],
+                    'nilai_siswa_cari'
+                );
+            });
         }
-
-        // Mempercepat pencarian nilai siswa per kelas / mata pelajaran
-        Schema::table('nilai_siswa', function (Blueprint $table): void {
-            $table->index(
-                ['siswa_id', 'mata_pelajaran_id', 'tahun_ajaran', 'semester'],
-                'nilai_siswa_cari'
-            );
-        });
     }
 
     public function down(): void
     {
-        Schema::table('nilai_siswa', function (Blueprint $table): void {
-            $table->dropIndex('nilai_siswa_cari');
-        });
+        if (
+            Schema::hasTable('nilai_siswa') &&
+            Schema::hasIndex('nilai_siswa', 'nilai_siswa_cari')
+        ) {
+            Schema::table('nilai_siswa', function (Blueprint $table): void {
+                $table->dropIndex('nilai_siswa_cari');
+            });
+        }
 
         Schema::dropIfExists('wali_kelas');
         Schema::dropIfExists('guru_mengajar');

@@ -46,7 +46,11 @@ return new class extends Migration
         ) {
             Schema::table('data_siswa', function (Blueprint $table): void {
                 $table->dropForeign(['user_id']);
-                $table->dropUnique('data_siswa_user_id_unique');
+
+                if (Schema::hasIndex('data_siswa', 'data_siswa_user_id_unique')) {
+                    $table->dropUnique('data_siswa_user_id_unique');
+                }
+
                 $table->dropColumn('user_id');
             });
         }

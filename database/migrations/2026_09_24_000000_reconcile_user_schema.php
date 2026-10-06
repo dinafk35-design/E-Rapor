@@ -39,9 +39,12 @@ return new class extends Migration
             }
         });
 
-        DB::table('users')
-            ->whereNull('name')
-            ->update(['name' => DB::raw('username')]);
+        if (Schema::hasColumn('users', 'username')) {
+
+            DB::table('users')
+                ->whereNull('name')
+                ->update(['name' => DB::raw('username')]);
+        }
 
         if (! Schema::hasTable('password_reset_tokens')) {
             Schema::create('password_reset_tokens', function (Blueprint $table): void {

@@ -379,14 +379,99 @@ class BackupController extends Controller
 
         $sql .= PHP_EOL;
 
-        foreach ($this->daftarTabelFisik() as $tabel) {
+        // Klausa foreign key sengaja dibuang dari CREATE TABLE lalu dipasang
+        // kembali di akhir file lewat ALTER TABLE._dump dari phpMyAdmin atau
+        // MySQL Workbench menyortir tabel secara alfabetis, sehingga
+        // `data_guru` dibuat sebelum `users` dan MySQL menolak dengan
+        // errno 150 "Foreign key constraint is incorrectly formed".
 
-            $sql .= $this->dumpTabel($tabel);
+        $foreign = [];
+
+        foreach ($this->urutkanTabel($foreign) as $tabel) {
+
+            $sql .= $this->dumpTabel($tabel, $foreign);
         }
+
+        foreach ($foreign as $perintah) {
+
+            $sql .= $perintah;
+        }
+
+        $sql .= PHP_EOL;
 
         $sql .= $this->perintahForeignKey('1') . PHP_EOL;
 
         return $sql;
+    }
+
+
+    /**
+     * Urutkan tabel sehingga tabel yang dirujuk selalu muncul lebih dulu.
+     *
+     * @param  array<int, string>  $foreign  tempat dikumpulkan ALTER TABLE
+     *                                         ADD CONSTRAINT
+     */
+    protected function urutkanTabel(array &$foreign = []): array
+    {
+        $tabel = $this->daftarTabelFisik();
+
+        $dependensi = [];
+
+        foreach ($tabel as $nama) {
+
+            $dependensi[$nama] = $this->tabelYangDirujuk($nama, $tabel);
+        }
+
+        $hasil = [];
+        $sisa = $tabel;
+
+        while ($sisa !== []) {
+
+            $siap = array_values(array_filter(
+                $sisa,
+                fn (string $nama) => array_diff($dependensi[$nama], $hasil, $sisa) === []
+            ));
+
+            // Penjaga bila ada relasi melingkar, agar tidak looping selamanya.
+            if ($siap === []) {
+
+                $siap = [reset($sisa)];
+            }
+
+            foreach ($siap as $nama) {
+
+                $hasil[] = $nama;
+            }
+
+            $sisa = array_values(array_diff($sisa, $siap));
+        }
+
+        return $hasil;
+    }
+
+
+    /**
+     * Daftar tabel yang dirujuk oleh foreign key milik satu tabel.
+     *
+     * @param  array<int, string>  $ada
+     * @return array<int, string>
+     */
+    protected function tabelYangDirujuk(string $tabel, array $ada): array
+    {
+        try {
+
+            $foreign = Schema::getForeignKeys($tabel);
+
+        } catch (Throwable) {
+            return [];
+        }
+
+        return collect($foreign)
+            ->pluck('foreign_table')
+            ->filter(fn ($nama) => is_string($nama) && in_array($nama, $ada, true))
+            ->unique()
+            ->values()
+            ->all();
     }
 
 
@@ -441,8 +526,11 @@ class BackupController extends Controller
 
     /**
      * Dump definisi dan data satu tabel.
+     *
+     * @param  array<int, string>  $foreign  dikumpulkan perintah ALTER TABLE
+     *                                        ADD CONSTRAINT
      */
-    protected function dumpTabel(string $tabel): string
+    protected function dumpTabel(string $tabel, array &$foreign = []): string
     {
         $sql = PHP_EOL . '-- --------------------' . PHP_EOL;
         $sql .= '-- Tabel: ' . $tabel . PHP_EOL;
@@ -450,7 +538,7 @@ class BackupController extends Controller
 
         $sql .= 'DROP TABLE IF EXISTS `' . $tabel . '`;' . PHP_EOL;
 
-        $sql .= $this->perintahBuatTabel($tabel) . ';' . PHP_EOL;
+        $sql .= $this->perintahBuatTabel($tabel, $foreign) . ';' . PHP_EOL;
 
         $kolom = Schema::getColumnListing($tabel);
 
@@ -480,8 +568,14 @@ class BackupController extends Controller
 
     /**
      * Perintah CREATE TABLE sesuai driver database.
+     *
+     * Klausa CONSTRAINT ... FOREIGN KEY dicabut dari badan CREATE TABLE lalu
+     * dikembalikan lewat $foreign supaya dipasang kembali sebagai
+     * ALTER TABLE ... ADD CONSTRAINT di akhir file.
+     *
+     * @param  array<int, string>  $foreign
      */
-    protected function perintahBuatTabel(string $tabel): string
+    protected function perintahBuatTabel(string $tabel, array &$foreign = []): string
     {
         if (DB::connection()->getDriverName() === 'sqlite') {
 
@@ -495,7 +589,26 @@ class BackupController extends Controller
 
         $baris = DB::selectOne('SHOW CREATE TABLE `' . $tabel . '`');
 
-        return array_values((array) $baris)[1];
+        $create = array_values((array) $baris)[1];
+
+        $create = preg_replace_callback(
+            '/^[ \t]*CONSTRAINT\b.*?FOREIGN KEY\b.*?$/mi',
+            function (array $cocok) use ($tabel, &$foreign): string {
+
+                $klausa = rtrim(trim($cocok[0]), ',');
+
+                $foreign[] = PHP_EOL
+                    . '-- Foreign key untuk tabel `' . $tabel . '`' . PHP_EOL
+                    . 'ALTER TABLE `' . $tabel . '` ADD ' . $klausa . ';' . PHP_EOL;
+
+                return '';
+            },
+            $create
+        );
+
+        // Melepas klausa terakhir meninggalkan koma menggantung sebelum ")",
+        // yang tidak sah di MySQL.
+        return preg_replace('/,(\s*)\)/', '$1)', $create);
     }
 
 
