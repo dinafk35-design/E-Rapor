@@ -14,6 +14,7 @@ use App\Models\MataPelajaran;
 use App\Models\Rombel;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (Request $request) {
