@@ -27,8 +27,8 @@
                     </h1>
 
                     <p class="mt-1 max-w-2xl text-sm text-[#d6d5ec]">
-                        Pantau perkembangan dan perbandingan nilai siswa berdasarkan
-                        tahun ajaran, semester, kelas, dan mata pelajaran.
+                        Bandingkan nilai siswa antar semester dari data yang sudah
+                        tersimpan pada Input Nilai.
                     </p>
                 </div>
 
@@ -38,7 +38,7 @@
                     </p>
 
                     <p id="headerJumlahData" class="mt-1 text-2xl font-bold">
-                        5
+                        {{ $perkembangan->count() }}
                     </p>
 
                     <p class="text-[11px] text-[#d6d5ec]">
@@ -74,164 +74,116 @@
                     </p>
                 </div>
 
-                <button type="button" onclick="resetFilter()"
+                <a href="{{ route('perkembangan-nilai') }}"
                     class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50">
 
                     <i class="ph ph-arrow-counter-clockwise"></i>
                     Reset
 
-                </button>
+                </a>
 
             </div>
 
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <form method="GET" action="{{ route('perkembangan-nilai') }}">
 
-                {{-- PENCARIAN --}}
-                <div>
-                    <label for="searchSiswa" class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Cari Siswa
-                    </label>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 
-                    <div class="relative">
+                    {{-- PENCARIAN --}}
+                    <div>
+                        <label for="q" class="mb-1.5 block text-xs font-semibold text-slate-700">
+                            Cari Siswa
+                        </label>
 
-                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <div class="relative">
 
-                        <input type="text" id="searchSiswa" placeholder="Nama siswa..."
-                            class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
+                            <input type="search" name="q" id="q" value="{{ request('q') }}"
+                                placeholder="Nama siswa atau NISN..."
+                                class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                        </div>
                     </div>
+
+
+                    {{-- TAHUN AJARAN --}}
+                    <div>
+                        <label for="tahun_ajaran" class="mb-1.5 block text-xs font-semibold text-slate-700">
+                            Tahun Ajaran
+                        </label>
+
+                        <select name="tahun_ajaran" id="tahun_ajaran" onchange="this.form.submit()"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                            @foreach ($daftarTahun as $tahun)
+                                <option value="{{ $tahun }}" @selected($tahun === $tahunAjaran)>
+                                    {{ $tahun }}
+                                </option>
+                            @endforeach
+
+                        </select>
+                    </div>
+
+
+                    {{-- KELAS --}}
+                    <div>
+                        <label for="rombel_id" class="mb-1.5 block text-xs font-semibold text-slate-700">
+                            Kelas
+                        </label>
+
+                        <select name="rombel_id" id="rombel_id" onchange="this.form.submit()"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                            <option value="">
+                                Semua Kelas
+                            </option>
+
+                            @foreach ($rombel as $item)
+                                <option value="{{ $item->id }}" @selected((string) $rombelId === (string) $item->id)>
+                                    {{ $item->nama_rombel }}
+                                </option>
+                            @endforeach
+
+                        </select>
+                    </div>
+
+
+                    {{-- MATA PELAJARAN --}}
+                    <div>
+                        <label for="filter_mata_pelajaran" class="mb-1.5 block text-xs font-semibold text-slate-700">
+                            Mata Pelajaran
+                        </label>
+
+                        <select name="filter_mata_pelajaran" id="filter_mata_pelajaran" onchange="this.form.submit()"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+
+                            <option value="">
+                                Semua Mata Pelajaran
+                            </option>
+
+                            @foreach ($mataPelajaran as $item)
+                                <option value="{{ $item->id }}" @selected((string) $mapelId === (string) $item->id)>
+                                    {{ $item->nama_mata_pelajaran }}
+                                </option>
+                            @endforeach
+
+                        </select>
+                    </div>
+
                 </div>
 
+                <div class="mt-3 flex justify-end">
+                    <button type="submit"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700">
 
-                {{-- TAHUN AJARAN --}}
-                <div>
-                    <label for="tahunAjaran" class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Tahun Ajaran
-                    </label>
+                        <i class="ph ph-funnel"></i>
+                        Terapkan
 
-                    <select id="tahunAjaran"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
-
-                        <option value="">
-                            Semua Tahun Ajaran
-                        </option>
-
-                        <option value="2025/2026">
-                            2025/2026
-                        </option>
-
-                        <option value="2026/2027">
-                            2026/2027
-                        </option>
-
-                    </select>
+                    </button>
                 </div>
 
-
-                {{-- SEMESTER --}}
-                <div>
-                    <label for="semester" class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Semester
-                    </label>
-
-                    <select id="semester"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
-
-                        <option value="">
-                            Semua Semester
-                        </option>
-
-                        <option value="Ganjil">
-                            Ganjil
-                        </option>
-
-                        <option value="Genap">
-                            Genap
-                        </option>
-
-                    </select>
-                </div>
-
-
-                {{-- KELAS --}}
-                <div>
-                    <label for="kelas" class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Kelas
-                    </label>
-
-                    <select id="kelas"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
-
-                        <option value="">
-                            Semua Kelas
-                        </option>
-
-                        <option value="X RPL 1">
-                            X RPL 1
-                        </option>
-
-                        <option value="X RPL 2">
-                            X RPL 2
-                        </option>
-
-                        <option value="XI RPL 1">
-                            XI RPL 1
-                        </option>
-
-                        <option value="XI RPL 2">
-                            XI RPL 2
-                        </option>
-
-                        <option value="XII RPL 1">
-                            XII RPL 1
-                        </option>
-
-                        <option value="XII RPL 2">
-                            XII RPL 2
-                        </option>
-
-                    </select>
-                </div>
-
-
-                {{-- MATA PELAJARAN --}}
-                <div>
-                    <label for="mataPelajaran" class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Mata Pelajaran
-                    </label>
-
-                    <select id="mataPelajaran"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
-
-                        <option value="">
-                            Semua Mata Pelajaran
-                        </option>
-
-                        <option value="Matematika">
-                            Matematika
-                        </option>
-
-                        <option value="Bahasa Indonesia">
-                            Bahasa Indonesia
-                        </option>
-
-                        <option value="Bahasa Inggris">
-                            Bahasa Inggris
-                        </option>
-
-                        <option value="Pemrograman Web">
-                            Pemrograman Web
-                        </option>
-
-                        <option value="Basis Data">
-                            Basis Data
-                        </option>
-
-                    </select>
-                </div>
-
-            </div>
+            </form>
 
 
             {{-- STATUS FILTER --}}
@@ -240,7 +192,7 @@
                 <p class="text-xs text-slate-500">
                     Menampilkan
                     <span id="jumlahData" class="font-bold text-slate-700">
-                        5
+                        {{ $perkembangan->count() }}
                     </span>
                     data perkembangan nilai
                 </p>
@@ -275,7 +227,7 @@
                         </p>
 
                         <h3 class="mt-1 text-2xl font-bold text-indigo-600">
-                            88.2
+                            {{ $rataRata === null ? '-' : rtrim(rtrim(number_format($rataRata, 2, '.', ''), '0'), '.') }}
                         </h3>
 
                         <p class="mt-1 text-[11px] text-slate-400">
@@ -305,7 +257,7 @@
                         </p>
 
                         <h3 class="mt-1 text-2xl font-bold text-emerald-600">
-                            92
+                            {{ $nilaiTertinggi === null ? '-' : rtrim(rtrim(number_format($nilaiTertinggi, 2, '.', ''), '0'), '.') }}
                         </h3>
 
                         <p class="mt-1 text-[11px] text-slate-400">
@@ -335,7 +287,7 @@
                         </p>
 
                         <h3 class="mt-1 text-2xl font-bold text-rose-600">
-                            85
+                            {{ $nilaiTerendah === null ? '-' : rtrim(rtrim(number_format($nilaiTerendah, 2, '.', ''), '0'), '.') }}
                         </h3>
 
                         <p class="mt-1 text-[11px] text-slate-400">
@@ -389,7 +341,7 @@
                     <i class="ph ph-info text-indigo-500"></i>
 
                     <span>
-                        Nilai dibandingkan berdasarkan semester
+                        Tahun ajaran {{ $tahunAjaran }}
                     </span>
 
                 </div>
@@ -427,11 +379,11 @@
                             </th>
 
                             <th class="px-5 py-3.5 text-center">
-                                Semester Ganjil
+                                {{ $daftarSemester[0] }}
                             </th>
 
                             <th class="px-5 py-3.5 text-center">
-                                Semester Genap
+                                {{ $daftarSemester[1] }}
                             </th>
 
                             <th class="px-5 py-3.5 text-center">
@@ -449,445 +401,171 @@
 
                     <tbody id="nilaiTable" class="divide-y divide-slate-100">
 
-                        {{-- SISWA 1 --}}
-                        <tr class="nilai-row transition hover:bg-slate-50" data-nama="Ahmad Fauzan"
-                            data-tahun="2026/2027" data-semester="Ganjil" data-kelas="XI RPL 1"
-                            data-mapel="Pemrograman Web">
+                        @forelse ($perkembangan as $item)
+                            @php
+                                $format = fn ($nilai) => $nilai === null
+                                    ? '-'
+                                    : rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.');
+                            @endphp
 
-                            <td class="px-5 py-4 text-xs text-slate-500">
-                                1
-                            </td>
+                            <tr class="nilai-row transition hover:bg-slate-50"
+                                data-nama="{{ strtolower($item->siswa->nama_siswa ?? '') }}"
+                                data-nisn="{{ strtolower($item->siswa->nisn ?? '') }}">
 
-                            <td class="px-5 py-4 text-xs font-medium text-slate-600">
-                                00654321
-                            </td>
+                                <td class="px-5 py-4 text-xs text-slate-500">
+                                    {{ $loop->iteration }}
+                                </td>
 
-                            <td class="px-5 py-4">
+                                <td class="px-5 py-4 text-xs font-medium text-slate-600">
+                                    {{ $item->siswa->nisn ?? '-' }}
+                                </td>
 
-                                <div class="flex items-center gap-3">
+                                <td class="px-5 py-4">
 
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
-                                        AF
-                                    </div>
+                                    <div class="flex items-center gap-3">
 
-                                    <div>
-                                        <div class="font-semibold text-slate-800">
-                                            Ahmad Fauzan
+                                        <div
+                                            class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
+                                            {{ strtoupper(substr(preg_replace('/\s+/', ' ', trim($item->siswa->nama_siswa ?? '?')), 0, 2)) }}
                                         </div>
 
-                                        <div class="text-[11px] text-slate-400">
-                                            Siswa
-                                        </div>
-                                    </div>
+                                        <div>
+                                            <div class="font-semibold text-slate-800">
+                                                {{ $item->siswa->nama_siswa ?? '-' }}
+                                            </div>
 
-                                </div>
-
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600">
-                                    <i class="ph ph-users-three"></i>
-                                    XI RPL 1
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-700">
-                                Pemrograman Web
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span class="font-semibold text-slate-700">
-                                    84
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span class="font-semibold text-emerald-600">
-                                    88
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span class="inline-flex items-center gap-1 font-semibold text-emerald-600">
-                                    <i class="ph ph-arrow-up"></i>
-                                    +4
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
-                                    <i class="ph ph-trend-up"></i>
-                                    Meningkat
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- SISWA 2 --}}
-                        <tr class="nilai-row transition hover:bg-slate-50" data-nama="Budi Santoso"
-                            data-tahun="2026/2027" data-semester="Ganjil" data-kelas="XI RPL 1" data-mapel="Basis Data">
-
-                            <td class="px-5 py-4 text-xs text-slate-500">
-                                2
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-600">
-                                00654322
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
-                                        BS
-                                    </div>
-
-                                    <div>
-                                        <div class="font-semibold text-slate-800">
-                                            Budi Santoso
+                                            <div class="text-[11px] text-slate-400">
+                                                Siswa
+                                            </div>
                                         </div>
 
-                                        <div class="text-[11px] text-slate-400">
-                                            Siswa
-                                        </div>
                                     </div>
 
-                                </div>
+                                </td>
 
-                            </td>
+                                <td class="px-5 py-4">
 
-                            <td class="px-5 py-4">
+                                    <span
+                                        class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600">
+                                        <i class="ph ph-users-three"></i>
+                                        {{ $item->siswa->rombel?->nama_rombel ?? '-' }}
+                                    </span>
 
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600">
-                                    <i class="ph ph-users-three"></i>
-                                    XI RPL 1
-                                </span>
+                                </td>
 
-                            </td>
+                                <td class="px-5 py-4 text-xs font-medium text-slate-700">
+                                    {{ $item->mataPelajaran->nama_mata_pelajaran ?? '-' }}
+                                </td>
 
-                            <td class="px-5 py-4 text-xs font-medium text-slate-700">
-                                Basis Data
-                            </td>
+                                <td class="px-5 py-4 text-center">
 
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-slate-700">
-                                    85
-                                </span>
-                            </td>
+                                    <span class="font-semibold text-slate-700">
+                                        {{ $format($item->nilai_ganjil) }}
+                                    </span>
 
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-emerald-600">
-                                    87
-                                </span>
-                            </td>
+                                </td>
 
-                            <td class="px-5 py-4 text-center">
+                                <td class="px-5 py-4 text-center">
 
-                                <span class="inline-flex items-center gap-1 font-semibold text-emerald-600">
-                                    <i class="ph ph-arrow-up"></i>
-                                    +2
-                                </span>
+                                    <span
+                                        class="font-semibold {{ $item->selisih === null ? 'text-slate-400' : ($item->selisih >= 0 ? 'text-emerald-600' : 'text-rose-600') }}">
+                                        {{ $format($item->nilai_genap) }}
+                                    </span>
 
-                            </td>
+                                </td>
 
-                            <td class="px-5 py-4 text-center">
+                                <td class="px-5 py-4 text-center">
 
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
-                                    <i class="ph ph-trend-up"></i>
-                                    Meningkat
-                                </span>
+                                    @if ($item->selisih === null)
+                                        <span class="inline-flex items-center gap-1 font-semibold text-slate-300">
+                                            <i class="ph ph-minus"></i>
+                                            -
+                                        </span>
+                                    @elseif ($item->selisih > 0)
+                                        <span
+                                            class="inline-flex items-center gap-1 font-semibold text-emerald-600">
+                                            <i class="ph ph-arrow-up"></i>
+                                            +{{ $format($item->selisih) }}
+                                        </span>
+                                    @elseif ($item->selisih < 0)
+                                        <span
+                                            class="inline-flex items-center gap-1 font-semibold text-rose-600">
+                                            <i class="ph ph-arrow-down"></i>
+                                            {{ $format($item->selisih) }}
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center gap-1 font-semibold text-slate-500">
+                                            <i class="ph ph-minus"></i>
+                                            0
+                                        </span>
+                                    @endif
 
-                            </td>
+                                </td>
 
-                        </tr>
+                                <td class="px-5 py-4 text-center">
 
+                                    @php
+                                        $gayaStatus = [
+                                            'Meningkat' => 'bg-emerald-50 text-emerald-600',
+                                            'Menurun' => 'bg-rose-50 text-rose-600',
+                                            'Tetap' => 'bg-slate-100 text-slate-600',
+                                            'Belum Lengkap' => 'bg-amber-50 text-amber-700',
+                                            'Baru Ada' => 'bg-blue-50 text-blue-700',
+                                            'Belum Dinilai' => 'bg-slate-100 text-slate-500',
+                                        ];
 
-                        {{-- SISWA 3 --}}
-                        <tr class="nilai-row transition hover:bg-slate-50" data-nama="Citra Lestari"
-                            data-tahun="2026/2027" data-semester="Ganjil" data-kelas="XI RPL 1" data-mapel="Matematika">
+                                        $gayaIkon = [
+                                            'Meningkat' => 'ph-trend-up',
+                                            'Menurun' => 'ph-trend-down',
+                                            'Tetap' => 'ph-minus',
+                                            'Belum Lengkap' => 'ph-hourglass-medium',
+                                            'Baru Ada' => 'ph-info',
+                                            'Belum Dinilai' => 'ph-minus',
+                                        ];
+                                    @endphp
 
-                            <td class="px-5 py-4 text-xs text-slate-500">
-                                3
-                            </td>
+                                    <span
+                                        class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold {{ $gayaStatus[$item->status] ?? 'bg-slate-100 text-slate-600' }}">
+                                        <i class="ph {{ $gayaIkon[$item->status] ?? 'ph-minus' }}"></i>
+                                        {{ $item->status }}
+                                    </span>
 
-                            <td class="px-5 py-4 text-xs font-medium text-slate-600">
-                                00654323
-                            </td>
+                                </td>
 
-                            <td class="px-5 py-4">
+                            </tr>
 
-                                <div class="flex items-center gap-3">
+                        @empty
 
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
-                                        CL
-                                    </div>
+                            <tr>
+                                <td colspan="9" class="px-6 py-12 text-center">
 
-                                    <div>
-                                        <div class="font-semibold text-slate-800">
-                                            Citra Lestari
+                                    <div class="flex flex-col items-center">
+
+                                        <div
+                                            class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+                                            <i class="ph ph-chart-line text-2xl"></i>
                                         </div>
 
-                                        <div class="text-[11px] text-slate-400">
-                                            Siswa
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600">
-                                    <i class="ph ph-users-three"></i>
-                                    XI RPL 1
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-700">
-                                Matematika
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-slate-700">
-                                    90
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-rose-600">
-                                    88
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span class="inline-flex items-center gap-1 font-semibold text-rose-600">
-                                    <i class="ph ph-arrow-down"></i>
-                                    -2
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-600">
-                                    <i class="ph ph-trend-down"></i>
-                                    Menurun
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- SISWA 4 --}}
-                        <tr class="nilai-row transition hover:bg-slate-50" data-nama="Dimas Pratama"
-                            data-tahun="2026/2027" data-semester="Ganjil" data-kelas="XI RPL 2"
-                            data-mapel="Bahasa Indonesia">
-
-                            <td class="px-5 py-4 text-xs text-slate-500">
-                                4
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-600">
-                                00654324
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
-                                        DP
-                                    </div>
-
-                                    <div>
-                                        <div class="font-semibold text-slate-800">
-                                            Dimas Pratama
+                                        <div class="text-sm font-semibold text-slate-700">
+                                            Belum ada data perkembangan nilai
                                         </div>
 
-                                        <div class="text-[11px] text-slate-400">
-                                            Siswa
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600">
-                                    <i class="ph ph-users-three"></i>
-                                    XI RPL 2
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-700">
-                                Bahasa Indonesia
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-slate-700">
-                                    86
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-slate-700">
-                                    86
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="inline-flex items-center gap-1 font-semibold text-slate-500">
-                                    <i class="ph ph-minus"></i>
-                                    0
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
-                                    <i class="ph ph-minus"></i>
-                                    Tetap
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- SISWA 5 --}}
-                        <tr class="nilai-row transition hover:bg-slate-50" data-nama="Eka Putri" data-tahun="2026/2027"
-                            data-semester="Ganjil" data-kelas="XII RPL 1" data-mapel="Bahasa Inggris">
-
-                            <td class="px-5 py-4 text-xs text-slate-500">
-                                5
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-600">
-                                00654325
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
-                                        EP
-                                    </div>
-
-                                    <div>
-                                        <div class="font-semibold text-slate-800">
-                                            Eka Putri
+                                        <div class="mt-1 max-w-md text-xs text-slate-500">
+                                            Data muncul setelah nilai siswa tersimpan pada Input Nilai
+                                            untuk tahun ajaran {{ $tahunAjaran }}.
                                         </div>
 
-                                        <div class="text-[11px] text-slate-400">
-                                            Siswa
-                                        </div>
                                     </div>
 
-                                </div>
+                                </td>
+                            </tr>
 
-                            </td>
-
-                            <td class="px-5 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600">
-                                    <i class="ph ph-users-three"></i>
-                                    XII RPL 1
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-xs font-medium text-slate-700">
-                                Bahasa Inggris
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-slate-700">
-                                    88
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-                                <span class="font-semibold text-emerald-600">
-                                    91
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span class="inline-flex items-center gap-1 font-semibold text-emerald-600">
-                                    <i class="ph ph-arrow-up"></i>
-                                    +3
-                                </span>
-
-                            </td>
-
-                            <td class="px-5 py-4 text-center">
-
-                                <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
-                                    <i class="ph ph-trend-up"></i>
-                                    Meningkat
-                                </span>
-
-                            </td>
-
-                        </tr>
+                        @endforelse
 
                     </tbody>
 
                 </table>
-
-            </div>
-
-
-            {{-- EMPTY STATE --}}
-            <div id="emptyState" class="hidden border-t border-slate-100 px-6 py-12 text-center">
-
-                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                    <i class="ph ph-chart-line text-xl"></i>
-                </div>
-
-                <h3 class="mt-3 text-sm font-semibold text-slate-700">
-                    Data tidak ditemukan
-                </h3>
-
-                <p class="mt-1 text-xs text-slate-500">
-                    Tidak ada data perkembangan nilai yang sesuai dengan filter.
-                </p>
 
             </div>
 
@@ -900,7 +578,7 @@
 
                     Menampilkan
                     <span id="jumlahDataFooter" class="font-semibold text-slate-700">
-                        5
+                        {{ $perkembangan->count() }}
                     </span>
                     data perkembangan nilai
 
@@ -908,25 +586,17 @@
 
                 <div class="flex items-center gap-1.5">
 
-                    <button type="button"
-                        class="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-500 transition hover:bg-slate-50">
+                    <a href="{{ route('input-nilai', [
+                        'tahun_ajaran' => $tahunAjaran,
+                        'rombel_id' => $rombelId,
+                        'filter_mata_pelajaran' => $mapelId,
+                    ]) }}"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700">
 
-                        Sebelumnya
+                        <i class="ph ph-notebook"></i>
+                        Kelola di Input Nilai
 
-                    </button>
-
-                    <button type="button" class="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white">
-
-                        1
-
-                    </button>
-
-                    <button type="button"
-                        class="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-500 transition hover:bg-slate-50">
-
-                        Berikutnya
-
-                    </button>
+                    </a>
 
                 </div>
 
@@ -935,165 +605,4 @@
         </div>
 
     </div>
-
-
-    {{-- ========================================================= --}}
-    {{-- JAVASCRIPT --}}
-    {{-- ========================================================= --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const searchSiswa = document.getElementById('searchSiswa');
-            const tahunAjaran = document.getElementById('tahunAjaran');
-            const semester = document.getElementById('semester');
-            const kelas = document.getElementById('kelas');
-            const mataPelajaran = document.getElementById('mataPelajaran');
-
-            const rows = document.querySelectorAll('.nilai-row');
-
-            const jumlahData = document.getElementById('jumlahData');
-            const jumlahDataFooter = document.getElementById('jumlahDataFooter');
-            const headerJumlahData = document.getElementById('headerJumlahData');
-            const filterStatus = document.getElementById('filterStatus');
-            const emptyState = document.getElementById('emptyState');
-
-
-            function filterData() {
-
-                const search = searchSiswa.value.toLowerCase().trim();
-                const tahun = tahunAjaran.value;
-                const semesterValue = semester.value;
-                const kelasValue = kelas.value;
-                const mapelValue = mataPelajaran.value;
-
-                let jumlah = 0;
-
-
-                rows.forEach(function(row) {
-
-                    const nama = row.dataset.nama.toLowerCase();
-                    const rowTahun = row.dataset.tahun;
-                    const rowSemester = row.dataset.semester;
-                    const rowKelas = row.dataset.kelas;
-                    const rowMapel = row.dataset.mapel;
-
-
-                    const cocokNama =
-                        search === '' ||
-                        nama.includes(search);
-
-                    const cocokTahun =
-                        tahun === '' ||
-                        rowTahun === tahun;
-
-                    const cocokSemester =
-                        semesterValue === '' ||
-                        rowSemester === semesterValue;
-
-                    const cocokKelas =
-                        kelasValue === '' ||
-                        rowKelas === kelasValue;
-
-                    const cocokMapel =
-                        mapelValue === '' ||
-                        rowMapel === mapelValue;
-
-
-                    const tampil =
-                        cocokNama &&
-                        cocokTahun &&
-                        cocokSemester &&
-                        cocokKelas &&
-                        cocokMapel;
-
-
-                    row.style.display = tampil ? '' : 'none';
-
-
-                    if (tampil) {
-                        jumlah++;
-                    }
-
-                });
-
-
-                jumlahData.textContent = jumlah;
-                jumlahDataFooter.textContent = jumlah;
-                headerJumlahData.textContent = jumlah;
-
-
-                const filterAktif =
-                    search !== '' ||
-                    tahun !== '' ||
-                    semesterValue !== '' ||
-                    kelasValue !== '' ||
-                    mapelValue !== '';
-
-
-                filterStatus.classList.toggle(
-                    'hidden',
-                    !filterAktif
-                );
-
-                filterStatus.classList.toggle(
-                    'inline-flex',
-                    filterAktif
-                );
-
-
-                emptyState.classList.toggle(
-                    'hidden',
-                    jumlah !== 0
-                );
-
-            }
-
-
-            function resetFilter() {
-
-                searchSiswa.value = '';
-                tahunAjaran.value = '';
-                semester.value = '';
-                kelas.value = '';
-                mataPelajaran.value = '';
-
-                filterData();
-
-            }
-
-
-            searchSiswa.addEventListener(
-                'input',
-                filterData
-            );
-
-            tahunAjaran.addEventListener(
-                'change',
-                filterData
-            );
-
-            semester.addEventListener(
-                'change',
-                filterData
-            );
-
-            kelas.addEventListener(
-                'change',
-                filterData
-            );
-
-            mataPelajaran.addEventListener(
-                'change',
-                filterData
-            );
-
-
-            window.filterData = filterData;
-            window.resetFilter = resetFilter;
-
-
-            filterData();
-
-        });
-    </script>
 @endsection

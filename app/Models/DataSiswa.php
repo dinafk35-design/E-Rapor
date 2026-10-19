@@ -61,4 +61,16 @@ class DataSiswa extends Model
     {
         return $this->hasMany(NilaiSiswa::class, 'siswa_id');
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI KE KEHADIRAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function kehadiran()
+    {
+        return $this->hasMany(KehadiranSiswa::class, 'siswa_id');
+    }
 }

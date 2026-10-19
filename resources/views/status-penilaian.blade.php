@@ -50,8 +50,8 @@
 
                         <i class="ph ph-chart-bar"></i>
 
-                        <span id="periodeAktif">
-                            Semua Periode
+                        <span>
+                            {{ $tahunAjaran }} • {{ $semester }}
                         </span>
 
                     </div>
@@ -80,7 +80,7 @@
                         </p>
 
                         <p id="jumlahSudahDinilai" class="mt-1 text-2xl font-bold text-green-600">
-                            0
+                            {{ $sudahDinilai }}
                         </p>
 
                         <p class="mt-0.5 text-[11px] text-slate-400">
@@ -112,7 +112,7 @@
                         </p>
 
                         <p id="jumlahBelumDinilai" class="mt-1 text-2xl font-bold text-red-600">
-                            0
+                            {{ $belumDinilai }}
                         </p>
 
                         <p class="mt-0.5 text-[11px] text-slate-400">
@@ -140,15 +140,15 @@
                     <div>
 
                         <p class="text-xs font-medium text-slate-500">
-                            Total Data Siswa
+                            Total Data
                         </p>
 
                         <p id="jumlahTotal" class="mt-1 text-2xl font-bold text-indigo-600">
-                            0
+                            {{ $totalPenilaian }}
                         </p>
 
                         <p class="mt-0.5 text-[11px] text-slate-400">
-                            Siswa dari database
+                            Siswa x mata pelajaran
                         </p>
 
                     </div>
@@ -188,9 +188,11 @@
             </div>
 
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <form method="GET" action="{{ route('status-penilaian') }}">
 
-                {{-- Tahun Ajaran --}}
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+
+                    {{-- Tahun Ajaran --}}
                 <div>
 
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">
@@ -202,20 +204,14 @@
                         <i
                             class="ph ph-calendar-blank pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-                        <select id="tahunAjaran"
+                        <select name="tahun_ajaran" onchange="this.form.submit()"
                             class="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-8 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
-                            <option value="">
-                                Semua Tahun Ajaran
-                            </option>
-
-                            <option value="2025/2026">
-                                2025/2026
-                            </option>
-
-                            <option value="2026/2027">
-                                2026/2027
-                            </option>
+                            @foreach ($daftarTahun as $tahun)
+                                <option value="{{ $tahun }}" @selected($tahunAjaran === $tahun)>
+                                    {{ $tahun }}
+                                </option>
+                            @endforeach
 
                         </select>
 
@@ -239,18 +235,14 @@
                         <i
                             class="ph ph-books pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-                        <select id="semester"
+                        <select name="semester" onchange="this.form.submit()"
                             class="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-8 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
-                            <option value="">
-                                Semua Semester
-                            </option>
-
-                            <option value="Ganjil">
+                            <option value="Ganjil" @selected($semester === 'Ganjil')>
                                 Ganjil
                             </option>
 
-                            <option value="Genap">
+                            <option value="Genap" @selected($semester === 'Genap')>
                                 Genap
                             </option>
 
@@ -276,15 +268,15 @@
                         <i
                             class="ph ph-users-three pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-                        <select id="kelas"
+                        <select name="rombel_id" onchange="this.form.submit()"
                             class="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-8 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                             <option value="">
                                 Semua Kelas
                             </option>
 
-                            @foreach ($rombel ?? [] as $item)
-                                <option value="{{ $item->id }}">
+                            @foreach ($rombel as $item)
+                                <option value="{{ $item->id }}" @selected((string) $rombelId === (string) $item->id)>
                                     {{ $item->nama_rombel }}
                                 </option>
                             @endforeach
@@ -311,15 +303,15 @@
                         <i
                             class="ph ph-book-open pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-                        <select id="mataPelajaran"
+                        <select name="filter_mata_pelajaran" onchange="this.form.submit()"
                             class="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-8 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
 
                             <option value="">
                                 Semua Mata Pelajaran
                             </option>
 
-                            @foreach ($mataPelajaran ?? [] as $item)
-                                <option value="{{ $item->id }}">
+                            @foreach ($mataPelajaran as $item)
+                                <option value="{{ $item->id }}" @selected((string) $mapelId === (string) $item->id)>
                                     {{ $item->nama_mata_pelajaran }}
                                 </option>
                             @endforeach
@@ -337,26 +329,35 @@
 
 
             {{-- Search --}}
-            <div class="mt-4">
+                <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-                <div class="relative max-w-md">
+                    <div class="relative max-w-md">
 
-                    <i
-                        class="ph ph-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <i
+                            class="ph ph-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-                    <input type="text" id="searchStatus" placeholder="Cari nama siswa atau NISN..."
-                        class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                        <input type="search" name="q" id="searchStatus" value="{{ request('q') }}"
+                            placeholder="Cari nama siswa atau NISN..."
+                            class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+
+                    </div>
+
+                    <button type="submit"
+                        class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700">
+                        <i class="ph ph-funnel"></i>
+                        Terapkan
+                    </button>
 
                 </div>
 
-            </div>
+            </form>
 
 
             {{-- Status filter --}}
-            <div id="filterStatus" class="mt-3 hidden text-[11px] text-slate-500">
+            <div class="mt-3 text-[11px] text-slate-500">
                 Menampilkan
                 <span id="jumlahHasil" class="font-semibold text-slate-700">
-                    0
+                    {{ count($statusPenilaian) }}
                 </span>
                 data
             </div>
@@ -396,7 +397,7 @@
                         <i class="ph ph-database"></i>
 
                         <span id="jumlahData">
-                            0
+                            {{ $totalPenilaian }}
                         </span>
 
                         Data
@@ -453,13 +454,12 @@
 
                     <tbody id="statusTable" class="divide-y divide-slate-100">
 
-                        @forelse ($statusPenilaian ?? [] as $item)
+                        @forelse ($statusPenilaian as $item)
                             <tr class="status-row transition hover:bg-slate-50"
                                 data-nama="{{ strtolower($item->siswa->nama_siswa ?? '') }}"
                                 data-nisn="{{ strtolower($item->siswa->nisn ?? '') }}"
                                 data-rombel="{{ $item->siswa->rombel_id ?? '' }}"
                                 data-mapel="{{ $item->mata_pelajaran_id ?? '' }}"
-                                data-tahun="{{ $item->tahun_ajaran ?? '' }}" data-semester="{{ $item->semester ?? '' }}"
                                 data-status="{{ $item->status ?? '' }}">
 
                                 {{-- No --}}
@@ -491,6 +491,15 @@
                                             <div class="mt-0.5 text-[11px] text-slate-500">
                                                 NISN:
                                                 {{ $item->siswa->nisn ?? '-' }}
+                                            </div>
+
+                                            <div class="mt-0.5 text-[11px] text-slate-400">
+                                                @if ($item->nilai === null)
+                                                    <span>Nilai belum diisi</span>
+                                                @else
+                                                    Nilai:
+                                                    {{ rtrim(rtrim(number_format((float) $item->nilai, 2, '.', ''), '0'), '.') }}
+                                                @endif
                                             </div>
 
                                         </div>
@@ -556,7 +565,7 @@
                                 {{-- Status --}}
                                 <td class="px-5 py-4 text-center align-top">
 
-                                    @if (($item->status ?? '') === 'Sudah Dinilai')
+                                    @if ($item->status === \App\Http\Controllers\StatusPenilaianController::SUDAH)
                                         <span
                                             class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1.5 text-[11px] font-semibold text-green-700">
 
@@ -600,8 +609,8 @@
                                         </div>
 
                                         <div class="mt-1 max-w-md text-xs text-slate-500">
-                                            Data status penilaian akan tampil setelah data siswa
-                                            dan penilaian tersedia.
+                                            Tambahkan data siswa, rombel, dan mata pelajaran
+                                            terlebih dahulu agar status penilaian dapat dihitung.
                                         </div>
 
                                     </div>
@@ -627,7 +636,7 @@
                     Menampilkan
 
                     <span id="footerJumlah" class="font-semibold text-slate-700">
-                        0
+                        {{ count($statusPenilaian) }}
                     </span>
 
                     data penilaian
@@ -635,7 +644,8 @@
                 </p>
 
                 <div class="text-[11px] text-slate-400">
-                    Status diperbarui berdasarkan data penilaian siswa.
+                    Status mengikuti data nilai yang tersimpan di
+                    {{ $tahunAjaran }} semester {{ $semester }}.
                 </div>
 
             </div>
@@ -645,282 +655,6 @@
     </div>
 
 
-    {{-- =========================================================
-    JAVASCRIPT
-========================================================= --}}
-    <script>
-        const searchStatus =
-            document.getElementById('searchStatus');
-
-        const tahunAjaran =
-            document.getElementById('tahunAjaran');
-
-        const semester =
-            document.getElementById('semester');
-
-        const kelas =
-            document.getElementById('kelas');
-
-        const mataPelajaran =
-            document.getElementById('mataPelajaran');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FILTER STATUS
-        |--------------------------------------------------------------------------
-        */
-
-        function filterData() {
-
-            const search =
-                searchStatus.value.toLowerCase().trim();
-
-            const tahun =
-                tahunAjaran.value;
-
-            const semesterValue =
-                semester.value;
-
-            const kelasValue =
-                kelas.value;
-
-            const mapelValue =
-                mataPelajaran.value;
-
-
-            const rows =
-                document.querySelectorAll('.status-row');
-
-
-            let jumlahHasil = 0;
-
-            let jumlahSudah = 0;
-
-            let jumlahBelum = 0;
-
-
-            rows.forEach(function(row) {
-
-                const nama =
-                    row.dataset.nama || '';
-
-                const nisn =
-                    row.dataset.nisn || '';
-
-                const rombel =
-                    row.dataset.rombel || '';
-
-                const mapel =
-                    row.dataset.mapel || '';
-
-                const tahunData =
-                    row.dataset.tahun || '';
-
-                const semesterData =
-                    row.dataset.semester || '';
-
-                const status =
-                    row.dataset.status || '';
-
-
-                const cocokSearch =
-                    search === '' ||
-                    nama.includes(search) ||
-                    nisn.includes(search);
-
-
-                const cocokTahun =
-                    tahun === '' ||
-                    tahunData === tahun;
-
-
-                const cocokSemester =
-                    semesterValue === '' ||
-                    semesterData === semesterValue;
-
-
-                const cocokKelas =
-                    kelasValue === '' ||
-                    rombel === kelasValue;
-
-
-                const cocokMapel =
-                    mapelValue === '' ||
-                    mapel === mapelValue;
-
-
-                const tampil =
-                    cocokSearch &&
-                    cocokTahun &&
-                    cocokSemester &&
-                    cocokKelas &&
-                    cocokMapel;
-
-
-                row.style.display =
-                    tampil ? '' : 'none';
-
-
-                if (tampil) {
-
-                    jumlahHasil++;
-
-
-                    if (status === 'Sudah Dinilai') {
-
-                        jumlahSudah++;
-
-                    } else {
-
-                        jumlahBelum++;
-
-                    }
-
-                }
-
-            });
-
-
-            document.getElementById('jumlahHasil').textContent =
-                jumlahHasil;
-
-
-            document.getElementById('jumlahData').textContent =
-                jumlahHasil;
-
-
-            document.getElementById('footerJumlah').textContent =
-                jumlahHasil;
-
-
-            document.getElementById('jumlahSudahDinilai').textContent =
-                jumlahSudah;
-
-
-            document.getElementById('jumlahBelumDinilai').textContent =
-                jumlahBelum;
-
-
-            document.getElementById('jumlahTotal').textContent =
-                jumlahHasil;
-
-
-            const filterAktif =
-                search !== '' ||
-                tahun !== '' ||
-                semesterValue !== '' ||
-                kelasValue !== '' ||
-                mapelValue !== '';
-
-
-            document
-                .getElementById('filterStatus')
-                .classList.toggle(
-                    'hidden',
-                    !filterAktif
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | PERIODE HEADER
-            |--------------------------------------------------------------------------
-            */
-
-            const periodeAktif =
-                document.getElementById('periodeAktif');
-
-
-            if (
-                tahun !== '' &&
-                semesterValue !== ''
-            ) {
-
-                periodeAktif.textContent =
-                    tahun + ' • ' + semesterValue;
-
-            } else if (tahun !== '') {
-
-                periodeAktif.textContent =
-                    tahun;
-
-            } else if (semesterValue !== '') {
-
-                periodeAktif.textContent =
-                    semesterValue;
-
-            } else {
-
-                periodeAktif.textContent =
-                    'Semua Periode';
-
-            }
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESET
-        |--------------------------------------------------------------------------
-        */
-
-        function resetFilter() {
-
-            searchStatus.value = '';
-
-            tahunAjaran.value = '';
-
-            semester.value = '';
-
-            kelas.value = '';
-
-            mataPelajaran.value = '';
-
-            filterData();
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | REALTIME FILTER
-        |--------------------------------------------------------------------------
-        */
-
-        searchStatus.addEventListener(
-            'input',
-            filterData
-        );
-
-        tahunAjaran.addEventListener(
-            'change',
-            filterData
-        );
-
-        semester.addEventListener(
-            'change',
-            filterData
-        );
-
-        kelas.addEventListener(
-            'change',
-            filterData
-        );
-
-        mataPelajaran.addEventListener(
-            'change',
-            filterData
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | LOAD AWAL
-        |--------------------------------------------------------------------------
-        */
-
-        filterData();
-    </script>
+    {{-- Filter sudah diproses di server oleh StatusPenilaianController,
+    sehingga angka ringkasan selalu sama dengan tabel. --}}
 @endsection

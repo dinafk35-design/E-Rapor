@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\CetakNilaiController;
 use App\Http\Controllers\DataGuruController;
 use App\Http\Controllers\DataSekolahController;
 use App\Http\Controllers\DataSiswaController;
 use App\Http\Controllers\GuruMengajarController;
 use App\Http\Controllers\MataPelajaranController;
 use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\PerkembanganNilaiController;
 use App\Http\Controllers\RombelController;
+use App\Http\Controllers\StatusPenilaianController;
 use App\Http\Controllers\WaliKelasController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -58,13 +61,11 @@ Route::middleware('auth')->group(function () {
         return view('nilai-ukk.create');
     })->name('nilai-ukk-create');
 
-    Route::get('/status-penilaian', function () {
-        return view('status-penilaian');
-    })->name('status-penilaian');
+    Route::get('/status-penilaian', [StatusPenilaianController::class, 'index'])
+        ->name('status-penilaian');
 
-    Route::get('/perkembangan-nilai', function () {
-        return view('perkembangan-nilai');
-    })->name('perkembangan-nilai');
+    Route::get('/perkembangan-nilai', [PerkembanganNilaiController::class, 'index'])
+        ->name('perkembangan-nilai');
 
 
 
@@ -99,13 +100,14 @@ Route::middleware('auth')->group(function () {
         return view('penilaian');
     })->name('penilaian');
 
-    Route::get('/cetak-nilai', function () {
-        return view('cetak-nilai.index');
-    })->name('cetak-nilai');
+    Route::get('/cetak-nilai', [CetakNilaiController::class, 'index'])
+        ->name('cetak-nilai');
 
-    Route::get('/cetak-nilai/create', function () {
-        return view('cetak-nilai.create');
-    })->name('cetak-nilai.create');
+    Route::get('/cetak-nilai/create', [CetakNilaiController::class, 'create'])
+        ->name('cetak-nilai.create');
+
+    Route::post('/cetak-nilai/kehadiran', [CetakNilaiController::class, 'simpanKehadiran'])
+        ->name('cetak-nilai.kehadiran.store');
 
     Route::get('/semester', function () {
         return view('semester');

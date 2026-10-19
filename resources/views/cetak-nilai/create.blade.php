@@ -1,64 +1,57 @@
 @php
 
-    $siswa = request('siswa', 'Ahmad Fauzan');
-    $nisn = request('nisn', '00654321');
-    $kelas = request('kelas', 'XI RPL 1');
-    $tahunAjaran = request('tahun_ajaran', '2026/2027');
-    $semester = request('semester', 'Ganjil');
-    $jenisCetak = request('jenis_cetak', 'Daftar Nilai');
-    $filterMapel = request('mata_pelajaran', '');
-
     $judulDokumen = match ($jenisCetak) {
         'Rapor Siswa' => 'RAPOR SISWA',
         'Rekap Nilai' => 'REKAPITULASI NILAI',
         default => 'DAFTAR NILAI',
     };
 
-    $daftarNilai = [
-        ['Matematika', 85],
-        ['Bahasa Indonesia', 87],
-        ['Bahasa Inggris', 91],
-        ['Pendidikan Agama', 84],
-        ['PPKn', 86],
-        ['Informatika', 89],
-        ['Pemrograman Web', 88],
-        ['Pemrograman Berorientasi Objek', 90],
-        ['Basis Data', 92],
-        ['Produk Kreatif dan Kewirausahaan', 85],
-    ];
+    $nilaiTersimpan = $daftarNilai
+        ->map(fn ($n) => $n->nilai === null ? null : (float) $n->nilai)
+        ->filter(fn ($n) => $n !== null)
+        ->values();
 
-    if ($filterMapel !== '') {
-        $daftarNilai = array_values(array_filter($daftarNilai, fn($item) => $item[0] === $filterMapel));
-    }
+    $jumlahMapel = $daftarNilai->count();
 
-    $nilaiArray = array_column($daftarNilai, 1);
+    $rataRata = $nilaiTersimpan->isEmpty()
+        ? null
+        : round($nilaiTersimpan->avg(), 1);
 
-    $jumlahMapel = count($daftarNilai);
+    $nilaiTertinggi = $nilaiTersimpan->isEmpty() ? null : $nilaiTersimpan->max();
 
-    $totalNilai = array_sum($nilaiArray);
+    $nilaiTerendah = $nilaiTersimpan->isEmpty() ? null : $nilaiTersimpan->min();
 
-    $rataRata = $jumlahMapel > 0 ? round($totalNilai / $jumlahMapel, 1) : 0;
+    $predikatRataRata = $rataRata === null
+        ? '-'
+        : match (true) {
+            $rataRata >= 90 => 'Sangat Baik',
+            $rataRata >= 80 => 'Baik',
+            $rataRata >= 70 => 'Cukup',
+            default => 'Kurang',
+        };
 
-    $nilaiTertinggi = $jumlahMapel > 0 ? max($nilaiArray) : 0;
-
-    $nilaiTerendah = $jumlahMapel > 0 ? min($nilaiArray) : 0;
-
-    $predikatRataRata = match (true) {
-        $rataRata >= 90 => 'Sangat Baik',
-        $rataRata >= 80 => 'Baik',
-        $rataRata >= 70 => 'Cukup',
-        default => 'Kurang',
-    };
-
-    $statusRataRata = $rataRata >= 80 ? 'Tuntas' : 'Belum Tuntas';
+    $statusRataRata = $rataRata === null
+        ? '-'
+        : ($rataRata >= 80 ? 'Tuntas' : 'Belum Tuntas');
 
     $mapelNilaiTertinggi = '-';
 
-    if ($jumlahMapel > 0) {
-        $indexTertinggi = array_search($nilaiTertinggi, $nilaiArray);
+    if (! $nilaiTersimpan->isEmpty()) {
+        $tertinggi = $daftarNilai
+            ->firstWhere(fn ($n) => $n->nilai !== null && (float) $n->nilai === $nilaiTertinggi);
 
-        $mapelNilaiTertinggi = $daftarNilai[$indexTertinggi][0] ?? '-';
+        $mapelNilaiTertinggi = $tertinggi?->mataPelajaran?->nama_mata_pelajaran ?? '-';
     }
+
+    // Keterangan izin, sakit, dan alpa untuk periode yang dicetak.
+    $izin = (int) ($kehadiran->izin ?? 0);
+    $sakit = (int) ($kehadiran->sakit ?? 0);
+    $alpa = (int) ($kehadiran->alpa ?? 0);
+    $totalKetidakhadiran = $izin + $sakit + $alpa;
+
+    $format = fn ($angka) => $angka === null
+        ? '-'
+        : rtrim(rtrim(number_format((float) $angka, 2, '.', ''), '0'), '.');
 
 @endphp
 
@@ -73,7 +66,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
-        {{ $judulDokumen }} - {{ $siswa }}
+        {{ $judulDokumen }} - {{ $siswa->nama_siswa }}
     </title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -172,17 +165,19 @@
             <div class="flex-1 text-center">
 
                 <h1 class="text-xl font-bold uppercase tracking-wide">
-                    SMK E-Rapor
+                    {{ $sekolah?->nama_sekolah ?? 'SMK E-Rapor' }}
                 </h1>
 
                 <p class="mt-1 text-xs">
-                    Jl. Contoh No. 10, Palembang, Sumatera Selatan 30123
+                    {{ $sekolah?->alamat ?? 'Jl. Contoh No. 10, Palembang, Sumatera Selatan 30123' }}
                 </p>
 
                 <p class="text-xs">
-                    Telp. (071) 1234567
-                    &nbsp;|&nbsp;
-                    Email: info@smkerapor.sch.id
+                    @if ($sekolah?->telepon)
+                        Telp. {{ $sekolah->telepon }}
+                        &nbsp;|&nbsp;
+                    @endif
+                    {{ $sekolah?->email ?? 'info@smkerapor.sch.id' }}
                 </p>
 
             </div>
@@ -227,7 +222,7 @@
                     </td>
 
                     <td class="py-1 font-semibold">
-                        {{ $siswa }}
+                        {{ $siswa->nama_siswa }}
                     </td>
                 </tr>
 
@@ -242,7 +237,7 @@
                     </td>
 
                     <td class="py-1 font-semibold">
-                        {{ $nisn }}
+                        {{ $siswa->nisn ?? '-' }}
                     </td>
                 </tr>
 
@@ -257,7 +252,7 @@
                     </td>
 
                     <td class="py-1 font-semibold">
-                        {{ $kelas }}
+                        {{ $rombel?->nama_rombel ?? '-' }}
                     </td>
                 </tr>
 
@@ -272,9 +267,74 @@
                     </td>
 
                     <td class="py-1 font-semibold">
-                        {{ $filterMapel ?: 'Semua Mata Pelajaran' }}
+                        {{ $filterMapel?->nama_mata_pelajaran ?? 'Semua Mata Pelajaran' }}
                     </td>
                 </tr>
+
+            </tbody>
+
+        </table>
+
+
+        {{-- ============================= --}}
+        {{-- KETERANGAN KEHADIRAN --}}
+        {{-- ============================= --}}
+
+        <table class="mt-5 w-full border-collapse border border-gray-900 text-sm">
+
+            <thead>
+
+                <tr class="bg-gray-200">
+
+                    <th colspan="3" class="border border-gray-900 px-3 py-2 text-left">
+                        Keterangan Kehadiran
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+
+                    <td class="w-1/3 border border-gray-900 px-3 py-2 text-center">
+                        <span class="font-semibold">{{ $izin }}</span>
+                        <span class="block text-[10px] uppercase text-gray-600">Izin</span>
+                    </td>
+
+                    <td class="w-1/3 border border-gray-900 px-3 py-2 text-center">
+                        <span class="font-semibold">{{ $sakit }}</span>
+                        <span class="block text-[10px] uppercase text-gray-600">Sakit</span>
+                    </td>
+
+                    <td class="w-1/3 border border-gray-900 px-3 py-2 text-center">
+                        <span class="font-semibold">{{ $alpa }}</span>
+                        <span class="block text-[10px] uppercase text-gray-600">Alpa</span>
+                    </td>
+
+                </tr>
+
+
+                <tr class="bg-gray-100">
+
+                    <td colspan="3" class="border border-gray-900 px-3 py-1.5 text-center text-xs">
+                        Total tidak hadir:
+                        <strong>{{ $totalKetidakhadiran }}</strong>
+                        hari pada semester {{ $semester }}
+                    </td>
+
+                </tr>
+
+                @if (! $kehadiran)
+                    <tr>
+                        <td colspan="3" class="border border-gray-900 px-3 py-2 text-center text-xs text-gray-600">
+                            Keterangan kehadiran untuk periode ini belum diinput,
+                            sehingga angka di atas tampil sebagai 0.
+                        </td>
+                    </tr>
+                @endif
 
             </tbody>
 
@@ -318,26 +378,30 @@
 
             <tbody>
 
-                @forelse ($daftarNilai as $index => $item)
+                @forelse ($daftarNilai as $index => $nilai)
                     @php
 
-                        [$mapel, $nilai] = $item;
+                        $angka = $nilai->nilai === null ? null : (float) $nilai->nilai;
 
-                        $predikat = match (true) {
-                            $nilai >= 90 => 'A',
-                            $nilai >= 80 => 'B',
-                            $nilai >= 70 => 'C',
-                            $nilai >= 60 => 'D',
-                            default => 'E',
-                        };
+                        $predikat = $angka === null
+                            ? '-'
+                            : match (true) {
+                                $angka >= 90 => 'A',
+                                $angka >= 80 => 'B',
+                                $angka >= 70 => 'C',
+                                $angka >= 60 => 'D',
+                                default => 'E',
+                            };
 
-                        $keterangan = match (true) {
-                            $nilai >= 90 => 'Sangat Baik',
-                            $nilai >= 80 => 'Baik',
-                            $nilai >= 70 => 'Cukup',
-                            $nilai >= 60 => 'Perlu Bimbingan',
-                            default => 'Belum Tuntas',
-                        };
+                        $keteranganNilai = $angka === null
+                            ? 'Belum ada nilai'
+                            : match (true) {
+                                $angka >= 90 => 'Sangat Baik',
+                                $angka >= 80 => 'Baik',
+                                $angka >= 70 => 'Cukup',
+                                $angka >= 60 => 'Perlu Bimbingan',
+                                default => 'Belum Tuntas',
+                            };
 
                     @endphp
 
@@ -348,11 +412,11 @@
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2">
-                            {{ $mapel }}
+                            {{ $nilai->mataPelajaran?->nama_mata_pelajaran ?? '-' }}
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2 text-center font-bold">
-                            {{ $nilai }}
+                            {{ $format($angka) }}
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2 text-center font-bold">
@@ -360,7 +424,7 @@
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2">
-                            {{ $keterangan }}
+                            {{ $keteranganNilai }}
                         </td>
 
                     </tr>
@@ -370,7 +434,7 @@
                     <tr>
 
                         <td colspan="5" class="border border-gray-900 px-3 py-8 text-center text-gray-500">
-                            Belum ada data nilai.
+                            Belum ada data nilai pada periode ini.
                         </td>
 
                     </tr>
@@ -379,7 +443,7 @@
             </tbody>
 
 
-            @if ($jumlahMapel > 0)
+            @if ($nilaiTersimpan->isNotEmpty())
                 <tfoot>
 
                     <tr class="bg-gray-200 font-bold">
@@ -389,7 +453,7 @@
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2 text-center">
-                            {{ $rataRata }}
+                            {{ $format($rataRata) }}
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2 text-center">
@@ -397,9 +461,9 @@
                         </td>
 
                         <td class="border border-gray-900 px-3 py-2">
-                            Tertinggi {{ $nilaiTertinggi }}
+                            Tertinggi {{ $format($nilaiTertinggi) }}
                             &bull;
-                            Terendah {{ $nilaiTerendah }}
+                            Terendah {{ $format($nilaiTerendah) }}
                         </td>
 
                     </tr>
@@ -414,7 +478,7 @@
         {{-- CATATAN --}}
         {{-- ============================= --}}
 
-        @if ($jumlahMapel > 0)
+        @if ($nilaiTersimpan->isNotEmpty())
             <div class="hindari-potong mt-5">
 
                 <p class="text-sm font-bold">
@@ -424,15 +488,15 @@
                 <p class="mt-1 text-sm leading-relaxed">
 
                     Nilai tertinggi adalah
-                    <strong>{{ $nilaiTertinggi }}</strong>
+                    <strong>{{ $format($nilaiTertinggi) }}</strong>
                     pada mata pelajaran
                     <strong>{{ $mapelNilaiTertinggi }}</strong>.
 
                     Nilai terendah adalah
-                    <strong>{{ $nilaiTerendah }}</strong>.
+                    <strong>{{ $format($nilaiTerendah) }}</strong>.
 
                     Rata-rata nilai siswa adalah
-                    <strong>{{ $rataRata }}</strong>
+                    <strong>{{ $format($rataRata) }}</strong>
                     dengan predikat
                     <strong>{{ $predikatRataRata }}</strong>.
 
@@ -440,6 +504,21 @@
 
             </div>
         @endif
+
+        <div class="hindari-potong mt-4">
+
+            <p class="text-sm font-bold">
+                Keterangan kehadiran:
+            </p>
+
+            <p class="mt-1 text-sm leading-relaxed">
+                Selama semester {{ $semester }} tahun ajaran {{ $tahunAjaran }},
+                siswa izin <strong>{{ $izin }}</strong> hari,
+                sakit <strong>{{ $sakit }}</strong> hari,
+                dan alpa <strong>{{ $alpa }}</strong> hari.
+            </p>
+
+        </div>
 
 
         {{-- ============================= --}}
@@ -461,11 +540,11 @@
                 <div class="h-20"></div>
 
                 <p class="font-semibold">
-                    ______________________
+                    {{ $sekolah?->kepala_sekolah ?? '______________________' }}
                 </p>
 
                 <p class="text-xs text-gray-600">
-                    NIP. 198501012010011001
+                    NIP. {{ $sekolah?->nip_kepala_sekolah ?? '....................' }}
                 </p>
 
             </div>
@@ -474,7 +553,7 @@
             <div>
 
                 <p>
-                    {{ $kelas }},
+                    {{ $rombel?->nama_rombel ?? '-' }},
                     {{ now()->format('d F Y') }}
                 </p>
 
@@ -485,11 +564,11 @@
                 <div class="h-20"></div>
 
                 <p class="font-semibold">
-                    ______________________
+                    {{ $rombel?->wali?->nama_guru ?? '______________________' }}
                 </p>
 
                 <p class="text-xs text-gray-600">
-                    NIP. 198502022010011002
+                    NIP. {{ $rombel?->wali?->nip ?? '....................' }}
                 </p>
 
             </div>
